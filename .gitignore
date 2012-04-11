@@ -1,0 +1,8 @@
+# These are things for git to ignore!
+
+*.o
+*.lst
+*.hex
+*.elf
+Thumbs.db
+.DS_Store
