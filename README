@@ -1,0 +1,6 @@
+make a file called path.txt which contains the 
+absolute path to your compiler, no new lines.
+save it in the same directory as this readme.
+
+example:
+/Users/politipunk/yagarto/yagarto-4.6.2/bin/

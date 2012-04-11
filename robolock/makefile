@@ -17,7 +17,8 @@
 # Start of default section
 #
 
-PATH = /Users/politipunk/yagarto/yagarto-4.6.2/bin/
+
+PATH = $(shell more ../path.txt)
 TRGT = $(PATH)arm-none-eabi-
 CC   = $(TRGT)gcc
 CP   = $(TRGT)objcopy
@@ -114,6 +115,7 @@ RAM: $(OBJS) $(PROJECT)_ram.elf $(PROJECT)_ram.hex
 
 ROM: $(OBJS) $(PROJECT)_rom.elf $(PROJECT)_rom.hex
 
+
 %.o : %.c
 	$(CC) -c $(CPFLAGS) -I . $(INCDIR) $< -o $@
 
@@ -147,5 +149,6 @@ clean:
 # Include the dependency files, should be the last of the makefile
 #
 -include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
+
 
 # *** EOF ***
