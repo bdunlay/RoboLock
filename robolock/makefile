@@ -51,7 +51,7 @@ DLIBS =
 #
 
 # Define project name here
-PROJECT = test
+PROJECT = robolock
 
 # Define linker script file here
 LDSCRIPT_RAM = ./prj/lpc2294_ram.ld

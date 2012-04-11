@@ -72,13 +72,12 @@
 int main (void)
 {
 
-	PINSEL3 = 0x00;
-	FIO1DIR = 0x00;
-
+	PINSEL3 = 0x00; // Set to GPIO
+	FIO1DIR = 0x01; // Set direction to output
+	FIO1SET = 0xFFFFFFFF; // toggle GPIOs high
 
   while (1)
   {
-
 
   }
   
