@@ -1,87 +1,65 @@
-/****************************************************************************
-*  Copyright (c) 2006 by Michael Fischer. All rights reserved.
-*
-*  Redistribution and use in source and binary forms, with or without 
-*  modification, are permitted provided that the following conditions 
-*  are met:
-*  
-*  1. Redistributions of source code must retain the above copyright 
-*     notice, this list of conditions and the following disclaimer.
-*  2. Redistributions in binary form must reproduce the above copyright
-*     notice, this list of conditions and the following disclaimer in the 
-*     documentation and/or other materials provided with the distribution.
-*  3. Neither the name of the author nor the names of its contributors may 
-*     be used to endorse or promote products derived from this software 
-*     without specific prior written permission.
-*
-*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
-*  THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
-*  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
-*  AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-*  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF 
-*  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
-*  SUCH DAMAGE.
-*
-****************************************************************************
-*  History:
-*
-*  30.03.06  mifi   First Version for Insight tutorial
-*  26.01.08  mifi   Added variable "d" to test const variable.
-*  13.02.10  mifi   Added floating point too.
-****************************************************************************/
 #define __MAIN_C__
 
-/*
- * I use the include only, to show
- * how to setup a include dir in the makefile
- */
 #include <stdio.h> 
 #include <stdlib.h> 
 #include "LPC23xx.h"
 #include "typedefs.h"
 
-/*=========================================================================*/
-/*  DEFINE: All Structures and Common Constants                            */
-/*=========================================================================*/
+//#define LED0 (1 << 2)	// p1-18 FIO2
+//#define LED1 (1 << 3)	// p1-19 FIO2
+//#define LED2 (1 << 4)	// p1-20 FIO2
+//#define LED3 (1 << 5)	// p1-21 FIO2
+//#define LED4 (1 << 6)	// p1-22 FIO2
+//#define LED5 (1 << 7)	// p1-23 FIO2
+//#define LED6 (1 << 0)	// p1-24 FIO3
+//#define LED7 (1 << 1)	// p1-25 FIO3
 
-/*=========================================================================*/
-/*  DEFINE: Prototypes                                                     */
-/*=========================================================================*/
+// LEDs
+// bits 19:4 (every 2) of PINSEL3
+//
+//p1[18] - 66
+//p1[19] - 68
+//p1[20] - 70
+//p1[21] - 72
+//p1[22] - 74
+//p1[23] - 76
+//p1[24] - 78
+//p1[25] - 80
 
-/*=========================================================================*/
-/*  DEFINE: Definition of all local Data                                   */
-/*=========================================================================*/
+// Hello World
 
-/*=========================================================================*/
-/*  DEFINE: Definition of all local Procedures                             */
-/*=========================================================================*/
-
-/*=========================================================================*/
-/*  DEFINE: All code exported                                              */
-/*=========================================================================*/
-
-
-/***************************************************************************/
-/*  main                                                                   */
-/***************************************************************************/
 int main (void)
 {
 
-	PINSEL3 = 0x00; // Set to GPIO
-	FIO1DIR = 0x01; // Set direction to output
-	FIO1SET = 0xFFFFFFFF; // toggle GPIOs high
+	PINSEL3 = 0x00; // (Re)Set to GPIO
 
-  while (1)
-  {
+	FIO1DIR2 |= 0xFF; // Set direction to output
+	FIO1DIR3 |= 0xFF; // Set direction to output
+
+	FIO1SET3 = 0xFF; // set all pins high
+	FIO1SET2 = 0xFF; // set all pins high
+
+	int i;
+	while (1)
+	{
+
+		// turn on LEDs sequentially
+		for (i = 0; i < 8; i++) {
+			if (i < 2)
+				FIO1CLR3 = (1 << i);
+			else
+			  FIO1CLR2 = (1 << i);
+		}
+
+		// turn off LEDs sequentially
+		for (i = 0; i < 8; i++) {
+			if (i < 2)
+				FIO1CLR3 = (1 << i);
+			else
+			  FIO1CLR2 = (1 << i);
+		}
 
   }
   
   return(0); // prevents compiler warnings
 }
-
-/*** EOF ***/
