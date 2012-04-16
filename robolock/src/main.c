@@ -1,7 +1,5 @@
 #define __MAIN_C__
 
-#include <stdio.h> 
-#include <stdlib.h> 
 #include "LPC23xx.h"
 #include "typedefs.h"
 
@@ -26,40 +24,80 @@
 //p1[24] - 78
 //p1[25] - 80
 
-// Hello World
+void initLED(void);
+void clearLED(void);
+void printLED(unsigned int);
+
+// set LED GPIOs as output
+void initLED(void) {
+	PINSEL2 = 0x00;
+	PINSEL3 = 0x00; // (Re)Set to GPIO
+
+	FIO1DIR2 = 0xFC;
+	FIO1DIR3 = 0x03;
+	clearLED();
+}
+
+// set all GPIOs high
+void clearLED(void) {
+	FIO1SET2 = 0xFC;
+	FIO1SET3 = 0x03;
+}
+
+
+void printLED(unsigned int val) {
+
+	clearLED();
+
+	int i;
+
+	for (i = 0; i < 8; i++) {
+		if (i < 6)
+			FIO2CLR |= ((val & (0x1 << i)) << 2);
+		else
+			FIO2CLR |= ((val & (0x1 << i)) >> 6);
+	}
+}
 
 int main (void)
 {
 
-	PINSEL3 = 0x00; // (Re)Set to GPIO
-
-	FIO1DIR2 |= 0xFF; // Set direction to output
-	FIO1DIR3 |= 0xFF; // Set direction to output
-
-	FIO1SET3 = 0xFF; // set all pins high
-	FIO1SET2 = 0xFF; // set all pins high
+	initLED();
 
 	int i;
-	while (1)
-	{
+	i = 0;
 
-		// turn on LEDs sequentially
-		for (i = 0; i < 8; i++) {
-			if (i < 2)
-				FIO1CLR3 = (1 << i);
-			else
-			  FIO1CLR2 = (1 << i);
-		}
+	while (1) {
+		printLED(i++%256);
+	}
 
-		// turn off LEDs sequentially
-		for (i = 0; i < 8; i++) {
-			if (i < 2)
-				FIO1CLR3 = (1 << i);
-			else
-			  FIO1CLR2 = (1 << i);
-		}
-
-  }
+//
+//	FIO1DIR2 |= 0xFF; // Set direction to output
+//	FIO1DIR3 |= 0xFF; // Set direction to output
+//
+//	FIO1SET3 = 0xFF; // set all pins high
+//	FIO1SET2 = 0xFF; // set all pins high
+//
+//	int i;
+//	while (1) {
+//
+//		// turn on LEDs sequentially
+//		for (i = 0; i < 8; i++) {
+//			if (i < 2)
+//				FIO1CLR3 = (1 << i);
+//			else
+//			  FIO1CLR2 = (1 << i);
+//		}
+//
+//		// turn off LEDs sequentially
+//		for (i = 0; i < 8; i++) {
+//			if (i < 2)
+//				FIO1CLR3 = (1 << i);
+//			else
+//			  FIO1CLR2 = (1 << i);
+//		}
+//
+//  }
   
   return(0); // prevents compiler warnings
 }
