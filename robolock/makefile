@@ -18,8 +18,8 @@
 #
 
 
-#PATH = $(shell more ../path.txt)
-#TRGT = $(PATH)arm-none-eabi-
+CCPATH = $(shell more ../path.txt)
+TRGT = $(CCPATH)arm-none-eabi-
 TRGT = arm-none-eabi-
 CC   = $(TRGT)gcc
 CP   = $(TRGT)objcopy
