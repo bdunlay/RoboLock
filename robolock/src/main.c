@@ -2,7 +2,7 @@
 
 #include "type.h"
 #include "LPC23xx.h"
-//#include "typedefs.h"
+#include "uart.h"
 
 
 void initLED(void);
