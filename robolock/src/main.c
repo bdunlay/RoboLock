@@ -1,7 +1,12 @@
 #define __MAIN_C__
 
+#include "type.h"
 #include "LPC23xx.h"
-#include "typedefs.h"
+//#include "target.h"
+//#include "timer.h"
+//#include "irq.h"
+
+//#include "typedefs.h"
 
 //#define LED0 (1 << 2)	// p1-18 FIO2
 //#define LED1 (1 << 3)	// p1-19 FIO2
@@ -36,6 +41,7 @@ void initLED(void) {
 	FIO1DIR2 = 0xFC;
 	FIO1DIR3 = 0x03;
 	clearLED();
+
 }
 
 // set all GPIOs high
@@ -59,8 +65,91 @@ void printLED(unsigned int val) {
 	}
 }
 
+
+
+static void prvSetupHardware( void )
+{
+
+	MAMCR  = 0x00;  /* Off                                        */
+	MAMTIM = 0x04;  /* 4 Fetch cycles, gives better result than 3 */
+	MAMCR  = 0x02;  /* Fully enabled                              */
+
+	MEMMAP = 0x01;  /* Uses interrupts vectors in flash */
+
+	PCONP |= (1 << 31);	
+	(*(volatile unsigned int *)(0xFFE0C008)) = 0x1;
+
+	/* Start main oscillator */
+	SCS |= (1<<5);
+
+	while ((SCS & (1<<6)) == 0)
+		;
+
+	/* Select PLL as source */
+	CLKSRCSEL = 0x01;
+
+	/* Start PLL */
+	PLLCFG = 11 | (0 << 16);
+	PLLFEED   = 0xAA;
+	PLLFEED   = 0x55;
+
+	PLLCON    = 0x01;
+	PLLFEED   = 0xAA;
+	PLLFEED   = 0x55;
+
+	/* Wait until locked */
+	while ((PLLSTAT & (1<<26)) == 0)
+		;
+
+	/* Wait until M and N are correct */
+	while ((PLLSTAT & 0xFF7FFF) != 0x0000000B)
+		;
+
+	/* Setup CPU clock divider */
+	//CCLKCFG = 3;
+	CCLKCFG = 4; //57600000
+
+	/* Setup USB clock divider */
+	USBCLKCFG = 5; //48Mhz
+
+	/* Setup Peripheral clock */
+	PCLKSEL0 = 0;
+	PCLKSEL1 = 0;
+
+	/* Switch to PLL clock */
+	PLLCON   = 0x03;
+	PLLFEED  = 0xAA;
+	PLLFEED  = 0x55;
+
+	/* Make sure we are connected to PLL */
+	while ((PLLSTAT & (1<<25))==0)
+		;
+
+	SCS |= (1<<0); //fast mode for port 0 and 1
+
+
+}
+/*-----------------------------------------------------------*/
+
+
+
 int main (void)
 {
+
+
+	prvSetupHardware();
+
+   // init_VIC();
+   // init_timer();
+
+    
+   // GPIOInit( REGULAR_PORT );		/* Initialize GPIO pins, default is REGULAR_PORT  */
+
+    
+   // enable_timer( 0 );			/* Initialize timer for GPIO toggling timing */
+
+   
+
 
 	initLED();
 
@@ -101,3 +190,5 @@ int main (void)
   
   return(0); // prevents compiler warnings
 }
+
+

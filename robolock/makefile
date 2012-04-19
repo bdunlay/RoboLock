@@ -18,8 +18,9 @@
 #
 
 
-PATH = $(shell more ../path.txt)
-TRGT = $(PATH)arm-none-eabi-
+#PATH = $(shell more ../path.txt)
+#TRGT = $(PATH)arm-none-eabi-
+TRGT = arm-none-eabi-
 CC   = $(TRGT)gcc
 CP   = $(TRGT)objcopy
 AS   = $(TRGT)gcc -x assembler-with-cpp
