@@ -45,7 +45,7 @@ void printLED(unsigned int val) {
 
 
 
-int main (void)
+/*int main (void)
 {
 
 	PINMODE3 = 0xAAAAAAAA;
@@ -111,6 +111,32 @@ int main (void)
 	//p1[25] - 80
 
   return(0); // prevents compiler warnings
+}*/
+
+static char Hello[]="\r\nHello from the WinARM-Port\r\nHave Fun,\r\nMartin Thomas\r\n";
+
+/*****************************************************************************
+**   Main Function  main()
+*****************************************************************************/
+int main (void)
+{
+    init_VIC();
+    UARTInit(115200);	/* baud rate setting */
+	
+	U0IER = IER_THRE | IER_RLS;			/* Disable RBR */
+	UARTSend( (BYTE*)Hello, strlen(Hello) );
+	UART0Count = 0;
+	U0IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
+	
+    while (1) 
+    {				/* Loop forever */
+	if ( UART0Count != 0 )
+	{
+		U0IER = IER_THRE | IER_RLS;			/* Disable RBR */
+	    UARTSend( UART0Buffer, UART0Count );
+	    UART0Count = 0;
+	    U0IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
+	}
+    }
+    return 0;
 }
-
-
