@@ -37,7 +37,7 @@ void printLED(unsigned int val) {
 		if (i < 6)
 			FIO2CLR |= ((val & (0x1 << i)) << 2);
 		else
-			FIO2CLR |= ((val & (0x1 << i)) >> 6);
+			FIO3CLR |= ((val & (0x1 << i)) >> 6);
 	}
 }
 
@@ -48,7 +48,7 @@ void printLED(unsigned int val) {
 int main (void)
 {
 
-
+	PINMODE3 = 0xAAAAAAAA;
 
 	initLED();
 
@@ -56,7 +56,8 @@ int main (void)
 	i = 0;
 
 	while (1) {
-		printLED(i++%256);
+		clearLED();
+//		printLED(i++%256);
 	}
 
 //
