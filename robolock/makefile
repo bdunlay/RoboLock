@@ -66,6 +66,12 @@ UADEFS =
 
 # List C source files here
 SRC  = ./src/low_level_init.c \
+       ./src/irq.c \
+       ./src/led.c \
+       ./src/uart.c \
+       ./src/target.c \
+       ./src/timer.c \
+       ./src/uart.c \
        ./src/main.c
 
 # List ASM source files here

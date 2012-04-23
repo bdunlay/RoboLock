@@ -1,12 +1,39 @@
 #define __MAIN_C__
 
-#define __irq __attribute__ ((interrupt ("IRQ")))
-
 #include "type.h"
 #include "LPC23xx.h"
 #include "uart.h"
 #include "led.h"
+#include "target.h"
 
+static char Hello[]="\r\nhelloworld";
+
+/*****************************************************************************
+**   Main Function  main()
+**   UNCHANGED UART TEST CODE
+*****************************************************************************/
+int main (void)
+{
+    init_VIC();
+    UARTInit(115200);	/* baud rate setting */
+
+	U0IER = IER_THRE | IER_RLS;			/* Disable RBR */
+	UARTSend( (BYTE*)Hello, 12 );
+	UART0Count = 0;
+	U0IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
+
+    while (1)
+    {				/* Loop forever */
+	if ( UART0Count != 0 )
+	{
+		U0IER = IER_THRE | IER_RLS;			/* Disable RBR */
+	    UARTSend( UART0Buffer, UART0Count );
+	    UART0Count = 0;
+	    U0IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
+	}
+    }
+    return 0;
+}
 
 /*int main (void)
 {
@@ -75,32 +102,3 @@
 
   return(0); // prevents compiler warnings
 }*/
-
-static char Hello[]="\r\nHello from the WinARM-Port\r\nHave Fun,\r\nMartin Thomas\r\n";
-
-/*****************************************************************************
-**   Main Function  main()
-**   UNCHANGED UART TEST CODE
-*****************************************************************************/
-int main (void)
-{
-    init_VIC();
-    UARTInit(115200);	/* baud rate setting */
-	
-	U0IER = IER_THRE | IER_RLS;			/* Disable RBR */
-	UARTSend( (BYTE*)Hello, strlen(Hello) );
-	UART0Count = 0;
-	U0IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
-	
-    while (1) 
-    {				/* Loop forever */
-	if ( UART0Count != 0 )
-	{
-		U0IER = IER_THRE | IER_RLS;			/* Disable RBR */
-	    UARTSend( UART0Buffer, UART0Count );
-	    UART0Count = 0;
-	    U0IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
-	}
-    }
-    return 0;
-}

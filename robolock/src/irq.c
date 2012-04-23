@@ -9,7 +9,6 @@
  *
 ******************************************************************************/
 #include "LPC23xx.h"			/* LPC23XX/24xx Peripheral Registers */
-#include "typedefs.h"
 #include "type.h"
 #include "irq.h"
 #if FIQ
@@ -25,7 +24,7 @@
 ** Returned value:		
 ** 
 ******************************************************************************/
-void FIQ_Handler( void ) irq
+void FIQ_Handler( void )
 {
 #if FIQ
   if ( VICFIQStatus & (0x1<<4) && VICIntEnable & (0x1<<4) )

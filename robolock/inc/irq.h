@@ -12,6 +12,8 @@
 #ifndef __IRQ_H 
 #define __IRQ_H
 
+#define __irq __attribute__ ((interrupt ("IRQ")))
+
 #define I_Bit			0x80
 #define F_Bit			0x40
 

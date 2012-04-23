@@ -28,7 +28,7 @@ volatile DWORD UART0Count = 0;
 ** Returned value:		None
 ** 
 *****************************************************************************/
-void UART0Handler (void) __irq 
+void UART0Handler (void)
 {
     BYTE IIRValue, LSRValue;
     BYTE Dummy;

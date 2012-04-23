@@ -9,7 +9,6 @@
  *
 *****************************************************************************/
 #include "LPC23xx.h"
-#include "typedefs.h"
 #include "irq.h"
 #include "target.h"
 #include "type.h"
