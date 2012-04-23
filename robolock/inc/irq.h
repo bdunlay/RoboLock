@@ -76,7 +76,7 @@ static DWORD sysreg;		/* used as LR register */
 #define IENABLE __asm { MRS sysreg, SPSR; MSR CPSR_c, #SYS32Mode }
 #define IDISABLE __asm { MSR CPSR_c, #(IRQ32Mode|I_Bit); MSR SPSR_cxsf, sysreg }
 
-extern void FIQ_Handler( void ) __irq;
+extern void FIQ_Handler( void )  __attribute__ ((interrupt ("IRQ")));
 void init_VIC( void );
 DWORD install_irq( DWORD IntNumber, void *HandlerAddr, DWORD Priority );
 

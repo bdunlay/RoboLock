@@ -1,9 +1,13 @@
 #define __MAIN_C__
 
 #include "type.h"
-#include "LPC23xx.h"
 #include "uart.h"
-
+#include "irq.h"
+#include "LPC23xx.h"
+#include "target.h"
+#include <stdio.h>
+#include <stdlib.h>
+//#include "timer.h"
 
 void initLED(void);
 void clearLED(void);
