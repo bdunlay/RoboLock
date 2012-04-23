@@ -1,48 +1,11 @@
 #define __MAIN_C__
 
+#define __irq __attribute__ ((interrupt ("IRQ")))
+
 #include "type.h"
 #include "LPC23xx.h"
 #include "uart.h"
-
-
-void initLED(void);
-void clearLED(void);
-void printLED(unsigned int);
-
-// set LED GPIOs as output
-void initLED(void) {
-	PINSEL2 = 0x00;
-	PINSEL3 = 0x00; // (Re)Set to GPIO
-
-	FIO1DIR2 = 0xFC;
-	FIO1DIR3 = 0x03;
-	clearLED();
-
-}
-
-// set all GPIOs high
-void clearLED(void) {
-	FIO1SET2 = 0xFC;
-	FIO1SET3 = 0x03;
-}
-
-
-void printLED(unsigned int val) {
-
-	clearLED();
-
-	int i;
-
-	for (i = 0; i < 8; i++) {
-		if (i < 6)
-			FIO2CLR |= ((val & (0x1 << i)) << 2);
-		else
-			FIO3CLR |= ((val & (0x1 << i)) >> 6);
-	}
-}
-
-
-
+#include "led.h"
 
 
 /*int main (void)
@@ -117,6 +80,7 @@ static char Hello[]="\r\nHello from the WinARM-Port\r\nHave Fun,\r\nMartin Thoma
 
 /*****************************************************************************
 **   Main Function  main()
+**   UNCHANGED UART TEST CODE
 *****************************************************************************/
 int main (void)
 {

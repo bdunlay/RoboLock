@@ -8,7 +8,7 @@
  *   2005.10.01  ver 1.00    Prelimnary version, first Release
  *
 ******************************************************************************/
-#include "LPC214x.h"                        /* LPC21xx definitions */
+#include "LPC23xx.h"                        /* LPC21xx definitions */
 #include "type.h"
 #include "target.h"
 #include "irq.h"
