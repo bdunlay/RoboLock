@@ -33,7 +33,7 @@
 #define BUFSIZE		0x10
 
 DWORD UARTInit( DWORD Baudrate );
-void UART0Handler( void ) __irq;
+void UART0Handler( void ) __attribute__ ((interrupt ("IRQ")));//__irq;
 void UARTSend( BYTE *BufferPtr, DWORD Length );
 
 extern volatile DWORD UART0Status;
