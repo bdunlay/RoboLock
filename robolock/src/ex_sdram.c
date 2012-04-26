@@ -42,11 +42,11 @@ void SDRAMInit( void )
 //  SCS     |= 0x00000002;		/* Reset EMC */ 
   EMC_CTRL = 0x00000001;		/*Disable Address mirror*/
   PCONP   |= 0x00000800;		/* Turn On EMC PCLK */
-  PINSEL4  = 0x50000000;
-  PINSEL5  = 0x05050555;
-  PINSEL6  = 0x55555555;
-  PINSEL8  = 0x55555555;
-  PINSEL9  = 0x50555555;  
+  //PINSEL4 |= 0x50000000;		/* set pins to CS[2:3] */
+  PINSEL5 |= 0x05050555;		/* set pins to CASn, RASn, CLKOUT[1:0], DYCS[1:0], CKEOUT[1:0], DQMOUT[1:0] */
+  PINSEL6 |= 0x55555555;		/* set pins to D[0:15] (data) */
+  PINSEL8 |= 0x55555555;		/* set pins to A[0:15] (address) */
+  PINSEL9 |= 0x00555555;  		/* set pins to A[16:23], OEn, WEn, BLS[1:0] */
   
   EMC_DYN_RP     = 2;		/* command period: 3(n+1) clock cycles */
   EMC_DYN_RAS    = 3;		/* RAS command period: 4(n+1) clock cycles */
