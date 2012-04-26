@@ -69,6 +69,8 @@ SRC  = ./src/low_level_init.c \
        ./src/irq.c \
        ./src/led.c \
        ./src/target.c \
+       ./src/dip.c \
+       ./src/robolock.c \
        ./src/main.c
 
 #       ./src/timer.c \
