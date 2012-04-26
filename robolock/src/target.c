@@ -103,7 +103,7 @@ void ConfigurePLL ( void )
   PLLFEED = 0xaa;
   PLLFEED = 0x55;
     
-  SCS |= 0x20;			/* Enable main OSC */
+  SCS |= 0x21;			/* Enable main OSC -- DOUBLE CHECK!! */
   while( !(SCS & 0x40) );	/* Wait until main OSC is usable */
 
   CLKSRCSEL = 0x1;		/* select main OSC, 12MHz, as the PLL clock source */
@@ -125,7 +125,7 @@ void ConfigurePLL ( void )
     
   MValue = PLLSTAT & 0x00007FFF;
   NValue = (PLLSTAT & 0x00FF0000) >> 16;
-  while ((MValue != PLL_MValue) && ( NValue != PLL_NValue) );
+//  while ((MValue != PLL_MValue) && ( NValue != PLL_NValue) ); // COMMENTED OUT!!
 
   PLLCON = 3;				/* enable and connect */
   PLLFEED = 0xaa;

@@ -9,8 +9,13 @@
  *   2006.09.01  ver 1.00    Prelimnary version, first Release
  *
 ******************************************************************************/
+#include "type.h"
+
+
 #ifndef __IRQ_H 
 #define __IRQ_H
+
+
 
 #define __irq __attribute__ ((interrupt ("IRQ")))
 

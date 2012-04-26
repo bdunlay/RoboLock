@@ -13,6 +13,9 @@
 
 // set LED GPIOs as output
 void initLED(void) {
+
+	//	PINMODE3 = 0xAAAAAAAA;
+
 	PINSEL2 = 0x00;
 	PINSEL3 = 0x00; // (Re)Set to GPIO
 
@@ -33,12 +36,43 @@ void printLED(unsigned int val) {
 
 	clearLED();
 
-	int i;
+	FIO1CLR2 = val<<2;
+	FIO1CLR3 = val>>6;
 
-	for (i = 0; i < 8; i++) {
-		if (i < 6)
-			FIO2CLR |= ((val & (0x1 << i)) << 2);
-		else
-			FIO3CLR |= ((val & (0x1 << i)) >> 6);
+}
+
+void delay() {
+	int a;
+	int b;
+	int c;
+
+	for (a = 0; a < 5; a++) {
+		for (b = 0; b < 32767; b++) {
+		}
 	}
+}
+
+void testLED() {
+		int i, j;
+		j = 0;
+		i = 0;
+
+		for (i = 0; i < 10; i++) {
+		printLED(0xAA);
+		delay();
+		printLED(0x55);
+		delay();
+		}
+
+		for (i = 0; i < 3; i++) {
+			for (j = 1; j < 255; j |= j*2) {
+				delay();
+				printLED(j);
+			}
+
+			for (j = 1; j < 255; j |= j*2) {
+				delay();
+				printLED(~j);
+			}
+		}
 }
