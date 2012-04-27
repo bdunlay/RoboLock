@@ -42,11 +42,11 @@ void SDRAMInit( void )
 //  SCS     |= 0x00000002;		/* Reset EMC */ 
   EMC_CTRL = 0x00000001;		/*Disable Address mirror*/
   PCONP   |= 0x00000800;		/* Turn On EMC PCLK */
-  PINSEL4  = 0x50000000;
-  PINSEL5  = 0x05050555;
-  PINSEL6  = 0x55555555;
-  PINSEL8  = 0x55555555;
-  PINSEL9  = 0x50555555;  
+  //PINSEL4 |= 0x50000000;		/* set pins to CS[2:3] */
+  PINSEL5 |= 0x05050555;		/* set pins to CASn, RASn, CLKOUT[1:0], DYCS[1:0], CKEOUT[1:0], DQMOUT[1:0] */
+  PINSEL6 |= 0x55555555;		/* set pins to D[0:15] (data) */
+  PINSEL8 |= 0x55555555;		/* set pins to A[0:15] (address) */
+  PINSEL9 |= 0x00555555;  		/* set pins to A[16:23], OEn, WEn, BLS[1:0] */
   
   EMC_DYN_RP     = 2;		/* command period: 3(n+1) clock cycles */
   EMC_DYN_RAS    = 3;		/* RAS command period: 4(n+1) clock cycles */
@@ -65,18 +65,13 @@ void SDRAMInit( void )
   /* Default setting, RAS latency 3 CCLKs, CAS latenty 3 CCLKs. */
   EMC_DYN_RASCAS0 = 0x00000303;
 
-#if ENG_BOARD_LPC24XX		/* NXP engineering board */
-  /* 256MB, 16Mx16, 4 banks, row=12, column=9 */
+  /* 128MB, 16Mx16, 4 banks, row=12, column=9 */
   EMC_DYN_CFG0 = 0x00000480;
-#else						/* Embedded Artists board */
-  /* 256MB, 16Mx16, 4 banks, row=13, column=9 */
-  EMC_DYN_CFG0 = 0x00000680;
-#endif
-  delayMs(1, 100);			/* use timer 1 */
+  delayMs(1, 100);			/* use timer 1, wait for 100ms */
 
   /* Mem clock enable, CLKOUT runs, send command: NOP */
   EMC_DYN_CTRL = 0x00000183;
-  delayMs(1, 200);			/* use timer 1 */
+  delayMs(1, 200);			/* use timer 1, wait for 200ms */
     
   /* Send command: PRECHARGE-ALL, shortest possible refresh period */
   EMC_DYN_CTRL = 0x00000103;

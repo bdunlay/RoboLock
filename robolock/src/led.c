@@ -1,4 +1,4 @@
-/** RoboLock
+/* RoboLock
  * LED.C
  *
  * Source file for GPIO control, configuration and usage of LEDs on the RoboLock board

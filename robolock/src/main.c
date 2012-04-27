@@ -2,9 +2,8 @@
 
 #include "type.h"
 #include "LPC23xx.h"
-//#include "uart.h"
-#include "led.h"
 #include "target.h"
+<<<<<<< HEAD
 #include "I2C.h"
 #include "LCD.h"
 #include "timer.h"
@@ -17,6 +16,12 @@ void testLCD(void);
 
 // static char Hello[]="\r\nhelloworld";
 
+=======
+
+#include "led.h"
+#include "dip.h"
+#include "robolock.h"
+>>>>>>> 02cc9ea4e47055be08f51462fb8bd38c7ec27681
 
 /*****************************************************************************
  *    Main Function  main()													 *
@@ -24,18 +29,24 @@ void testLCD(void);
 
 int main (void)
 {
-	// put all initializations in this function
-	init_robolock();
+
+	TargetResetInit();
+	initLED();
+	init_dip();
 
 	while(1) {
 
 		switch(read_dip()) {
+
+
 
 			/* MAIN PROGRAM */
 
 			case 0:
 				robolock();
 				break;
+
+
 
 
 
@@ -94,28 +105,11 @@ int main (void)
 	}
 
 
-
-//	UARTInit(115200);	/* baud rate setting */
-//
-//	U0IER = IER_THRE | IER_RLS;			/* Disable RBR */
-//	UARTSend( (BYTE*)Hello, 12 );
-//	UART0Count = 0;
-//	U0IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
-//
-//    while (1)
-//    {				/* Loop forever */
-//	if ( UART0Count != 0 )
-//	{
-//		U0IER = IER_THRE | IER_RLS;			/* Disable RBR */
-//	    UARTSend( UART0Buffer, UART0Count );
-//	    UART0Count = 0;
-//	    U0IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
-//	}
-//    }
     return 0;
 }
 
 
+<<<<<<< HEAD
 /*****************************************************************************
  *    Will factor these out later
  *****************************************************************************/
@@ -143,3 +137,5 @@ void init_robolock() {
 void robolock() {
 
 }
+=======
+>>>>>>> 02cc9ea4e47055be08f51462fb8bd38c7ec27681
