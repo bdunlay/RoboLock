@@ -4,7 +4,6 @@
 #include "LPC23xx.h"
 #include "target.h"
 #include "I2C.h"
-#include "LCD.h"
 #include "timer.h"
 #include "dip.h"
 
@@ -18,6 +17,7 @@ void robolock(void);
 
 
 #include "led.h"
+#include "LCD.h"
 #include "dip.h"
 #include "robolock.h"
 

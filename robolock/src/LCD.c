@@ -13,6 +13,7 @@
 
 volatile BYTE I2CMasterBuffer[BUFSIZE];
  BYTE buff;
+ void delay();
 
 void initLCD(void) {
 I2CInit(0);
@@ -34,8 +35,7 @@ void printLCD(BYTE val) {
 
 
 void testLCD() {
-		int i, j;
-		j = 0;
+		int i;
 		i = 0;
 		clearLCD();
 
