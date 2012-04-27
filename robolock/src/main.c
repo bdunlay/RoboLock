@@ -5,12 +5,15 @@
 //#include "uart.h"
 #include "led.h"
 #include "target.h"
-
+#include "I2C.h"
+#include "LCD.h"
+#include "timer.h"
 
 void init_dip(void);
 unsigned short read_dip(void);
 void init_robolock(void);
 void robolock(void);
+void testLCD(void);
 
 // static char Hello[]="\r\nhelloworld";
 
@@ -49,6 +52,7 @@ int main (void)
 				break;
 
 			case 4:
+				testLCD();
 				break;
 
 			case 5:
@@ -125,11 +129,14 @@ unsigned short read_dip() {
 	return (FIO2PIN0>>1) & 0xF;
 }
 
+
 void init_robolock() {
 
 	TargetResetInit(); // PLL
 	initLED();
+	initLCD();
 	init_dip();
+
 }
 
 // main program

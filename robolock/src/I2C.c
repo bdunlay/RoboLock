@@ -11,15 +11,14 @@
 #include "LPC23xx.h"                        /* LPC23xx/24xx definitions */
 #include "type.h"
 #include "irq.h"
-#include "i2c.h"
+#include "I2C.h"
 
 volatile DWORD I2CMasterState = I2C_IDLE;
 volatile DWORD I2CSlaveState = I2C_IDLE;
 
 volatile DWORD I2CCmd;
 volatile DWORD I2CMode;
-
-volatile BYTE I2CMasterBuffer[BUFSIZE];
+extern volatile BYTE I2CMasterBuffer[BUFSIZE];
 volatile BYTE I2CSlaveBuffer[BUFSIZE];
 volatile DWORD I2CCount = 0;
 volatile DWORD I2CReadLength;
@@ -39,54 +38,54 @@ be READ or WRITE depending on the I2CCmd.
 */   
 
 /*****************************************************************************
-** Function name:		I2C0MasterHandler
+** Function name:		I2C1MasterHandler
 **
-** Descriptions:		I2C0 interrupt handler, deal with master mode
+** Descriptions:		I2C1 interrupt handler, deal with master mode
 **				only.
 **
 ** parameters:			None
 ** Returned value:		None
 ** 
 *****************************************************************************/
-void I2C0MasterHandler(void) __irq 
+void I2C1MasterHandler(void)// __irq
 {
   BYTE StatValue;
 
   /* this handler deals with master read and master write only */
-  StatValue = I20STAT;
-  IENABLE;				/* handles nested interrupt */	
+  StatValue = I21STAT;
+  //IENABLE;				/* handles nested interrupt */
   switch ( StatValue )
   {
 	case 0x08:			/* A Start condition is issued. */
-	I20DAT = I2CMasterBuffer[0];
-	I20CONCLR = (I2CONCLR_SIC | I2CONCLR_STAC);
+	I21DAT = I2CMasterBuffer[0];
+	I21CONCLR = (I2CONCLR_SIC | I2CONCLR_STAC);
 	I2CMasterState = I2C_STARTED;
 	break;
 	
 	case 0x10:			/* A repeated started is issued */
-	if ( I2CCmd == LM75_TEMP )
+	if ( I2CCmd == LCD_TEMP )
 	{
-	  I20DAT = I2CMasterBuffer[2];
+	  I21DAT = I2CMasterBuffer[2];
 	}
-	I20CONCLR = (I2CONCLR_SIC | I2CONCLR_STAC);
+	I21CONCLR = (I2CONCLR_SIC | I2CONCLR_STAC);
 	I2CMasterState = I2C_RESTARTED;
 	break;
 	
 	case 0x18:			/* Regardless, it's a ACK */
 	if ( I2CMasterState == I2C_STARTED )
 	{
-	  I20DAT = I2CMasterBuffer[1+WrIndex];
+	  I21DAT = I2CMasterBuffer[1+WrIndex];
 	  WrIndex++;
 	  I2CMasterState = DATA_ACK;
 	}
-	I20CONCLR = I2CONCLR_SIC;
+	I21CONCLR = I2CONCLR_SIC;
 	break;
 	
 	case 0x28:	/* Data byte has been transmitted, regardless ACK or NACK */
 	case 0x30:
 	if ( WrIndex != I2CWriteLength )
 	{   
-	  I20DAT = I2CMasterBuffer[1+WrIndex]; /* this should be the last one */
+	  I21DAT = I2CMasterBuffer[1+WrIndex]; /* this should be the last one */
 	  WrIndex++;
 	  if ( WrIndex != I2CWriteLength )
 	  {   
@@ -97,7 +96,7 @@ void I2C0MasterHandler(void) __irq
 		I2CMasterState = DATA_NACK;
 		if ( I2CReadLength != 0 )
 		{
-		  I20CONSET = I2CONSET_STA;	/* Set Repeated-start flag */
+		  I21CONSET = I2CONSET_STA;	/* Set Repeated-start flag */
 		  I2CMasterState = I2C_REPEATED_START;
 		}
 	  }
@@ -106,26 +105,26 @@ void I2C0MasterHandler(void) __irq
 	{
 	  if ( I2CReadLength != 0 )
 	  {
-		I20CONSET = I2CONSET_STA;	/* Set Repeated-start flag */
+		I21CONSET = I2CONSET_STA;	/* Set Repeated-start flag */
 		I2CMasterState = I2C_REPEATED_START;
 	  }
 	  else
 	  {
 		I2CMasterState = DATA_NACK;
-		I20CONSET = I2CONSET_STO;      /* Set Stop flag */
+		I21CONSET = I2CONSET_STO;      /* Set Stop flag */
 	  }
 	}
-	I20CONCLR = I2CONCLR_SIC;
+	I21CONCLR = I2CONCLR_SIC;
 	break;
 	
 	case 0x40:	/* Master Receive, SLA_R has been sent */
-	I20CONSET = I2CONSET_AA;	/* assert ACK after data is received */
-	I20CONCLR = I2CONCLR_SIC;
+	I21CONSET = I2CONSET_AA;	/* assert ACK after data is received */
+	I21CONCLR = I2CONCLR_SIC;
 	break;
 	
 	case 0x50:	/* Data byte has been received, regardless following ACK or NACK */
 	case 0x58:
-	I2CMasterBuffer[3+RdIndex] = I20DAT;
+	I2CMasterBuffer[3+RdIndex] = I21DAT;
 	RdIndex++;
 	if ( RdIndex != I2CReadLength )
 	{   
@@ -136,23 +135,23 @@ void I2C0MasterHandler(void) __irq
 	  RdIndex = 0;
 	  I2CMasterState = DATA_NACK;
 	}
-	I20CONSET = I2CONSET_AA;	/* assert ACK after data is received */
-	I20CONCLR = I2CONCLR_SIC;
+	I21CONSET = I2CONSET_AA;	/* assert ACK after data is received */
+	I21CONCLR = I2CONCLR_SIC;
 	break;
 	
 	case 0x20:		/* regardless, it's a NACK */
 	case 0x48:
-	I20CONCLR = I2CONCLR_SIC;
+	I21CONCLR = I2CONCLR_SIC;
 	I2CMasterState = DATA_NACK;
 	break;
 	
 	case 0x38:		/* Arbitration lost, in this example, we don't
 					deal with multiple master situation */
 	default:
-	I20CONCLR = I2CONCLR_SIC;	
+	I21CONCLR = I2CONCLR_SIC;
 	break;
   }
-  IDISABLE;
+  //IDISABLE;
   VICVectAddr = 0;		/* Acknowledge Interrupt */
 }
 
@@ -173,7 +172,7 @@ DWORD I2CStart( void )
   DWORD retVal = FALSE;
  
   /*--- Issue a start condition ---*/
-  I20CONSET = I2CONSET_STA;	/* Set Start flag */
+  I21CONSET = I2CONSET_STA;	/* Set Start flag */
     
   /*--- Wait until START transmitted ---*/
   while( 1 )
@@ -205,11 +204,11 @@ DWORD I2CStart( void )
 *****************************************************************************/
 DWORD I2CStop( void )
 {
-  I20CONSET = I2CONSET_STO;      /* Set Stop flag */ 
-  I20CONCLR = I2CONCLR_SIC;  /* Clear SI flag */ 
+  I21CONSET = I2CONSET_STO;      /* Set Stop flag */
+  I21CONCLR = I2CONCLR_SIC;  /* Clear SI flag */
             
   /*--- Wait for STOP detected ---*/
-  while( I20CONSET & I2CONSET_STO );
+  while( I21CONSET & I2CONSET_STO );
   return TRUE;
 }
 
@@ -223,29 +222,29 @@ DWORD I2CStop( void )
 **				interrupt handler was not installed correctly
 ** 
 *****************************************************************************/
-DWORD I2CInit( DWORD I2cMode ) 
+DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
 {
   PCONP |= (1 << 19);
-  PINSEL1 &= ~0x03C00000;
-  PINSEL1 |= 0x01400000;	/* set PIO0.27 and PIO0.28 to I2C0 SDA and SCK */
-							/* function to 01 on both SDA and SCK. */
+ // PINSEL1 &= ~0x03C00000;
+ // PINSEL1 |= 0x01400000;	/* set PIO0.27 and PIO0.28 to I2C1 SDA and SCK */
+	PINSEL0 |= 0x0000000F;  /* function to 01 on both SDA and SCK. for I21 */
   /*--- Clear flags ---*/
-  I20CONCLR = I2CONCLR_AAC | I2CONCLR_SIC | I2CONCLR_STAC | I2CONCLR_I2ENC;    
+  I21CONCLR = I2CONCLR_AAC | I2CONCLR_SIC | I2CONCLR_STAC | I2CONCLR_I2ENC;
 
   /*--- Reset registers ---*/
-  I20SCLL   = I2SCLL_SCLL;
-  I20SCLH   = I2SCLH_SCLH;
+  I21SCLL   = I2SCLL_SCLL;
+  I21SCLH   = I2SCLH_SCLH;
   if ( I2cMode == I2CSLAVE )
   {
-	I20ADR = LM75_ADDR;
+	I21ADR = LCD_ADDR;
   }    
 
   /* Install interrupt handler */	
-  if ( install_irq( I2C0_INT, (void *)I2C0MasterHandler, HIGHEST_PRIORITY ) == FALSE )
+  if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, HIGHEST_PRIORITY ) == FALSE )
   {
 	return( FALSE );
   }
-  I20CONSET = I2CONSET_I2EN;
+  I21CONSET = I2CONSET_I2EN;
   return( TRUE );
 }
 
