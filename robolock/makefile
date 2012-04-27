@@ -69,13 +69,10 @@ SRC  = ./src/low_level_init.c \
        ./src/irq.c \
        ./src/led.c \
        ./src/target.c \
-<<<<<<< HEAD
        ./src/I2C.c \
        ./src/LCD.c \
-=======
        ./src/dip.c \
        ./src/robolock.c \
->>>>>>> 02cc9ea4e47055be08f51462fb8bd38c7ec27681
        ./src/main.c
        
 

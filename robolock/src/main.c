@@ -3,25 +3,23 @@
 #include "type.h"
 #include "LPC23xx.h"
 #include "target.h"
-<<<<<<< HEAD
 #include "I2C.h"
 #include "LCD.h"
 #include "timer.h"
+#include "dip.h"
 
-void init_dip(void);
-unsigned short read_dip(void);
+//void init_dip(void);
+//unsigned short read_dip(void);
 void init_robolock(void);
 void robolock(void);
-void testLCD(void);
+//void testLCD(void);
 
 // static char Hello[]="\r\nhelloworld";
 
-=======
 
 #include "led.h"
 #include "dip.h"
 #include "robolock.h"
->>>>>>> 02cc9ea4e47055be08f51462fb8bd38c7ec27681
 
 /*****************************************************************************
  *    Main Function  main()													 *
@@ -109,19 +107,19 @@ int main (void)
 }
 
 
-<<<<<<< HEAD
+
 /*****************************************************************************
  *    Will factor these out later
  *****************************************************************************/
 
-void init_dip() {
-	FIO2DIR0 = 0x00;
-	FIO2CLR0 = 0x1E;
-}
-
-unsigned short read_dip() {
-	return (FIO2PIN0>>1) & 0xF;
-}
+//void init_dip() {
+//	FIO2DIR0 = 0x00;
+//	FIO2CLR0 = 0x1E;
+//}
+//
+//unsigned short read_dip() {
+//	return (FIO2PIN0>>1) & 0xF;
+//}
 
 
 void init_robolock() {
@@ -134,8 +132,6 @@ void init_robolock() {
 }
 
 // main program
-void robolock() {
-
-}
-=======
->>>>>>> 02cc9ea4e47055be08f51462fb8bd38c7ec27681
+//void robolock() {
+//
+//}
