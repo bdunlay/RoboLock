@@ -227,7 +227,7 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
   PCONP |= (1 << 19);
  // PINSEL1 &= ~0x03C00000;
  // PINSEL1 |= 0x01400000;	/* set PIO0.27 and PIO0.28 to I2C1 SDA and SCK */
-	PINSEL0 |= 0x0000000F;  /* function to 01 on both SDA and SCK. for I21 */
+  PINSEL0 |= 0x0000000F;  /* function to 01 on both SDA and SCK. for I21 */
   /*--- Clear flags ---*/
   I21CONCLR = I2CONCLR_AAC | I2CONCLR_SIC | I2CONCLR_STAC | I2CONCLR_I2ENC;
 
