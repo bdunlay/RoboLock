@@ -1,7 +1,7 @@
 /** RoboLock
  * LED.C
  *
- * Source file for GPIO control, configuration and usage of LEDs on the RoboLock board
+ * Source file for GPIO control, configuration and usage of LCD on the RoboLock board
  *
  * v1.0 - 4/22/2012
  */
@@ -17,6 +17,9 @@ volatile BYTE I2CMasterBuffer[BUFSIZE];
 
 void initLCD(void) {
 I2CInit(0);
+FIO1DIR3 |= 0x04;
+PINSEL1 = 0x00;
+FIO1CLR3 |= 0x04;
 
 }
 
@@ -45,4 +48,5 @@ void testLCD() {
 		printLCD(0x43);
 		delay();
 		}
+
 }

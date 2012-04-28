@@ -46,13 +46,14 @@ int main (void)
 				break;
 
 			case 2:
+				testLCD();
 				break;
 
 			case 3:
 				break;
 
 			case 4:
-				testLCD();
+
 				break;
 
 			case 5:
