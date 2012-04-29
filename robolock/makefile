@@ -82,7 +82,8 @@ SRC  = ./src/low_level_init.c \
 
 
 # List ASM source files here
-ASRC = ./src/startup.s
+ASRC = ./src/startup.s \
+       ./src/swi_handler.s
 
 # List all user directories here
 UINCDIR = ./inc

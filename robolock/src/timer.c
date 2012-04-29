@@ -76,7 +76,7 @@ void delayMs(BYTE timer_num, DWORD delayInMs)
 ** Returned value:		None
 ** 
 ******************************************************************************/
-void Timer0Handler (void) __irq 
+void Timer0Handler (void) __irq
 {  
   T0IR = 1;			/* clear interrupt flag */
   IENABLE;			/* handles nested interrupt */

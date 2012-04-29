@@ -10,14 +10,14 @@
  *
 ******************************************************************************/
 #include "type.h"
-
+#include "swi.h"
 
 #ifndef __IRQ_H 
 #define __IRQ_H
 
 
 
-#define __irq __attribute__ ((interrupt ("IRQ")))
+#define __irq //__attribute__ ((interrupt ("IRQ")))
 
 #define I_Bit			0x80
 #define F_Bit			0x40
@@ -80,10 +80,10 @@ restore registers into the stack in RVD as the compiler does that for you.
 See RVD ARM compiler Inline and embedded assemblers, "Rules for 
 using __asm and asm keywords. */
 static DWORD sysreg;		/* used as LR register */
-#define IENABLE __asm { MRS sysreg, SPSR; MSR CPSR_c, #SYS32Mode }
-#define IDISABLE __asm { MSR CPSR_c, #(IRQ32Mode|I_Bit); MSR SPSR_cxsf, sysreg }
+#define IENABLE IntEnable()//__asm { MRS sysreg, SPSR; MSR CPSR_c, #SYS32Mode }
+#define IDISABLE IntDisable()//__asm { MSR CPSR_c, #(IRQ32Mode|I_Bit); MSR SPSR_cxsf, sysreg }
 
-extern void FIQ_Handler( void )  __attribute__ ((interrupt ("IRQ")));
+//extern void FIQ_Handler( void )  __irq;
 void init_VIC( void );
 DWORD install_irq( DWORD IntNumber, void *HandlerAddr, DWORD Priority );
 

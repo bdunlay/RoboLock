@@ -11,33 +11,6 @@
 #include "LPC23xx.h"			/* LPC23XX/24xx Peripheral Registers */
 #include "type.h"
 #include "irq.h"
-#if FIQ
-#include "timer.h"
-#endif
-
-/******************************************************************************
-** Function name:		FIQ_Handler
-**
-** Descriptions:		FIQ interrupt handler called in startup
-** parameters:			 
-**					
-** Returned value:		
-** 
-******************************************************************************/
-void FIQ_Handler( void )
-{
-#if FIQ
-  if ( VICFIQStatus & (0x1<<4) && VICIntEnable & (0x1<<4) )
-  {
-	Timer0FIQHandler();	
-  }
-  if ( VICFIQStatus & (0x1<<5) && VICIntEnable & (0x1<<5) )
-  {
-	Timer1FIQHandler();	
-  }
-  return;
-#endif 
-}
 
 /* Initialize the interrupt controller */
 /******************************************************************************
