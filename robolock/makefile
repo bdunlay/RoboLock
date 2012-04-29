@@ -64,6 +64,23 @@ UDEFS =
 # Define ASM defines here
 UADEFS = 
 
+LWIP_SRC = \
+	./src/api/err.c \
+	./src/core/init.c \
+	./src/core/mem.c \
+	./src/core/memp.c \
+	./src/core/netif.c \
+	./src/core/pbuf.c \
+	./src/core/stats.c \
+	./src/core/udp.c \
+	./src/core/ipv4/icmp.c \
+	./src/core/ipv4/inet.c \
+	./src/core/ipv4/ip.c \
+	./src/core/ipv4/ip_addr.c \
+	./src/core/ipv4/ip_frag.c \
+	./src/netif/etharp.c \
+
+
 # List C source files here
 SRC  = ./src/low_level_init.c \
        ./src/irq.c \
@@ -74,7 +91,9 @@ SRC  = ./src/low_level_init.c \
        ./src/dip.c \
        ./src/robolock.c \
        ./src/main.c
+#       $(LWIP_SRC) \
        
+
 
 #       ./src/timer.c \
 #       ./src/uart.c \
