@@ -3,6 +3,7 @@
 #include "type.h"
 #include "LPC23xx.h"
 #include "target.h"
+#include "common.h"
 
 #include "led.h"
 #include "dip.h"

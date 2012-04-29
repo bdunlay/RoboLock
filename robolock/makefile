@@ -67,6 +67,7 @@ UADEFS =
 # List C source files here
 SRC  = ./src/low_level_init.c \
        ./src/irq.c \
+       ./src/common.c \
        ./src/led.c \
        ./src/target.c \
        ./src/I2C.c \

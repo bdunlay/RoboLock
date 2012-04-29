@@ -47,13 +47,13 @@ be READ or WRITE depending on the I2CCmd.
 ** Returned value:		None
 ** 
 *****************************************************************************/
-void I2C1MasterHandler(void)// __irq
+void I2C1MasterHandler(void) __irq
 {
   BYTE StatValue;
 
   /* this handler deals with master read and master write only */
   StatValue = I21STAT;
-  //IENABLE;				/* handles nested interrupt */
+  IENABLE;				/* handles nested interrupt */
   switch ( StatValue )
   {
 	case 0x08:			/* A Start condition is issued. */
@@ -151,7 +151,7 @@ void I2C1MasterHandler(void)// __irq
 	I21CONCLR = I2CONCLR_SIC;
 	break;
   }
-  //IDISABLE;
+  IDISABLE;
   VICVectAddr = 0;		/* Acknowledge Interrupt */
 }
 

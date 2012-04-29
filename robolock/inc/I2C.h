@@ -26,7 +26,7 @@
 
 #define LCD_ADDR		0x7C
 #define LCD_TEMP		0x00	//?
-#define LCD_CONFIG		0x01	//?
+#define LCD_CONFIG		0x01 //0x01	//?
 #define LCD_THYST		0x02	//?
 #define LCD_TOS			0x03	//?
 
@@ -56,7 +56,7 @@
 #define I2SCLL_SCLL			0x00000080  /* I2C SCL Duty Cycle Low Reg */
 
 #include "type.h"
-extern void I2C1MasterHandler( void );// __irq;
+extern void I2C1MasterHandler( void ); __irq;
 extern DWORD I2CInit( DWORD I2cMode );  // 0 slave 1 master
 extern DWORD I2CStart( void );
 extern DWORD I2CStop( void );
