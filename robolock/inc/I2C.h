@@ -26,7 +26,7 @@
 
 #define LCD_ADDR		0x7C
 #define LCD_TEMP		0x00	//?
-#define LCD_CONFIG		0x01	//?
+#define LCD_CONFIG		0x01 //0x01	//?
 #define LCD_THYST		0x02	//?
 #define LCD_TOS			0x03	//?
 

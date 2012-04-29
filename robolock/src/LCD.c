@@ -10,6 +10,7 @@
 #include "LCD.h"
 #include "type.h"
 #include "target.h"
+#include "common.h"
 
 extern volatile DWORD I2CCount;
 extern volatile BYTE I2CMasterBuffer[BUFSIZE];
@@ -18,7 +19,7 @@ extern volatile DWORD I2CReadLength, I2CWriteLength;
 
 volatile BYTE I2CMasterBuffer[BUFSIZE];
  BYTE buff;
- void delay();
+ //void delay();
 
 void initLCD(void) {
 I2CInit(I2CMASTER);

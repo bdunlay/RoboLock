@@ -6,6 +6,8 @@
  * v1.0 - 4/22/2012
  */
 
+#include "robolock.h"
+
 void robolock() {
 
 }

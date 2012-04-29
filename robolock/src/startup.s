@@ -233,7 +233,7 @@ UndefHandler:
    b UndefHandler
 
 SWIHandler:
-   b SWIHandler
+   b SoftwareInterrupt
 
 PAbortHandler:
    b PAbortHandler
