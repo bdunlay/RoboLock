@@ -10,6 +10,7 @@
 #include "led.h"
 #include "type.h"
 #include "target.h"
+#include "common.h"
 
 // set LED GPIOs as output
 void initLED(void) {
@@ -39,17 +40,6 @@ void printLED(unsigned int val) {
 	FIO1CLR2 = val<<2;
 	FIO1CLR3 = val>>6;
 
-}
-
-void delay() {
-	int a;
-	int b;
-	int c;
-
-	for (a = 0; a < 5; a++) {
-		for (b = 0; b < 32767; b++) {
-		}
-	}
 }
 
 void testLED() {
