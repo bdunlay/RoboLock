@@ -24,6 +24,7 @@ if disabled(0), the code will be executed without terminal display. */
 #define SDRAM_SIZE			0x02000000
 
 extern void SDRAMInit( void );
+void testSDRAM(void);
 
 #endif /* end __EX_SDRAM_H */
 /*****************************************************************************

@@ -83,23 +83,19 @@ LWIP_SRC = \
 
 # List C source files here
 SRC  = ./src/low_level_init.c \
-       ./src/irq.c \
-       ./src/common.c \
-       ./src/led.c \
-       ./src/target.c \
-       ./src/I2C.c \
-       ./src/LCD.c \
-       ./src/dip.c \
-       ./src/robolock.c \
-       ./src/main.c
-#       $(LWIP_SRC) \
-       
-
-
-#       ./src/timer.c \
+		./src/irq.c \
+		./src/common.c \
+		./src/led.c \
+		./src/target.c \
+		./src/I2C.c \
+		./src/LCD.c \
+		./src/dip.c \
+		./src/robolock.c \
+		./src/ex_sdram.c \
+		./src/timer.c \
+		./src/main.c
+#       $(LWIP_SRC) \       
 #       ./src/uart.c \
-#       ./src/uart.c \
-
 
 # List ASM source files here
 ASRC = ./src/startup.s \

@@ -11,6 +11,7 @@
 #include "type.h"
 #include "target.h"
 #include "common.h"
+#include "led.h"
 
 extern volatile DWORD I2CCount;
 extern volatile BYTE I2CMasterBuffer[BUFSIZE];
@@ -18,15 +19,13 @@ extern volatile DWORD I2CCmd, I2CMasterState;
 extern volatile DWORD I2CReadLength, I2CWriteLength;
 
 volatile BYTE I2CMasterBuffer[BUFSIZE];
- BYTE buff;
- //void delay();
+BYTE buff;
 
 void initLCD(void) {
-I2CInit(I2CMASTER);
-FIO1DIR3 |= 0x04;
-PINSEL1 = 0x00;
-FIO1CLR3 |= 0x04;
-
+	I2CInit(I2CMASTER);  // start master
+	FIO1DIR3 |= 0x04;
+	PINSEL1 = 0x00;
+	FIO1CLR3 |= 0x04;
 }
 
 void clearLCD(void) {
@@ -43,9 +42,9 @@ void clearLCD(void) {
 	  I2CWriteLength = 2;
 	  I2CReadLength = 0;
 	  I2CMasterBuffer[0] = LCD_ADDR;
-	  I2CMasterBuffer[1] = LCD_CONFIG;
-	  I2CMasterBuffer[2] = 0x01;	/* configuration value, no change from
-									default */
+	  I2CMasterBuffer[1] = 0x00;//LCD_CONFIG;
+	  I2CMasterBuffer[2] = 0x38;//0x01;
+	  /* configuration value, no change from default */
 	  I2CCmd = LCD_CONFIG;
 	  I2CEngine();
 }
@@ -71,13 +70,15 @@ void printLCD(BYTE val) {
 void testLCD() {
 		int i;
 		i = 0;
+		printLED(0x01);
+		busyWait(100);//
 		clearLCD();
-
+		printLED(0x02);
+		busyWait(100);
 		for (i = 0; i < 10; i++) {
-		printLCD(0x42);
-		delay();
-		printLCD(0x43);
-		delay();
+			printLED(0x03);
+			busyWait(100);
+			printLCD(0x42);
+			printLCD(0x43);
 		}
-
 }
