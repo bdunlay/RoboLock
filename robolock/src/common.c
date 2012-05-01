@@ -1,11 +1,12 @@
+#include "type.h"
 #include "common.h"
-#define DELAY_PERIOD 100
-void delay() {
+
+
+void busyWait(unsigned int delay_period) {
 	volatile int a;
 	volatile int b;
-	volatile int c;
 
-	for (a = 0; a < DELAY_PERIOD; a++) {
+	for (a = 0; a < delay_period; a++) {
 		for (b = 0; b < 32767; b++) {
 		}
 	}

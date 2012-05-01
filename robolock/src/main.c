@@ -54,7 +54,6 @@ int main (void)
 				break;
 
 			case 4:
-
 				break;
 
 			case 5:
@@ -67,6 +66,7 @@ int main (void)
 				break;
 
 			case 8:
+				testSDRAM();
 				break;
 
 			case 9:

@@ -49,19 +49,19 @@ void testLED() {
 
 		for (i = 0; i < 10; i++) {
 		printLED(0xAA);
-		delay();
+		busyWait(5);
 		printLED(0x55);
-		delay();
+		busyWait(5);
 		}
 
 		for (i = 0; i < 3; i++) {
 			for (j = 1; j < 255; j |= j*2) {
-				delay();
+				busyWait(5);
 				printLED(j);
 			}
 
 			for (j = 1; j < 255; j |= j*2) {
-				delay();
+				busyWait(5);
 				printLED(~j);
 			}
 		}

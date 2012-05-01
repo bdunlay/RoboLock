@@ -19,15 +19,13 @@ extern volatile DWORD I2CCmd, I2CMasterState;
 extern volatile DWORD I2CReadLength, I2CWriteLength;
 
 volatile BYTE I2CMasterBuffer[BUFSIZE];
- BYTE buff;
- //void delay();
+BYTE buff;
 
 void initLCD(void) {
-I2CInit(I2CMASTER);  // start master
-FIO1DIR3 |= 0x04;
-PINSEL1 = 0x00;
-FIO1CLR3 |= 0x04;
-
+	I2CInit(I2CMASTER);  // start master
+	FIO1DIR3 |= 0x04;
+	PINSEL1 = 0x00;
+	FIO1CLR3 |= 0x04;
 }
 
 void clearLCD(void) {
@@ -73,15 +71,14 @@ void testLCD() {
 		int i;
 		i = 0;
 		printLED(0x01);
-		delay();//
+		busyWait(100);//
 		clearLCD();
 		printLED(0x02);
-		delay();
+		busyWait(100);
 		for (i = 0; i < 10; i++) {
 			printLED(0x03);
-			delay();
-		printLCD(0x42);
-		printLCD(0x43);
+			busyWait(100);
+			printLCD(0x42);
+			printLCD(0x43);
 		}
-
 }

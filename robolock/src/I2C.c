@@ -13,6 +13,8 @@
 #include "irq.h"
 #include "I2C.h"
 #include "led.h"
+#include "common.h"
+
 volatile DWORD I2CMasterState = I2C_IDLE;
 volatile DWORD I2CSlaveState = I2C_IDLE;
 
@@ -51,7 +53,7 @@ void I2C1MasterHandler(void) __irq
 {
   BYTE StatValue;
   printLED(0xF0);
-  delay();
+  busyWait(100);
 
   /* this handler deals with master read and master write only */
   StatValue = I21STAT;
@@ -171,7 +173,7 @@ void I2C1MasterHandler(void) __irq
 DWORD I2CStart( void )
 {
 	printLED(0x04);
-	delay();
+	busyWait(100);
   DWORD timeout = 0;
   DWORD retVal = FALSE;
  
@@ -184,7 +186,7 @@ DWORD I2CStart( void )
 	if ( I2CMasterState == I2C_STARTED )
 	{
 		printLED(0x05);
-		delay();
+		busyWait(100);
 	  retVal = TRUE;
 	  break;	
 	}
@@ -192,7 +194,7 @@ DWORD I2CStart( void )
 	{
 		//test for timeout
 		printLED(0xFF);
-		delay();
+		busyWait(100);
 	  retVal = FALSE;
 	  break;
 	}
@@ -252,7 +254,7 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
   if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, HIGHEST_PRIORITY ) == FALSE )
   {
 	  printLED(0x06);
-	  delay();
+	  busyWait(100);
 	return( FALSE );
   }
   I21CONSET = I2CONSET_I2EN;
@@ -284,7 +286,7 @@ DWORD I2CEngine( void )
   if ( I2CStart() != TRUE )
   {
 	  printLED(0x0F);
-	  delay();
+	  busyWait(100);
 	I2CStop();
 	return ( FALSE );
   }

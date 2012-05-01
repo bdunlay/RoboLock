@@ -106,6 +106,94 @@ void SDRAMInit( void )
 
 }
 
+void testSDRAM(void)
+{
+	  volatile DWORD *wr_ptr;
+	  volatile BYTE *char_wr_ptr;
+	  volatile WORD *short_wr_ptr;
+	  DWORD  i;
+
+	  printLED(0x01);
+
+	  /* initialize memory */
+	  SDRAMInit();
+	  printLED(0x02);
+
+	  wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
+	  char_wr_ptr = (BYTE *)wr_ptr;
+	  /* Clear content before 8 bit access test */
+	  for ( i= 0; i < SDRAM_SIZE/4; i++ )
+	  {
+		*wr_ptr++ = 0;
+	  }
+	  printLED(0x04);
+
+	  /* 8 bit write */
+	  for (i=0; i<SDRAM_SIZE; i++)
+	  {
+		*char_wr_ptr++ = 0xAA;
+		*char_wr_ptr++ = 0x55;
+		*char_wr_ptr++ = 0x5A;
+		*char_wr_ptr++ = 0xA5;
+	  }
+	  printLED(0x08);
+
+	  /* verifying */
+	  wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
+	  for ( i= 0; i < SDRAM_SIZE/4; i++ )
+	  {
+		if ( *wr_ptr != 0xA55A55AA )	/* be aware of endianess */
+		{
+			printLED(0xAA);
+			busyWait(100);
+			printLED(0x55);
+			busyWait(100);
+			printLED(0xAA);
+			busyWait(100);
+			printLED(0x55);
+		}
+		wr_ptr++;
+	  }
+	  printLED(0x0F);
+
+	  wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
+	  short_wr_ptr = (WORD *)wr_ptr;
+	  /* Clear content before 16 bit access test */
+	  for ( i= 0; i < SDRAM_SIZE/4; i++ )
+	  {
+		*wr_ptr++ = 0;
+	  }
+	  printLED(0x1F);
+
+	  /* 16 bit write */
+	  for (i=0; i<(SDRAM_SIZE/2); i++)
+	  {
+		*short_wr_ptr++ = 0x5AA5;
+		*short_wr_ptr++ = 0xAA55;
+	  }
+	  printLED(0x2F);
+
+	  /* Verifying */
+	  wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
+	  for ( i= 0; i < SDRAM_SIZE/4; i++ )
+	  {
+		if ( *wr_ptr != 0xAA555AA5 )	/* be aware of endianess */
+		{
+			printLED(0xCC);
+			busyWait(100);
+			printLED(0x33);
+			busyWait(100);
+			printLED(0xCC);
+			busyWait(100);
+			printLED(0x33);
+		}
+		wr_ptr++;
+	  }
+	  printLED(0xFF);
+
+	  return 0;
+}
+
 /*********************************************************************************
 **                            End Of File
 *********************************************************************************/
