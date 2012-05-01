@@ -88,7 +88,7 @@ _start:
     LDR     pc, PAbortAddr   /* Prefetch abort        */
     LDR     pc, DAbortAddr   /* Data abort            */
     LDR     pc, ReservedAddr /* Reserved              */
-    LDR     pc, IRQAddr      /* IRQ interrupt         */
+    LDR     pc, [pc,#-0x120]  /*IRQAddr IRQ interrupt */
     LDR     pc, FIQAddr      /* FIQ interrupt         */
 
 ResetAddr:     .word _reset

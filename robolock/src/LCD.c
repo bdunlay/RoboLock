@@ -23,11 +23,15 @@ BYTE buff;
 
 void initLCD(void) {
 	I2CInit(I2CMASTER);  // start master
+
+}
+
+void backlightLCD(void){
 	FIO1DIR3 |= 0x04;
 	PINSEL1 = 0x00;
 	FIO1CLR3 |= 0x04;
-}
 
+}
 void clearLCD(void) {
 //	e.g. Start, DevAddr(W), WRByte1...WRByteN, Repeated-Start, DevAddr(R),
 //	  RDByte1...RDByteN Stop. The content of the reading will be filled
@@ -69,6 +73,7 @@ void printLCD(BYTE val) {
 
 void testLCD() {
 		int i;
+		backlightLCD();
 		i = 0;
 		printLED(0x01);
 		busyWait(100);//

@@ -9,6 +9,8 @@
 #include "dip.h"
 #include "LCD.h"
 #include "robolock.h"
+#include "ex_sdram.h"
+#include "timer.h"
 
 
 /*****************************************************************************

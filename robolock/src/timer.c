@@ -13,7 +13,7 @@
 #include "irq.h"
 #include "target.h"
 #include "type.h"
-
+#include "led.h"
 #include "timer.h"
 
 volatile DWORD timer0_counter = 0;

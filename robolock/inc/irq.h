@@ -80,12 +80,61 @@ restore registers into the stack in RVD as the compiler does that for you.
 See RVD ARM compiler Inline and embedded assemblers, "Rules for 
 using __asm and asm keywords. */
 //static DWORD sysreg;		/* used as LR register */
-#define IENABLE IntEnable()//__asm { MRS sysreg, SPSR; MSR CPSR_c, #SYS32Mode }
-#define IDISABLE IntDisable()//__asm { MSR CPSR_c, #(IRQ32Mode|I_Bit); MSR SPSR_cxsf, sysreg }
+#define IENABLE enable_interrupt()//__asm { MRS sysreg, SPSR; MSR CPSR_c, #SYS32Mode }
+#define IDISABLE disable_interrupt()//__asm { MSR CPSR_c, #(IRQ32Mode|I_Bit); MSR SPSR_cxsf, sysreg }
 
 //extern void FIQ_Handler( void )  __irq;
 void init_VIC( void );
 DWORD install_irq( DWORD IntNumber, void *HandlerAddr, DWORD Priority );
+
+////////////
+#ifndef __thumb
+static inline uint32_t __get_CPSR(void)
+{
+	uint32_t temp;
+	asm volatile ("mrs %0,CPSR":"=r" (temp):) ;
+	return temp;
+}
+
+static inline void __set_CPSR(uint32_t save_cpsr)
+{
+	asm volatile (" msr CPSR_cxsf,%0"::"r"(save_cpsr) );
+}
+#endif
+
+/* enable interrupts */
+static inline void enable_interrupt(void)
+{
+	uint32_t temp;
+	temp = __get_CPSR();
+	__set_CPSR(temp & ~0xC0);
+}
+
+/* Disable interrupts and save CPSR */
+static inline uint32_t disable_interrupt(void)
+{
+	uint32_t temp;
+	temp = __get_CPSR();
+	__set_CPSR(temp | 0xC0);
+	return temp;
+}
+/* Disable IRQ interrupt and save CPSR */
+static inline uint32_t disable_irq(void)
+{
+	uint32_t temp;
+	temp = __get_CPSR();
+	__set_CPSR(temp | 0x80);
+	return temp;
+}
+
+/* Restore interrupt status */
+static inline void restore_interrupt(uint32_t saved_CPSR)
+{
+	__set_CPSR (saved_CPSR);
+}
+
+///////////
+
 
 #endif /* end __IRQ_H */
 
