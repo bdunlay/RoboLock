@@ -54,6 +54,7 @@ int main (void)
 				break;
 
 			case 4:
+				testTimerIRQ();
 				break;
 
 			case 5:

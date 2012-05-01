@@ -74,11 +74,10 @@ SRC  = ./src/low_level_init.c \
        ./src/LCD.c \
        ./src/dip.c \
        ./src/robolock.c \
+       ./src/ex_sdram.c \
+       ./src/timer.c \
        ./src/main.c
        
-
-#       ./src/timer.c \
-#       ./src/uart.c \
 #       ./src/uart.c \
 
 

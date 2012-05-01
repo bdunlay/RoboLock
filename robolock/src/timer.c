@@ -276,6 +276,46 @@ DWORD init_timer ( BYTE timer_num, DWORD TimerInterval )
   return (FALSE);
 }
 
+void testTimerIRQ(void)
+{
+	DWORD i = 0;
+	timer0_counter = 0;
+	T0MR0 = TIME_INTERVAL;
+	T0MCR = 3;				/* Interrupt and Reset on MR0 */
+	install_irq( TIMER0_INT, (void *)testTimer0Handler, HIGHEST_PRIORITY );
+	for (i=0; i<TIME_INTERVAL*10; i++) ; // wait for a long time while interrupts do their thing
+
+	timer1_counter = 0;
+	T1MR0 = TIME_INTERVAL;
+	T1MCR = 3;				/* Interrupt and Reset on MR1 */
+
+	install_irq( TIMER1_INT, (void *)testTimer1Handler, HIGHEST_PRIORITY );
+	for (i=0; i<TIME_INTERVAL*10; i++) ; // wait for a long time while interrupts do their thing
+
+}
+
+void testTimer0Handler(void)
+{
+	T0IR = 1;			/* clear interrupt flag */
+	IENABLE;			/* handles nested interrupt */
+
+	printLED(0x01 << timer0_counter++);
+
+	IDISABLE;
+	VICVectAddr = 0;	/* Acknowledge Interrupt */
+}
+
+void testTimer1Handler(void)
+{
+	T1IR = 1;			/* clear interrupt flag */
+	IENABLE;			/* handles nested interrupt */
+
+	printLED(0x80 << timer1_counter++);
+
+	IDISABLE;
+	VICVectAddr = 0;	/* Acknowledge Interrupt */
+}
+
 /******************************************************************************
 **                            End Of File
 ******************************************************************************/

@@ -17,6 +17,8 @@
 #include "ex_sdram.h"
 
 #include "uart.h"
+#include "led.h"
+#include "common.h"
 
 /*****************************************************************************
 ** Function name:		SDRAMInit
@@ -190,8 +192,6 @@ void testSDRAM(void)
 		wr_ptr++;
 	  }
 	  printLED(0xFF);
-
-	  return 0;
 }
 
 /*********************************************************************************

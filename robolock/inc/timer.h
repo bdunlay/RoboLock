@@ -24,6 +24,9 @@ extern void disable_timer( BYTE timer_num );
 extern void reset_timer( BYTE timer_num );
 extern void Timer0FIQHandler( void );
 extern void Timer1FIQHandler( void );
+void testTimerIRQ(void);
+void testTimer0Handler(void);
+void testTimer1Handler(void);
 
 #endif /* end __TIMER_H */
 /*****************************************************************************
