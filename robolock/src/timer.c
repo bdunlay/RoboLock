@@ -283,15 +283,19 @@ void testTimerIRQ(void)
 	T0MR0 = TIME_INTERVAL;
 	T0MCR = 3;				/* Interrupt and Reset on MR0 */
 	install_irq( TIMER0_INT, (void *)testTimer0Handler, HIGHEST_PRIORITY );
+	reset_timer( TIMER0_INT );
+	enable_timer( TIMER0_INT );
 	for (i=0; i<TIME_INTERVAL*10; i++) ; // wait for a long time while interrupts do their thing
+	disable_timer( TIMER0_INT );
 
 	timer1_counter = 0;
 	T1MR0 = TIME_INTERVAL;
 	T1MCR = 3;				/* Interrupt and Reset on MR1 */
-
+	reset_timer( TIMER1_INT );
+	enable_timer( TIMER1_INT );
 	install_irq( TIMER1_INT, (void *)testTimer1Handler, HIGHEST_PRIORITY );
 	for (i=0; i<TIME_INTERVAL*10; i++) ; // wait for a long time while interrupts do their thing
-
+	disable_timer( TIMER1_INT );
 }
 
 void testTimer0Handler(void)
