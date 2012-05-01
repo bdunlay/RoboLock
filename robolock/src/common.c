@@ -1,10 +1,11 @@
 #include "common.h"
+#define DELAY_PERIOD 100
 void delay() {
-	int a;
-	int b;
-	int c;
+	volatile int a;
+	volatile int b;
+	volatile int c;
 
-	for (a = 0; a < 5; a++) {
+	for (a = 0; a < DELAY_PERIOD; a++) {
 		for (b = 0; b < 32767; b++) {
 		}
 	}

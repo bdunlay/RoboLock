@@ -13,5 +13,5 @@ void initLED(void);
 void clearLED(void);
 void printLED(unsigned int);
 void testLED(void);
-
+void delay(void);
 #endif
