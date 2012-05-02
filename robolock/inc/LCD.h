@@ -15,5 +15,6 @@ void initLCD(void);
 void clearLCD(void);
 void printLCD(BYTE);
 void testLCD(void);
+void backlightLCD(void);
 
 #endif
