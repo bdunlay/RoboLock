@@ -153,6 +153,7 @@ void testSDRAM(void)
 			printLED(0xAA);
 			busyWait(100);
 			printLED(0x55);
+			break;
 		}
 		wr_ptr++;
 	  }
@@ -188,6 +189,7 @@ void testSDRAM(void)
 			printLED(0xCC);
 			busyWait(100);
 			printLED(0x33);
+			break;
 		}
 		wr_ptr++;
 	  }

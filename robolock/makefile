@@ -18,13 +18,12 @@
 #
 
 
-CCPATH = $(shell more ../path.txt)
-TRGT = $(CCPATH)arm-none-eabi-
-TRGT = arm-none-eabi-
-CC   = $(TRGT)gcc
-CP   = $(TRGT)objcopy
-AS   = $(TRGT)gcc -x assembler-with-cpp
-BIN  = $(CP) -O ihex 
+CCPATH 	= $(shell more ../path.txt)
+TRGT 	= $(CCPATH)arm-none-eabi-
+CC   	= $(TRGT)gcc
+CP   	= $(TRGT)objcopy
+AS   	= $(TRGT)gcc -x assembler-with-cpp
+BIN  	= $(CP) -O ihex 
 
 MCU  = arm7tdmi
 
@@ -64,38 +63,8 @@ UDEFS =
 # Define ASM defines here
 UADEFS = 
 
-LWIP_SRC = \
-	./src/api/err.c \
-	./src/core/init.c \
-	./src/core/mem.c \
-	./src/core/memp.c \
-	./src/core/netif.c \
-	./src/core/pbuf.c \
-	./src/core/stats.c \
-	./src/core/udp.c \
-	./src/core/ipv4/icmp.c \
-	./src/core/ipv4/inet.c \
-	./src/core/ipv4/ip.c \
-	./src/core/ipv4/ip_addr.c \
-	./src/core/ipv4/ip_frag.c \
-	./src/netif/etharp.c \
-
-
-# List C source files here
-SRC  = ./src/low_level_init.c \
-		./src/irq.c \
-		./src/common.c \
-		./src/led.c \
-		./src/target.c \
-		./src/I2C.c \
-		./src/LCD.c \
-		./src/dip.c \
-		./src/robolock.c \
-		./src/ex_sdram.c \
-		./src/timer.c \
-		./src/main.c
-#       $(LWIP_SRC) \       
-#       ./src/uart.c \
+# Source files
+SRC = 	$(wildcard ./src/*.c) 
 
 # List ASM source files here
 ASRC = ./src/startup.s \
