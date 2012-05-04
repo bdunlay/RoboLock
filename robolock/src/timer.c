@@ -76,7 +76,7 @@ void delayMs(BYTE timer_num, DWORD delayInMs)
 ** Returned value:		None
 ** 
 ******************************************************************************/
-void Timer0Handler (void) __irq
+void Timer0Handler (void)
 {  
   T0IR = 1;			/* clear interrupt flag */
   IENABLE;			/* handles nested interrupt */
@@ -117,7 +117,7 @@ void Timer0FIQHandler(void)
 ** Returned value:		None
 ** 
 ******************************************************************************/
-void Timer1Handler (void) __irq 
+void Timer1Handler (void)
 {  
   T1IR = 1;			/* clear interrupt flag */
   IENABLE;			/* handles nested interrupt */
@@ -283,19 +283,20 @@ void testTimerIRQ(void)
 	T0MR0 = TIME_INTERVAL;
 	T0MCR = 3;				/* Interrupt and Reset on MR0 */
 	install_irq( TIMER0_INT, (void *)testTimer0Handler, HIGHEST_PRIORITY );
-	reset_timer( TIMER0_INT );
-	enable_timer( TIMER0_INT );
+	reset_timer( 0 );
+	enable_timer( 0 );
+	IENABLE;
 	for (i=0; i<TIME_INTERVAL*10; i++) ; // wait for a long time while interrupts do their thing
-	disable_timer( TIMER0_INT );
+	disable_timer( 0 );
 
 	timer1_counter = 0;
 	T1MR0 = TIME_INTERVAL;
 	T1MCR = 3;				/* Interrupt and Reset on MR1 */
-	reset_timer( TIMER1_INT );
-	enable_timer( TIMER1_INT );
+	reset_timer( 1 );
+	enable_timer( 1 );
 	install_irq( TIMER1_INT, (void *)testTimer1Handler, HIGHEST_PRIORITY );
 	for (i=0; i<TIME_INTERVAL*10; i++) ; // wait for a long time while interrupts do their thing
-	disable_timer( TIMER1_INT );
+	disable_timer( 1 );
 }
 
 void testTimer0Handler(void)

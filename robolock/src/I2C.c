@@ -49,7 +49,8 @@ be READ or WRITE depending on the I2CCmd.
 ** Returned value:		None
 ** 
 *****************************************************************************/
-void I2C1MasterHandler(void) __irq
+extern void I2C1MasterHandler( void ) __irq;
+void I2C1MasterHandler(void)
 {
   BYTE StatValue;
   printLED(0xF0);

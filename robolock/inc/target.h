@@ -31,7 +31,7 @@ to get precise USB clock 48Mhz. If USB is not used, you set any clock you want
 but make sure the divider of the CCO should be an even number. If you want to 
 use USB, change "define USE_USB" from 0 to 1 */
  
-#define	USE_USB					1
+#define	USE_USB					0
 
 
 /* PLL Setting Table Matrix */
@@ -79,15 +79,15 @@ the same PLL. The USB clock needs to be multiple of
 
 /* Fcck = 60Mhz, Fosc = 360Mhz, USB can't be divided into 48Mhz
 in this case, so USBCLKDivValue is not needed. */
-#define PLL_MValue			14
-#define PLL_NValue			0
-#define CCLKDivValue		5
+#define PLL_MValue			144
+#define PLL_NValue			12
+#define CCLKDivValue		3
 
 /* System configuration: Fosc, Fcclk, Fcco, Fpclk must be defined */
 /* PLL input Crystal frequence range 4KHz~20MHz. */
 #define Fosc	12000000
 /* System frequence,should be less than 72MHz. */
-#define Fcclk	60000000
+#define Fcclk	72000000
 #define Fcco	360000000
 
 #endif

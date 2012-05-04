@@ -15,8 +15,10 @@
 PCLK = 1/4 CCLK, then, 10mSec = 150.000-1 counts */
 // #define TIME_INTERVAL	149999
 	
-#define TIME_INTERVAL	(Fpclk/100 - 1)
+#define TIME_INTERVAL	(180000-1)
 
+void Timer0Handler (void) __irq;
+void Timer1Handler (void) __irq;
 extern void delayMs(BYTE timer_num, DWORD delayInMs);
 extern DWORD init_timer( BYTE timer_num, DWORD timerInterval );
 extern void enable_timer( BYTE timer_num );
@@ -25,8 +27,8 @@ extern void reset_timer( BYTE timer_num );
 extern void Timer0FIQHandler( void );
 extern void Timer1FIQHandler( void );
 void testTimerIRQ(void);
-void testTimer0Handler(void);
-void testTimer1Handler(void);
+extern void testTimer0Handler(void) __irq;
+extern void testTimer1Handler(void) __irq;
 
 #endif /* end __TIMER_H */
 /*****************************************************************************

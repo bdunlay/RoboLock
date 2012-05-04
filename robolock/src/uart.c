@@ -28,7 +28,7 @@ volatile DWORD UART0Count = 0;
 ** Returned value:		None
 ** 
 *****************************************************************************/
-void UART0Handler (void) __irq
+void UART0Handler (void)
 {
     BYTE IIRValue, LSRValue;
     BYTE Dummy;
@@ -124,7 +124,7 @@ DWORD UARTInit( DWORD baudrate )
     U0LCR = 0x03;               /* DLAB = 0                         */
     U0FCR = 0x07;		/* Enable and reset TX and RX FIFO. */
 
-    if ( install_irq( UART0_INT, (void *)UART0Handler ) == FALSE )
+    if ( install_irq( UART0_INT, (void *)UART0Handler, HIGHEST_PRIORITY+1 ) == FALSE )
     {
 	return (FALSE);
     }
@@ -147,14 +147,19 @@ void UARTSend(BYTE *BufferPtr, DWORD Length )
 {
     while ( Length != 0 )
     {
-	while ( !(UART0TxEmpty & 0x01) );	/* THRE status, contain valid 
-						data */
-	U0THR = *BufferPtr;
-	UART0TxEmpty = 0;	/* not empty in the THR until it shifts out */
-	BufferPtr++;
-	Length--;
+		while ( !(UART0TxEmpty & 0x01) );	/* THRE status, contain valid
+							data */
+		U0THR = *BufferPtr;
+		UART0TxEmpty = 0;	/* not empty in the THR until it shifts out */
+		BufferPtr++;
+		Length--;
     }
     return;
+}
+
+void testUART(void)
+{
+	UARTSend((BYTE*)"Hello world\n\r", 13);
 }
 
 /******************************************************************************

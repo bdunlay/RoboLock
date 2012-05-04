@@ -24,6 +24,7 @@ int main (void)
 	initLED();
 	initLCD();
 	init_dip();
+	UARTInit(9600);
 
 
 	while(1) {
@@ -53,6 +54,7 @@ int main (void)
 				break;
 
 			case 3:
+				testUART();
 				break;
 
 			case 4:

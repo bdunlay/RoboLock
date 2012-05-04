@@ -56,7 +56,7 @@
 #define I2SCLL_SCLL			0x00000080  /* I2C SCL Duty Cycle Low Reg */
 
 #include "type.h"
-extern void I2C1MasterHandler( void );// __irq;
+#include "irq.h"
 extern DWORD I2CInit( DWORD I2cMode );  // 0 slave 1 master
 extern DWORD I2CStart( void );
 extern DWORD I2CStop( void );
