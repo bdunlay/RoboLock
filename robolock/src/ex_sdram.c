@@ -50,24 +50,24 @@ void SDRAMInit( void )
   PINSEL8 |= 0x55555555;		/* set pins to A[0:15] (address) */
   PINSEL9 |= 0x00555555;  		/* set pins to A[16:23], OEn, WEn, BLS[1:0] */
   
-  EMC_DYN_RP     = 2;		/* command period: 3(n+1) clock cycles */
-  EMC_DYN_RAS    = 3;		/* RAS command period: 4(n+1) clock cycles */
-  EMC_DYN_SREX   = 7;		/* Self-refresh period: 8(n+1) clock cycles */
-  EMC_DYN_APR    = 2;		/* Data out to active: 3(n+1) clock cycles */
-  EMC_DYN_DAL    = 5;		/* Data in to active: 5(n+1) clock cycles */
-  EMC_DYN_WR     = 1;		/* Write recovery: 2(n+1) clock cycles */
-  EMC_DYN_RC     = 5;		/* Active to Active cmd: 6(n+1) clock cycles */
-  EMC_DYN_RFC    = 5;		/* Auto-refresh: 6(n+1) clock cycles */
-  EMC_DYN_XSR    = 7;		/* Exit self-refresh: 8(n+1) clock cycles */
-  EMC_DYN_RRD    = 1;		/* Active bank A->B: 2(n+1) clock cycles */
-  EMC_DYN_MRD    = 2;		/* Load Mode to Active cmd: 3(n+1) clock cycles */
+  EMC_DYN_RP     = 1;		/* command period: 2 clock cycles (1 clock cycle @ 72Mhz = 13.89ns) */
+  EMC_DYN_RAS    = 3;		/* RAS command period: 4 clock cycles */
+  EMC_DYN_SREX   = 5;		/* Self-refresh period: 6 clock cycles */
+  EMC_DYN_APR    = 2;		/* Data out to active: 3 clock cycles */
+  EMC_DYN_DAL    = 4;		/* Data in to active: 5 clock cycles */
+  EMC_DYN_WR     = 1;		/* Write recovery: 2 clock cycles */
+  EMC_DYN_RC     = 4;		/* Active to Active cmd: 5 clock cycles */
+  EMC_DYN_RFC    = 4;		/* Auto-refresh: 5 clock cycles */
+  EMC_DYN_XSR    = 5;		/* Exit self-refresh: 6 clock cycles */
+  EMC_DYN_RRD    = 1;		/* Active bank A->B: 2 clock cycles */
+  EMC_DYN_MRD    = 1;		/* Load Mode to Active cmd: 2 clock cycles */
 
   EMC_DYN_RD_CFG = 1;		/* Command delayed strategy */
 
   /* Default setting, RAS latency 3 CCLKs, CAS latenty 3 CCLKs. */
   EMC_DYN_RASCAS0 = 0x00000303;
 
-  /* 128MB, 16Mx16, 4 banks, row=12, column=9 */
+  /* 128MB, 8Mx16, 4 banks, row=12, column=9 */
   EMC_DYN_CFG0 = 0x00000480;
   delayMs(1, 100);			/* use timer 1, wait for 100ms */
 
@@ -82,8 +82,8 @@ void SDRAMInit( void )
   EMC_DYN_RFSH = 0x00000002;
   for(i = 0; i < 0x40; i++);	/* wait 128 AHB clock cycles */
     
-  /* set 28 x 16CCLKs=448CCLK=7us between SDRAM refresh cycles */
-  EMC_DYN_RFSH = 28;
+  /* set 71 x 16CCLKs=1136CCLK=15.8us between SDRAM refresh cycles */
+  EMC_DYN_RFSH = 71;
     
   /* To set mode register in SDRAM, enter mode by issue
   MODE command, after finishing, bailout and back to NORMAL mode. */    
