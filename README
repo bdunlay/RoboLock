@@ -1,6 +1,7 @@
 make a file called path.txt which contains the 
 absolute path to your compiler, no new lines.
-save it in the same directory as this readme.
+EDIT:
+save the file in Robolock/robolock (where the inc and src folders are)
 
 example:
 /Users/politipunk/yagarto/yagarto-4.6.2/bin/

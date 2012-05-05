@@ -20,7 +20,7 @@
 #CCPATH 	= $(shell more ../path.txt)
 #TRGT 	= C:\yagarto2\bin\arm-none-eabi-
 
-CCPATH 	= $(shell more ../path.txt)
+CCPATH 	= $(shell more path.txt)
 TRGT 	= $(CCPATH)arm-none-eabi-
 CC   	= $(TRGT)gcc
 CP   	= $(TRGT)objcopy

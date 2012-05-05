@@ -315,7 +315,7 @@ void testTimer1Handler(void)
 	T1IR = 1;			/* clear interrupt flag */
 	IENABLE;			/* handles nested interrupt */
 
-	printLED(0x80 << timer1_counter++);
+	printLED(0x80 >> timer1_counter++);
 
 	IDISABLE;
 	VICVectAddr = 0;	/* Acknowledge Interrupt */
