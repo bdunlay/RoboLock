@@ -53,8 +53,8 @@ extern void I2C1MasterHandler( void ) __irq;
 void I2C1MasterHandler(void)
 {
   BYTE StatValue;
-  printLED(0xF0);
-  busyWait(100);
+ // printLED(0xF0);
+ // busyWait(100);
 
   /* this handler deals with master read and master write only */
   StatValue = I21STAT;
@@ -173,8 +173,8 @@ void I2C1MasterHandler(void)
 *****************************************************************************/
 DWORD I2CStart( void )
 {
-	printLED(0x04);
-	busyWait(100);
+//	printLED(0x04);
+//	busyWait(100);
   DWORD timeout = 0;
   DWORD retVal = FALSE;
  
@@ -186,8 +186,8 @@ DWORD I2CStart( void )
   {
 	if ( I2CMasterState == I2C_STARTED )
 	{
-		printLED(0x05);
-		busyWait(100);
+	//	printLED(0x05);
+	//	busyWait(100);
 	  retVal = TRUE;
 	  break;	
 	}
