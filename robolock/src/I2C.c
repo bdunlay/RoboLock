@@ -49,8 +49,8 @@ be READ or WRITE depending on the I2CCmd.
 ** Returned value:		None
 ** 
 *****************************************************************************/
-extern void I2C1MasterHandler( void ) __irq;
-void I2C1MasterHandler(void)
+//extern void I2C1MasterHandler( void ) __irq;
+void I2C1MasterHandler(void)// __irq
 {
   BYTE StatValue;
  // printLED(0xF0);
@@ -173,8 +173,8 @@ void I2C1MasterHandler(void)
 *****************************************************************************/
 DWORD I2CStart( void )
 {
-//	printLED(0x04);
-//	busyWait(100);
+	printLED(0x04);
+	busyWait(100);
   DWORD timeout = 0;
   DWORD retVal = FALSE;
  
@@ -186,8 +186,8 @@ DWORD I2CStart( void )
   {
 	if ( I2CMasterState == I2C_STARTED )
 	{
-	//	printLED(0x05);
-	//	busyWait(100);
+		printLED(0x05);
+		busyWait(100);
 	  retVal = TRUE;
 	  break;	
 	}
@@ -238,8 +238,9 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
 {
   PCONP |= (1 << 19);
  // PINSEL1 &= ~0x03C00000;
- // PINSEL1 |= 0x01400000;	/* set PIO0.27 and PIO0.28 to I2C1 SDA and SCK */
+ // PINSEL1 |=  0x01400000;	/* set PIO0.27 and PIO0.28 to I2C1 SDA and SCK */
   PINSEL0 |= 0x0000000F;  /* function to 01 on both SDA and SCK. for I21 */
+
   /*--- Clear flags ---*/
   I21CONCLR = I2CONCLR_AAC | I2CONCLR_SIC | I2CONCLR_STAC | I2CONCLR_I2ENC;
 
@@ -255,7 +256,7 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
   if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, HIGHEST_PRIORITY ) == FALSE )
   {
 	  printLED(0x06);
-	  busyWait(100);
+	  busyWait(10000);
 	return( FALSE );
   }
   I21CONSET = I2CONSET_I2EN;
@@ -287,7 +288,7 @@ DWORD I2CEngine( void )
   if ( I2CStart() != TRUE )
   {
 	  printLED(0x0F);
-	  busyWait(100);
+	  busyWait(10000);
 	I2CStop();
 	return ( FALSE );
   }

@@ -115,7 +115,7 @@ DWORD UARTInit( DWORD baudrate )
 {
     DWORD Fdiv;
 
-    PINSEL0 = 0x00050005;       /* Enable RxD1 and TxD1, RxD0 and TxD0 */
+    PINSEL0 = 0x00050005;       /* Enable RxD1 and TxD1, RxD0 and TxD0   THIS IS WRONG! OVERRIDING I2C FUNCTIONALITY*/
 
     U0LCR = 0x83;               /* 8 bits, no Parity, 1 Stop bit    */
     Fdiv = ( Fpclk / 16 ) / baudrate ;	/*baud rate */

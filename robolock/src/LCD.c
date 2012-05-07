@@ -22,6 +22,7 @@ volatile BYTE I2CMasterBuffer[BUFSIZE];
 BYTE buff;
 
 void initLCD(void) {
+
 	I2CInit(I2CMASTER);  // start master
 
 }
@@ -43,11 +44,12 @@ void clearLCD(void) {
 	  {
 		I2CMasterBuffer[i] = 0;
 	  }
-	  I2CWriteLength = 2;
+	  I2CWriteLength = 3;
 	  I2CReadLength = 0;
 	  I2CMasterBuffer[0] = LCD_ADDR;
-	  I2CMasterBuffer[1] = 0x00;//LCD_CONFIG;
-	  I2CMasterBuffer[2] = 0x38;//0x01;
+	  I2CMasterBuffer[1] = 0x38;//LCD_CONFIG;
+	  I2CMasterBuffer[2] = 0x0F;//0x01;
+	  I2CMasterBuffer[3] = 0x26;
 	  /* configuration value, no change from default */
 	  I2CCmd = LCD_CONFIG;
 	  I2CEngine();
@@ -76,14 +78,16 @@ void testLCD() {
 		backlightLCD();
 		i = 0;
 		printLED(0x01);
-		busyWait(100);//
+		busyWait(10000);//
 		clearLCD();
 		printLED(0x02);
-		busyWait(100);
+		busyWait(10000);
 		for (i = 0; i < 10; i++) {
 			printLED(0x03);
-			busyWait(100);
+			busyWait(10000);
 			printLCD(0x42);
+			busyWait(10000);
 			printLCD(0x43);
+			busyWait(10000);
 		}
 }
