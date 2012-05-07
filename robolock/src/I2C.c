@@ -53,7 +53,7 @@ be READ or WRITE depending on the I2CCmd.
 void I2C1MasterHandler(void)// __irq
 {
   BYTE StatValue;
- // printLED(0xF0);
+  //printLED(0xF0);
  // busyWait(100);
 
   /* this handler deals with master read and master write only */
@@ -173,7 +173,7 @@ void I2C1MasterHandler(void)// __irq
 *****************************************************************************/
 DWORD I2CStart( void )
 {
-	printLED(0x04);
+	printLED(0x03);
 	busyWait(100);
   DWORD timeout = 0;
   DWORD retVal = FALSE;
@@ -186,8 +186,8 @@ DWORD I2CStart( void )
   {
 	if ( I2CMasterState == I2C_STARTED )
 	{
-		printLED(0x05);
-		busyWait(100);
+	//	printLED(0x04);
+	//	busyWait(100);
 	  retVal = TRUE;
 	  break;	
 	}
@@ -220,6 +220,7 @@ DWORD I2CStop( void )
   I21CONCLR = I2CONCLR_SIC;  /* Clear SI flag */
             
   /*--- Wait for STOP detected ---*/
+  printLED(0x05);
   while( I21CONSET & I2CONSET_STO );
   return TRUE;
 }
@@ -241,6 +242,9 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
  // PINSEL1 |=  0x01400000;	/* set PIO0.27 and PIO0.28 to I2C1 SDA and SCK */
   PINSEL0 |= 0x0000000F;  /* function to 01 on both SDA and SCK. for I21 */
 
+  PINMODE0 &=~0x0000000F;
+  PCLKSEL1 &=~0x000000C0;
+  PCLKSEL1 |= 0x000000C0;
   /*--- Clear flags ---*/
   I21CONCLR = I2CONCLR_AAC | I2CONCLR_SIC | I2CONCLR_STAC | I2CONCLR_I2ENC;
 
@@ -253,12 +257,13 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
   }    
 
   /* Install interrupt handler */	
-  if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, HIGHEST_PRIORITY ) == FALSE )
+  if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, 0x08 ) == FALSE )
   {
-	  printLED(0x06);
-	  busyWait(10000);
+	  printLED(0xAA);
+	  busyWait(100);
 	return( FALSE );
   }
+  IENABLE;
   I21CONSET = I2CONSET_I2EN;
   return( TRUE );
 }
@@ -288,7 +293,7 @@ DWORD I2CEngine( void )
   if ( I2CStart() != TRUE )
   {
 	  printLED(0x0F);
-	  busyWait(10000);
+	  //busyWait(100);
 	I2CStop();
 	return ( FALSE );
   }

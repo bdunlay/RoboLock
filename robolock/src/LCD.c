@@ -29,7 +29,7 @@ void initLCD(void) {
 
 void backlightLCD(void){
 	FIO1DIR3 |= 0x04;
-	PINSEL1 = 0x00;
+	PINSEL1 &= ~0x00008000;
 	FIO1CLR3 |= 0x04;
 
 }
@@ -52,6 +52,8 @@ void clearLCD(void) {
 	  I2CMasterBuffer[3] = 0x26;
 	  /* configuration value, no change from default */
 	  I2CCmd = LCD_CONFIG;
+	  printLED(0x02);
+	  busyWait(100);
 	  I2CEngine();
 }
 
@@ -78,16 +80,16 @@ void testLCD() {
 		backlightLCD();
 		i = 0;
 		printLED(0x01);
-		busyWait(10000);//
+		busyWait(100);//
 		clearLCD();
-		printLED(0x02);
-		busyWait(10000);
+		printLED(0x06);
+		busyWait(100);
 		for (i = 0; i < 10; i++) {
-			printLED(0x03);
-			busyWait(10000);
+			printLED(0x07);
+			busyWait(100);
 			printLCD(0x42);
-			busyWait(10000);
+			busyWait(100);
 			printLCD(0x43);
-			busyWait(10000);
+			busyWait(1000);
 		}
 }

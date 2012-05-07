@@ -50,12 +50,12 @@
 
 //#define I2DAT_I2C			0x00000000  /* I2C Data Reg */
 //#define I2ADR_I2C			0x00000000  /* I2C Slave Address Reg */
-#define I2SCLH_SCLH			0x00000080  /* I2C SCL Duty Cycle High Reg */
-#define I2SCLL_SCLL			0x00000080  /* I2C SCL Duty Cycle Low Reg */
+#define I2SCLH_SCLH			0x00000004 //0x00000080  /* I2C SCL Duty Cycle High Reg */
+#define I2SCLL_SCLL			0x00000004 //0x00000080  /* I2C SCL Duty Cycle Low Reg */
 
 #include "type.h"
 #include "irq.h"
-extern void I2C1MasterHandler( void );// __irq;
+extern void I2C1MasterHandler( void ) __irq;
 extern DWORD I2CInit( DWORD I2cMode );  // 0 slave 1 master
 extern DWORD I2CStart( void );
 extern DWORD I2CStop( void );
