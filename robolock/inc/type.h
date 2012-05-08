@@ -29,6 +29,8 @@ typedef unsigned short WORD;
 typedef unsigned long  DWORD;
 typedef unsigned int   BOOL;
 typedef unsigned long  uint32_t;
+typedef unsigned short uint16_t;
+typedef unsigned char  uint8_t;
 
 
 #endif  /* __TYPE_H__ */

@@ -11,6 +11,8 @@
 #include "ex_sdram.h"
 #include "timer.h"
 #include "uart.h"
+#include "adc.h"
+#include "uart.h"
 
 /*****************************************************************************
  *    Main Function  main()													 *
@@ -23,8 +25,11 @@ int main (void)
 	initLED();
 	initLCD();
 	init_dip();
+
 	UARTInit(9600);
 
+	ADCInit();
+	SDRAMInit();
 
 	while(1) {
 
@@ -64,6 +69,7 @@ int main (void)
 				break;
 
 			case 6:
+				testADC();
 				break;
 
 			case 7:
@@ -74,6 +80,7 @@ int main (void)
 				break;
 
 			case 9:
+				testSDRAM_simple();
 				break;
 
 			case 10:

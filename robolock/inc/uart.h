@@ -12,11 +12,13 @@
 #define __UART_H
 
 
+
 #include "common.h"
 #include "LPC23xx.h"                        /* LPC21xx definitions */
 #include "type.h"
 #include "target.h"
 #include "irq.h"
+
 
 
 #define IER_RBR		0x01
@@ -39,7 +41,6 @@
 #define LSR_RXFE	0x80
 
 #define UART_BUFSIZE		0x10
-
 
 
 DWORD UARTInit( DWORD Baudrate );
