@@ -10,6 +10,7 @@
 #include "robolock.h"
 #include "ex_sdram.h"
 #include "timer.h"
+#include "adc.h"
 //#include "uart.h"
 
 /*****************************************************************************
@@ -23,6 +24,8 @@ int main (void)
 	initLED();
 	initLCD();
 	init_dip();
+	ADCInit();
+	SDRAMInit();
 	//UARTInit(9600);
 
 
@@ -64,6 +67,7 @@ int main (void)
 				break;
 
 			case 6:
+				testADC();
 				break;
 
 			case 7:

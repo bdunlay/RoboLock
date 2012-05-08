@@ -9,7 +9,7 @@
  *
 ******************************************************************************/
 #include "LPC23xx.h"		/* LPC23xx/24xx Peripheral Registers	*/
-#include "typedefs.h"
+#include "type.h"
 #include "irq.h"
 #include "target.h"
 #include "type.h"

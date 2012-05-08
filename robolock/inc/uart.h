@@ -34,9 +34,9 @@
 
 typedef struct _UartFifo_t
 {
-	Int32U PushIndx;
-	Int32U PopIndx;
-	Int8U Buffer[UART_BUFSIZE];
+	uint32_t PushIndx;
+	uint32_t PopIndx;
+	uint8_t Buffer[UART_BUFSIZE];
 } UartFifo_t, *pUartFifo_t;
 
 

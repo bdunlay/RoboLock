@@ -118,7 +118,7 @@ void testSDRAM(void)
 	  printLED(0x01);
 
 	  /* initialize memory */
-	  SDRAMInit();
+	  //SDRAMInit();
 	  printLED(0x02);
 
 	  wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
@@ -144,15 +144,17 @@ void testSDRAM(void)
 	  wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
 	  for ( i= 0; i < SDRAM_SIZE/4; i++ )
 	  {
+		//printLED(0xFF >> i/(SDRAM_SIZE/32));
 		if ( *wr_ptr != 0xA55A55AA )	/* be aware of endianess */
 		{
 			printLED(0xAA);
-			busyWait(100);
+			busyWait(50);
 			printLED(0x55);
-			busyWait(100);
+			busyWait(50);
 			printLED(0xAA);
-			busyWait(100);
+			busyWait(50);
 			printLED(0x55);
+			busyWait(50);
 			break;
 		}
 		wr_ptr++;
@@ -180,15 +182,17 @@ void testSDRAM(void)
 	  wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
 	  for ( i= 0; i < SDRAM_SIZE/4; i++ )
 	  {
+		//printLED(0xFF >> i/(SDRAM_SIZE/32));
 		if ( *wr_ptr != 0xAA555AA5 )	/* be aware of endianess */
 		{
 			printLED(0xCC);
-			busyWait(100);
+			busyWait(50);
 			printLED(0x33);
-			busyWait(100);
+			busyWait(50);
 			printLED(0xCC);
-			busyWait(100);
+			busyWait(50);
 			printLED(0x33);
+			busyWait(50);
 			break;
 		}
 		wr_ptr++;
