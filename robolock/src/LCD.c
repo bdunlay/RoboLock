@@ -78,18 +78,43 @@ void printLCD(BYTE val) {
 void testLCD() {
 		int i;
 		backlightLCD();
-		i = 0;
-		printLED(0x01);
-		busyWait(100);//
-		clearLCD();
-		printLED(0x06);
+
 		busyWait(100);
-		for (i = 0; i < 10; i++) {
-			printLED(0x07);
-			busyWait(100);
-			printLCD(0x42);
-			busyWait(100);
-			printLCD(0x43);
-			busyWait(1000);
-		}
+		lcdStart();
+		busyWait(10000);
+//		clearLCD();
+//		//printLED(0x06);
+//		busyWait(100);
+//			printLED(0x07);
+//			busyWait(100);
+//			printLCD(0x42);
+//			busyWait(100);
+//			printLCD(0x43);
+//			busyWait(1000);
+
+}
+
+void lcdStart(){
+	int i=0;
+		  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
+		  {
+			I2CMasterBuffer[i] = 0;
+		  }
+		  I2CWriteLength = 9;
+		  I2CReadLength = 0;
+		  I2CMasterBuffer[0] = LCD_ADDR;
+		  I2CMasterBuffer[1] = 0x00;
+		  I2CMasterBuffer[2] = 0x38;
+		  I2CMasterBuffer[3] = 0x39;
+		  I2CMasterBuffer[4] = 0x14;
+		  I2CMasterBuffer[5] = 0x78;
+		  I2CMasterBuffer[6] = 0x5E;
+		  I2CMasterBuffer[7] = 0x6D;
+		  I2CMasterBuffer[8] = 0x0C;
+		  I2CMasterBuffer[9] = 0x06;
+
+
+		  /* configuration value, no change from default */
+		  I2CCmd = LCD_CONFIG;
+		  I2CEngine();
 }

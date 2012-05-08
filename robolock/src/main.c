@@ -4,14 +4,13 @@
 #include "LPC23xx.h"
 #include "target.h"
 #include "common.h"
-
 #include "led.h"
 #include "dip.h"
 #include "LCD.h"
 #include "robolock.h"
 #include "ex_sdram.h"
 #include "timer.h"
-
+//#include "uart.h"
 
 /*****************************************************************************
  *    Main Function  main()													 *
