@@ -78,6 +78,7 @@ int main (void)
 				break;
 
 			case 9:
+				testSDRAM_simple();
 				break;
 
 			case 10:

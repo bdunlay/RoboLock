@@ -25,6 +25,7 @@ if disabled(0), the code will be executed without terminal display. */
 
 extern void SDRAMInit( void );
 void testSDRAM(void);
+void testSDRAM_simple(void);
 
 #endif /* end __EX_SDRAM_H */
 /*****************************************************************************
