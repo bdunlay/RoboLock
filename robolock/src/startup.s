@@ -84,7 +84,7 @@ _start:
     */
     LDR     pc, ResetAddr    /* Reset                 */
     LDR     pc, UndefAddr    /* Undefined instruction */
-    LDR     pc, SWIAddr      /* Software interrupt    */
+/*    LDR     pc, SWIAddr      /* Software interrupt    */
     LDR     pc, PAbortAddr   /* Prefetch abort        */
     LDR     pc, DAbortAddr   /* Data abort            */
     LDR     pc, ReservedAddr /* Reserved              */
@@ -93,7 +93,7 @@ _start:
 
 ResetAddr:     .word _reset
 UndefAddr:     .word UndefHandler
-SWIAddr:       .word SWIHandler
+/*SWIAddr:       .word SWIHandler*/
 PAbortAddr:    .word PAbortHandler
 DAbortAddr:    .word DAbortHandler
 ReservedAddr:  .word 0
@@ -232,8 +232,8 @@ ExitFunction:
 UndefHandler:
    b UndefHandler
 
-SWIHandler:
-   b SoftwareInterrupt
+/*SWIHandler:
+   b SoftwareInterrupt*/
 
 PAbortHandler:
    b PAbortHandler

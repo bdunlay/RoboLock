@@ -119,7 +119,7 @@ void low_level_init (void *reset_addr, void *return_addr)
       /* setup the secondary vector table in RAM */
       *(uint32_t volatile *)(&__ram_start + 0x20) = (uint32_t)reset_addr;
       *(uint32_t volatile *)(&__ram_start + 0x24) = (uint32_t)UndefHandler;
-      *(uint32_t volatile *)(&__ram_start + 0x28) = (uint32_t)SWIHandler;
+ /*     *(uint32_t volatile *)(&__ram_start + 0x28) = (uint32_t)SWIHandler; */
       *(uint32_t volatile *)(&__ram_start + 0x2C) = (uint32_t)PAbortHandler;
       *(uint32_t volatile *)(&__ram_start + 0x30) = (uint32_t)DAbortHandler;
       *(uint32_t volatile *)(&__ram_start + 0x34) = 0;

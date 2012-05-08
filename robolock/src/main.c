@@ -28,6 +28,7 @@ int main (void)
 
 	UARTInit(9600);
 
+
 	ADCInit();
 	SDRAMInit();
 

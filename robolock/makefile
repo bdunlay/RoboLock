@@ -69,11 +69,22 @@ UADEFS =
 SRC = 	$(wildcard ./src/*.c) 
 
 # List ASM source files here
-ASRC = ./src/startup.s \
-       ./src/swi_handler.s
+ASRC = ./src/startup.s #\
+#       ./src/swi_handler.s
 
 # List all user directories here
-UINCDIR = ./inc
+UINCDIR = ./inc 
+
+#If this is brian's computer, include some fancy stuff
+ifeq ($(shell uname), Darwin) 
+		
+SRC +=	$(wildcard ./uip/uip/*.c) \
+		$(wildcard ./uip/uip_port/*.c)
+
+UINCDIR +=	./uip/uip \
+		  	./uip/uip_port
+
+endif
 
 # List the user directory to look for the libraries here
 ULIBDIR =
