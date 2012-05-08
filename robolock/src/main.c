@@ -10,7 +10,7 @@
 #include "robolock.h"
 #include "ex_sdram.h"
 #include "timer.h"
-//#include "uart.h"
+#include "uart.h"
 
 /*****************************************************************************
  *    Main Function  main()													 *
@@ -23,7 +23,7 @@ int main (void)
 	initLED();
 	initLCD();
 	init_dip();
-	//UARTInit(9600);
+	UARTInit(9600);
 
 
 	while(1) {
@@ -53,7 +53,7 @@ int main (void)
 				break;
 
 			case 3:
-				//testUART();
+				testUART();
 				break;
 
 			case 4:

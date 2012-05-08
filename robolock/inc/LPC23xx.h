@@ -1128,4 +1128,106 @@ with the spec. update in USB Device Section. */
 #define MAC_MODULEID        (*(volatile unsigned long *)(MAC_BASE_ADDR + 0xFFC)) /* Module ID reg (RO) */
 
 
+/* Some bit-mask definitions - mthomas */
+/* Timers */
+#define TxIR_MR0_Interrupt (1UL<<0)
+#define TxIR_MR1_Interrupt (1UL<<1)
+#define TxIR_MR2_Interrupt (1UL<<2)
+#define TxIR_MR3_Interrupt (1UL<<3)
+#define TxIR_CR0_Interrupt (1UL<<4)
+#define TxIR_CR1_Interrupt (1UL<<5)
+#define TxIR_CR2_Interrupt (1UL<<6)
+#define TxIR_CR3_Interrupt (1UL<<7)
+
+#define TxTCR_Counter_Enable (1UL<<0)
+#define TxTCR_Counter_Reset  (1UL<<1)
+
+#define TxMCR_MR0I  (1UL<<0)
+#define TxMCR_MR0R  (1UL<<1)
+#define TxMCR_MR0S  (1UL<<2)
+#define TxMCR_MR1I  (1UL<<3)
+#define TxMCR_MR1R  (1UL<<4)
+#define TxMCR_MR1S  (1UL<<5)
+#define TxMCR_MR2I  (1UL<<6)
+#define TxMCR_MR2R  (1UL<<7)
+#define TxMCR_MR2S  (1UL<<8)
+#define TxMCR_MR3I  (1UL<<9)
+#define TxMCR_MR3R  (1UL<<10)
+#define TxMCR_MR3S  (1UL<<11)
+
+/* VIC */
+#define VIC_CHAN_NUM_WDT      0
+#define VIC_CHAN_NUM_UNUSED   1
+#define VIC_CHAN_NUM_ARM_Core_DgbCommRX 2
+#define VIC_CHAN_NUM_ARM_Core_DbgCommTX 3
+#define VIC_CHAN_NUM_Timer0   4
+#define VIC_CHAN_NUM_Timer1   5
+#define VIC_CHAN_NUM_UART0    6
+#define VIC_CHAN_NUM_UART1    7
+#define VIC_CHAN_NUM_PWM1     8
+#define VIC_CHAN_NUM_I2C0     9
+#define VIC_CHAN_NUM_SPI     10
+#define VIC_CHAN_NUM_SSP0    10
+#define VIC_CHAN_NUM_SSP1    11
+#define VIC_CHAN_NUM_PLL     12
+#define VIC_CHAN_NUM_RTC     13
+#define VIC_CHAN_NUM_EINT0   14
+#define VIC_CHAN_NUM_EINT1   15
+#define VIC_CHAN_NUM_EINT2   16
+#define VIC_CHAN_NUM_EINT3   17
+#define VIC_CHAN_NUM_ADC0    18
+#define VIC_CHAN_NUM_I2C1    19
+#define VIC_CHAN_NUM_BOD     20
+#define VIC_CHAN_NUM_Ethernet 21
+#define VIC_CHAN_NUM_USB     22
+#define VIC_CHAN_NUM_CAN     23
+#define VIC_CHAN_NUM_SD_MMC  24
+#define VIC_CHAN_NUM_GP_DMA  25
+#define VIC_CHAN_NUM_Timer2  26
+#define VIC_CHAN_NUM_Timer3  27
+#define VIC_CHAN_NUM_UART2   28
+#define VIC_CHAN_NUM_UART3   29
+#define VIC_CHAN_NUM_I2C2    30
+#define VIC_CHAN_NUM_I2S     31
+
+#define VIC_CHAN_TO_MASK(vctm_chan_num__) (1UL<<vctm_chan_num__)
+
+/* mthomas - added "real" names */
+#define VICVectPriority0   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x200))
+#define VICVectPriority1   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x204))
+#define VICVectPriority2   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x208))
+#define VICVectPriority3   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x20C))
+#define VICVectPriority4   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x210))
+#define VICVectPriority5   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x214))
+#define VICVectPriority6   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x218))
+#define VICVectPriority7   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x21C))
+#define VICVectPriority8   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x220))
+#define VICVectPriority9   (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x224))
+#define VICVectPriority10  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x228))
+#define VICVectPriority11  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x22C))
+#define VICVectPriority12  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x230))
+#define VICVectPriority13  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x234))
+#define VICVectPriority14  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x238))
+#define VICVectPriority15  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x23C))
+#define VICVectPriority16  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x240))
+#define VICVectPriority17  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x244))
+#define VICVectPriority18  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x248))
+#define VICVectPriority19  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x24C))
+#define VICVectPriority20  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x250))
+#define VICVectPriority21  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x254))
+#define VICVectPriority22  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x258))
+#define VICVectPriority23  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x25C))
+#define VICVectPriority24  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x260))
+#define VICVectPriority25  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x264))
+#define VICVectPriority26  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x268))
+#define VICVectPriority27  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x26C))
+#define VICVectPriority28  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x270))
+#define VICVectPriority29  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x274))
+#define VICVectPriority30  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x278))
+#define VICVectPriority31  (*(volatile unsigned long *)(VIC_BASE_ADDR + 0x27C))
+
+
+#define VICVectAddr    (*(volatile unsigned long *)(VIC_BASE_ADDR + 0xF00))
+
+
 #endif  // __LPC23xx_H
