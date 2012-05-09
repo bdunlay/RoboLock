@@ -36,5 +36,6 @@
 
 typedef int clock_time_t;
 #define CLOCK_CONF_SECOND 1000
+#define CLOCK_SECOND CLOCK_CONF_SECOND //TODO ??
 
 #endif /* __CLOCK_ARCH_H__ */
