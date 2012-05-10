@@ -76,7 +76,7 @@ ASRC = ./src/startup.s #\
 UINCDIR = ./inc 
 
 #If this is brian's computer, include some fancy stuff
-ifeq ($(shell uname), Darwin1) 
+ifeq ($(shell uname), Darwin) 
 		
 SRC +=	$(wildcard ./uip/uip/*.c) \
 		$(wildcard ./uip/uip_port/*.c)
