@@ -21,7 +21,7 @@ if disabled(0), the code will be executed without terminal display. */
  * Defines and typedefs
  ****************************************************************************/
 #define SDRAM_BASE_ADDR		0xA0000000
-#define SDRAM_SIZE			0x02000000
+#define SDRAM_SIZE			0x01000000
 
 extern void SDRAMInit( void );
 void testSDRAM(void);

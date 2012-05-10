@@ -26,9 +26,9 @@ int main (void)
 	initLCD();
 	init_dip();
 
-	UARTInit(9600);
+	UARTInit(0, 9600);
 
-
+	//UARTInit();
 	ADCInit();
 	SDRAMInit();
 
@@ -43,9 +43,6 @@ int main (void)
 			case 0:
 				robolock();
 				break;
-
-
-
 
 
 			/* SUBSYSTEM TESTS */

@@ -93,7 +93,7 @@ _start:
 
 ResetAddr:     .word _reset
 UndefAddr:     .word UndefHandler
-/*SWIAddr:       .word SWIHandler*/
+SWIAddr:       .word SWIHandler
 PAbortAddr:    .word PAbortHandler
 DAbortAddr:    .word DAbortHandler
 ReservedAddr:  .word 0
@@ -232,8 +232,8 @@ ExitFunction:
 UndefHandler:
    b UndefHandler
 
-/*SWIHandler:
-   b SoftwareInterrupt*/
+SWIHandler:
+   b SWIHandler
 
 PAbortHandler:
    b PAbortHandler

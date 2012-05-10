@@ -115,6 +115,11 @@ void testSDRAM(void)
 	  volatile WORD *short_wr_ptr;
 	  DWORD  i;
 
+//	  wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
+//	  while (1) {
+//		  wr_ptr[0] = 0;
+//		  wr_ptr[8193] = 0xff;
+//	  }
 	  printLED(0x01);
 
 	  /* initialize memory */
@@ -131,7 +136,7 @@ void testSDRAM(void)
 	  printLED(0x04);
 
 	  /* 8 bit write */
-	  for (i=0; i<SDRAM_SIZE; i++)
+	  for (i=0; i<SDRAM_SIZE/4; i++)
 	  {
 		*char_wr_ptr++ = 0xAA;
 		*char_wr_ptr++ = 0x55;
@@ -213,67 +218,32 @@ void testSDRAM_simple(void)
 	volatile DWORD *wr_ptr;
 	volatile BYTE *char_wr_ptr;
 	volatile WORD *short_wr_ptr;
-	DWORD  i;
+	BYTE  i;
 
-	printLED(0x01);
-	wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
-	*wr_ptr = 0x00000000;
-	*wr_ptr = 0xA55A55AA;
-	if ( *wr_ptr != 0xA55A55AA )
+	char_wr_ptr = (BYTE *)SDRAM_BASE_ADDR;
+#define TESTLEN 0xFF
+	for (i=0; i<TESTLEN; i++)
 	{
-		printLED(0xFF);
-		busyWait(50);
-		printLED(0x00);
-		busyWait(50);
-		printLED(0xFF);
-		busyWait(50);
-		printLED(0x00);
-		busyWait(50);
+		char_wr_ptr[i] = i;
 	}
 
-	printLED(0x02);
-
-	wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
-	char_wr_ptr = (BYTE *)wr_ptr;
-	/* Clear content before 8 bit access test */
-	for ( i= 0; i < 32; i++ )
+	for (i=0; i <TESTLEN; i++)
 	{
-		*wr_ptr++ = 0;
-	}
-	printLED(0x04);
-
-	/* 8 bit write */
-	for (i=0; i < 32; i++)
-	{
-		*char_wr_ptr++ = i;
-		*char_wr_ptr++ = i;
-		*char_wr_ptr++ = i;
-		*char_wr_ptr++ = i;
-	}
-	printLED(0x08);
-
-	/* verifying */
-	wr_ptr = (DWORD *)SDRAM_BASE_ADDR;
-	for ( i= 0; i < 32; i++ )
-	{
-		if ( *wr_ptr != (i | i<<8 | i<<16 | i<<24) )
+		if ( char_wr_ptr[i] != i )
 		{
-			printLED(i);
-			busyWait(300);
-			printLED(*wr_ptr);
-			busyWait(300);
-			printLED(*wr_ptr >> 8);
-			busyWait(300);
-			printLED(*wr_ptr >> 16);
-			busyWait(300);
-			printLED(*wr_ptr >> 24);
-			busyWait(300);
-			break;
+			printLED(0xFF);
+			busyWait(10);
+			clearLED();
+			busyWait(10);
+			printLED(0xFF);
+			busyWait(10);
+			clearLED();
+			busyWait(100);
+			printLED(char_wr_ptr[i]);
+			busyWait(200);
+			clearLED();
 		}
-		wr_ptr++;
 	}
-	printLED(0x0F);
-	busyWait(100);
 }
 
 /*********************************************************************************
