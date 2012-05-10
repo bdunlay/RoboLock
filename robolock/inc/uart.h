@@ -44,8 +44,10 @@
 
 
 DWORD UARTInit( DWORD Baudrate );
+//DWORD UARTInit(  );
 void UART0Handler( void ) __irq;
-void UARTSend( BYTE *BufferPtr, DWORD Length );
+//void UARTSend( BYTE *BufferPtr, DWORD Length );
+void UARTSend();
 void testUART(void);
 
 extern volatile DWORD UART0Status;

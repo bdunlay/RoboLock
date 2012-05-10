@@ -28,7 +28,6 @@ int main (void)
 	init_dip();
 
 	UARTInit(9600);
-
 	ADCInit();
 	SDRAMInit();
 
@@ -44,9 +43,6 @@ int main (void)
 			case 0:
 				robolock();
 				break;
-
-
-
 
 
 			/* SUBSYSTEM TESTS */
