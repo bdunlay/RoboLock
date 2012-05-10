@@ -68,8 +68,6 @@ int main (void)
 				break;
 
 			case 5:
-
-				//				ethernet();
 				break;
 
 			case 6:

@@ -76,7 +76,7 @@ ASRC = ./src/startup.s #\
 UINCDIR = ./inc 
 
 #If this is brian's computer, include some fancy stuff
-ifeq ($(shell uname), Darwin_no_uip) 
+ifeq ($(shell uname), Darwin1) 
 		
 SRC +=	$(wildcard ./uip/uip/*.c) \
 		$(wildcard ./uip/uip_port/*.c)
@@ -87,7 +87,7 @@ UINCDIR +=	./uip/uip \
 endif
 
 # List the user directory to look for the libraries here
-ULIBDIR =
+ULIBDIR = 
 
 # List all user libraries here
 ULIBS = 
@@ -140,7 +140,7 @@ ROM: $(OBJS) $(PROJECT)_rom.elf $(PROJECT)_rom.hex
 
 %rom.elf: $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS_ROM) $(LIBS) -o $@
-
+#-v -L /Users/politipunk/yagarto/yagarto-4.6.2/arm-none-eabi/lib -lc
 %hex: %elf
 	$(BIN) $< $@
 

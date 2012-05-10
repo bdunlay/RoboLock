@@ -41,6 +41,8 @@ var TAKE_IMAGE = "/capture";
  * functions
  */
 
+
+// this pulls out header flags
 function parseHeader(x, header) {
 
       var h = x.readUInt32BE(0);
@@ -53,6 +55,7 @@ function parseHeader(x, header) {
       return header;
 }
 
+// this processes a packet based on its header flags
 function process_packet(data) {
   var h = data.slice(0,4);
   var header = {};
@@ -130,17 +133,6 @@ function process_packet(data) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 /* 
  * node.js
  */
@@ -174,9 +166,10 @@ http_server.on('request', function(req, res) {
   res.writeHead(200, {'Content-Type': 'text/html'});
 
 
-  var path = url.parse(req.url, true).pathname;
+  var url_header = url.parse(req.url, true);
+  mobile_id = url_header.query.id;
   
-  switch(path) {
+  switch(url_header.pathname) {
     
     case OPEN_DOOR:
     console.log("[mobile] - Open door.")
@@ -209,7 +202,7 @@ http_server.on('request', function(req, res) {
     default:
     console.log("[mobile] - Unknown.")
   }
-res.end(path);
+res.end(url_header.pathname);
 });
 
 
