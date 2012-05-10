@@ -13,6 +13,7 @@
 #include "uart.h"
 #include "adc.h"
 #include "uart.h"
+#include "ethernet.h"
 
 /*****************************************************************************
  *    Main Function  main()													 *
@@ -26,13 +27,12 @@ int main (void)
 	initLCD();
 	init_dip();
 
-	UARTInit(0, 9600);
-
-	//UARTInit();
+	UARTInit(9600);
 	ADCInit();
 	SDRAMInit();
 
 	while(1) {
+
 
 		switch(read_dip()) {
 
@@ -64,6 +64,8 @@ int main (void)
 				break;
 
 			case 5:
+
+				//				ethernet();
 				break;
 
 			case 6:
@@ -71,6 +73,8 @@ int main (void)
 				break;
 
 			case 7:
+				ethernet();
+
 				break;
 
 			case 8:

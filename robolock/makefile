@@ -76,7 +76,7 @@ ASRC = ./src/startup.s #\
 UINCDIR = ./inc 
 
 #If this is brian's computer, include some fancy stuff
-ifeq ($(shell uname), Darwin) 
+ifeq ($(shell uname), Darwin_no_uip) 
 		
 SRC +=	$(wildcard ./uip/uip/*.c) \
 		$(wildcard ./uip/uip_port/*.c)
@@ -122,7 +122,7 @@ CPFLAGS += -MD -MP -MF .dep/$(@F).d
 # makefile rules
 #
 
-all: RAM ROM
+all: ROM #RAM
 
 RAM: $(OBJS) $(PROJECT)_ram.elf $(PROJECT)_ram.hex
 
