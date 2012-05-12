@@ -139,9 +139,9 @@ void testADC(void)
 	while (!ADC0IntDone)
 		i++;
 	ADC0IntDone = 0;
-	printLED(i);
-	//printLED((WORD)(ADC0Value >> 2));
-	busyWait(100);
+//	printLED(i);
+	printLED((BYTE)(0xFF >> (8 - (ADC0Value>>7))));
+	busyWait(10);
 }
 
 /*********************************************************************************
