@@ -28,7 +28,7 @@ volatile DWORD I2CWriteLength;
 
 volatile DWORD RdIndex = 0;
 volatile DWORD WrIndex = 0;
-
+volatile int i = 0;
 /* 
 From device to device, the I2C communication protocol may vary, 
 in the example below, the protocol uses repeated start to read data from or 
@@ -54,8 +54,8 @@ void I2C1MasterHandler(void)// __irq
 {
   BYTE StatValue;
   //printLED(0xF0);
- // busyWait(100);
-
+  //busyWait(1);
+  for(i=0;i<1000;i++);
   /* this handler deals with master read and master write only */
   StatValue = I21STAT;
   IENABLE;				/* handles nested interrupt */
@@ -173,8 +173,9 @@ void I2C1MasterHandler(void)// __irq
 *****************************************************************************/
 DWORD I2CStart( void )
 {
+	volatile int i=0;
 	printLED(0x03);
-	busyWait(100);
+//	for(i=0;i<1000;i++);//busyWait(10);
   DWORD timeout = 0;
   DWORD retVal = FALSE;
  
@@ -186,16 +187,16 @@ DWORD I2CStart( void )
   {
 	if ( I2CMasterState == I2C_STARTED )
 	{
-	//	printLED(0x04);
-	//	busyWait(100);
+		//for(i=0;i<1000;i++);//	printLED(0x04);
+		//busyWait(10);
 	  retVal = TRUE;
 	  break;	
 	}
 	if ( timeout >= MAX_TIMEOUT )
 	{
 		//test for timeout
-		printLED(0xFF);
-		busyWait(100);
+		//printLED(0xFF);
+		//busyWait(100);
 	  retVal = FALSE;
 	  break;
 	}
@@ -220,7 +221,7 @@ DWORD I2CStop( void )
   I21CONCLR = I2CONCLR_SIC;  /* Clear SI flag */
             
   /*--- Wait for STOP detected ---*/
-  printLED(0x05);
+  //printLED(0x05);
   while( I21CONSET & I2CONSET_STO );
   return TRUE;
 }
@@ -292,7 +293,7 @@ DWORD I2CEngine( void )
   WrIndex = 0;
   if ( I2CStart() != TRUE )
   {
-	  printLED(0x0F);
+	 // printLED(0x0F);
 	  //busyWait(100);
 	I2CStop();
 	return ( FALSE );
