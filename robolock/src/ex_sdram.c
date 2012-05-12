@@ -218,18 +218,20 @@ void testSDRAM_simple(void)
 	volatile DWORD *wr_ptr;
 	volatile BYTE *char_wr_ptr;
 	volatile WORD *short_wr_ptr;
-	BYTE  i;
+	WORD  i;
+	WORD temp;
 
-	char_wr_ptr = (BYTE *)SDRAM_BASE_ADDR;
+	short_wr_ptr = (WORD *)SDRAM_BASE_ADDR;
 #define TESTLEN 0xFF
 	for (i=0; i<TESTLEN; i++)
 	{
-		char_wr_ptr[i] = i;
+		short_wr_ptr[i] = i;
 	}
 
 	for (i=0; i <TESTLEN; i++)
 	{
-		if ( char_wr_ptr[i] != i )
+		temp = short_wr_ptr[i];
+		if ( temp != i )
 		{
 			printLED(0xFF);
 			busyWait(10);
@@ -238,9 +240,11 @@ void testSDRAM_simple(void)
 			printLED(0xFF);
 			busyWait(10);
 			clearLED();
+			busyWait(50);
+			printLED(i);
+			busyWait(50);
+			printLED(temp);
 			busyWait(100);
-			printLED(char_wr_ptr[i]);
-			busyWait(200);
 			clearLED();
 		}
 	}
