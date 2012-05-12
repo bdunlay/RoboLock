@@ -47,8 +47,8 @@ void SDRAMInit( void )
   //PINSEL4 |= 0x50000000;		/* set pins to CS[2:3] */
   PINSEL5 |= 0x05050555;		/* set pins to CASn, RASn, CLKOUT[1:0], DYCS[1:0], CKEOUT[1:0], DQMOUT[1:0] */
   PINSEL6 |= 0x55555555;		/* set pins to D[0:15] (data) */
-  PINSEL8 |= 0x55555555;		/* set pins to A[0:15] (address) */
-  PINSEL9 |= 0x00555555;  		/* set pins to A[16:23], OEn, WEn, BLS[1:0] */
+  PINSEL8 |= 0x15555555;		/* set pins to A[0:14] (address) */
+  PINSEL9 |= 0x00050000;  		/* set pins to OEn, WEn */
   
   EMC_DYN_RP     = 1;		/* command period: 2 clock cycles (1 clock cycle @ 72Mhz = 13.89ns) */
   EMC_DYN_RAS    = 3;		/* RAS command period: 4 clock cycles */
