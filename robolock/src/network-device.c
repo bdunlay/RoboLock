@@ -833,21 +833,6 @@ DWORD EMACSend( DWORD *EMACBuf, DWORD length )
   return ( TRUE );
 }
 
-//
-//
-//void network_device_init() {
-//	EMACInit();
-//}
-//
-//u16_t network_device_read() {
-//
-//}
-//
-//void network_device_send() {
-//
-//}
-
-
 
 
 
