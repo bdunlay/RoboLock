@@ -7,13 +7,15 @@
 #include "led.h"
 #include "dip.h"
 #include "LCD.h"
-#include "robolock.h"
 #include "ex_sdram.h"
 #include "timer.h"
 #include "uart.h"
 #include "adc.h"
 #include "uart.h"
 #include "ethernet.h"
+#include "strike.h"
+#include "robolock.h"
+
 
 /*****************************************************************************
  *    Main Function  main()													 *
@@ -30,6 +32,7 @@ int main (void)
 	UARTInit(9600);
 	ADCInit();
 	SDRAMInit();
+	strikeInit();
 
 	while(1) {
 
@@ -64,6 +67,7 @@ int main (void)
 				break;
 
 			case 5:
+				testStrike();
 				break;
 
 			case 6:

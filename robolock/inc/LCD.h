@@ -18,8 +18,10 @@ void lcdInit(void);
 void lcdClear(void);
 void lcdShow(void);
 void testLCD(void);
-void backlightLCD(void);
-void LCDWrite(int, char*);
+void lcdBacklight(void);
+void lcdBacklightOff(void);
+void LCDWrite(char*);
 void LCDLine2(void);
 void LCDLine1(void);
+void lcdDisplay(char*,char*);
 #endif
