@@ -81,7 +81,7 @@ the same PLL. The USB clock needs to be multiple of
 in this case, so USBCLKDivValue is not needed. */
 #define PLL_MValue			144
 #define PLL_NValue			12
-#define CCLKDivValue		3
+#define CCLKDivValue		4
 
 /* System configuration: Fosc, Fcclk, Fcco, Fpclk must be defined */
 /* PLL input Crystal frequence range 4KHz~20MHz. */

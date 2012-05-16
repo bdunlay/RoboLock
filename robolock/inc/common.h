@@ -2,5 +2,6 @@
 #define __COMMON_H
 
 void busyWait(unsigned int);
+BYTE hexToChar(BYTE);
 
 #endif

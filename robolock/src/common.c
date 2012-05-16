@@ -12,3 +12,10 @@ void busyWait(unsigned int delay_period) {
 	}
 }
 
+BYTE hexToChar(BYTE hex)
+{
+	if (hex < 10)
+		return hex + 0x30;
+	else
+		return hex + 0x41;
+}

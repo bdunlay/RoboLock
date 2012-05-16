@@ -68,7 +68,7 @@ void SDRAMInit( void )
   EMC_DYN_RASCAS0 = 0x00000303;
 
   /* 128MB, 8Mx16, 4 banks, row=12, column=9 */
-  EMC_DYN_CFG0 = 0x00000480;
+  EMC_DYN_CFG0 = 0x00080480;
   delayMs(1, 100);			/* use timer 1, wait for 100ms */
 
   /* Mem clock enable, CLKOUT runs, send command: NOP */
@@ -102,7 +102,7 @@ void SDRAMInit( void )
   
   EMC_DYN_CTRL = 0x00000000;	  /* Send command: NORMAL */
 
-  EMC_DYN_CFG0 |= 0x00080000;	  /* Enable buffer */
+  EMC_DYN_CFG0 = 0x00080480;	  /* Enable buffer */
   delayMs(1, 1);				  /* Use timer 1 */
   return;
 
@@ -231,22 +231,8 @@ void testSDRAM_simple(void)
 	for (i=0; i <TESTLEN; i++)
 	{
 		temp = short_wr_ptr[i];
-		if ( temp != i )
-		{
-			printLED(0xFF);
-			busyWait(10);
-			clearLED();
-			busyWait(10);
-			printLED(0xFF);
-			busyWait(10);
-			clearLED();
-			busyWait(50);
-			printLED(i);
-			busyWait(50);
-			printLED(temp);
-			busyWait(100);
-			clearLED();
-		}
+		UARTSendHexWord(temp);
+		UARTSend("\n",1);
 	}
 }
 

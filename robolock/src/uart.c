@@ -203,7 +203,7 @@ DWORD UARTInit( DWORD baudrate )
 void UARTSend(BYTE *BufferPtr, DWORD Length )
 //void UARTSend()
 {
-	while ( Length != 0 )
+	while ( *BufferPtr != 0 )
 	    {
 			while ( !(UART0TxEmpty & 0x01) );	/* THRE status, contain valid
 								data */
@@ -214,6 +214,21 @@ void UARTSend(BYTE *BufferPtr, DWORD Length )
 	    }
 	    return;
 
+}
+
+void UARTSendHexWord(WORD hex)
+{
+	BYTE i;
+	BYTE temp;
+	for (i=0; i<4; i++)
+	{
+		temp = hexToChar((BYTE)hex & 0xF);
+		while ( !(UART0TxEmpty & 0x01) );	/* THRE status, contain valid
+										data */
+		U0THR = temp;
+		UART0TxEmpty = 0;	/* not empty in the THR until it shifts out */
+		hex = hex >> 4;
+	}
 }
 
 void testUART(void)

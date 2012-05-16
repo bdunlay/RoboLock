@@ -108,7 +108,7 @@ void ConfigurePLL ( void )
 
   CLKSRCSEL = 0x1;		/* select main OSC, 12MHz, as the PLL clock source */
 
-  PLLCFG = PLL_MValue | (PLL_NValue << 16);
+  PLLCFG = (PLL_MValue-1) | ((PLL_NValue-1) << 16);
   PLLFEED = 0xaa;
   PLLFEED = 0x55;
       
@@ -116,7 +116,7 @@ void ConfigurePLL ( void )
   PLLFEED = 0xaa;
   PLLFEED = 0x55;
 
-  CCLKCFG = CCLKDivValue;	/* Set clock divider */
+  CCLKCFG = CCLKDivValue-1;	/* Set clock divider */
 #if USE_USB
   USBCLKCFG = USBCLKDivValue;		/* usbclk = 288 MHz/6 = 48 MHz */
 #endif
