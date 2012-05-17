@@ -79,11 +79,13 @@ UINCDIR = ./inc
 #ifeq ($(shell uname), Darwin) 
 		
 SRC +=	$(wildcard ./uip/uip/*.c) \
-		$(wildcard ./uip/uip_port/*.c)
+		$(wildcard ./uip/port/*.c) \
+		$(wildcard ./uip/apps/tcpclient/*.c)
+		
 
 UINCDIR +=	./uip/uip \
-		  	./uip/uip_port
-
+		  	./uip/port \
+			./uip/apps/tcpclient
 #endif
 
 # List the user directory to look for the libraries here

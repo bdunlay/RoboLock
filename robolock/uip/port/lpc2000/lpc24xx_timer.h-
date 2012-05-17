@@ -1,0 +1,22 @@
+/*****************************************************************************
+ *   timer.h:  Header file for NXP LPC23xx/24xx Family Microprocessors
+ *
+ *   Copyright(C) 2006, NXP Semiconductor
+ *   All rights reserved.
+ *
+ *   History
+ *   2006.07.13  ver 1.00    Prelimnary version, first Release
+ *
+******************************************************************************/
+#ifndef __TIMER_H 
+#define __TIMER_H
+
+#include "lpc_types.h"
+
+extern void init_timer(UNS_32 timerInterval );
+
+
+#endif /* end __TIMER_H */
+/*****************************************************************************
+**                            End Of File
+******************************************************************************/
