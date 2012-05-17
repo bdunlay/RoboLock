@@ -11,6 +11,6 @@ void testKeypad(void){
 	IENABLE;
 	while(1){
 		printLED(dummy3);
-		//busyWait(10);
+		busyWait(50);
 	}
 }

@@ -20,7 +20,7 @@ void strikeInit(void) {
 	FIO2DIR0 &= ~0x3;
 	FIO2DIR0 |= 0x1;
 
-	strikeOpen();
+	//strikeOpen();
 
 }
 

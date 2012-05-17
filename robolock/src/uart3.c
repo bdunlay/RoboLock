@@ -18,7 +18,7 @@
 
 volatile DWORD UART3Status;
 volatile BYTE UART3TxEmpty = 1;
-/*volatile*/ BYTE UART3Buffer[UART_BUFSIZE];
+volatile BYTE UART3Buffer[UART_BUFSIZE];
 volatile DWORD UART3Count = 0;
 
 /*****************************************************************************
@@ -32,7 +32,7 @@ volatile DWORD UART3Count = 0;
 *****************************************************************************/
 void UART3Handler (void)
 {
-	printLED(0xAA);
+	//printLED(0xAA);
     BYTE IIRValue, LSRValue; //value in IIR, LSR
  //   BYTE dummy3;   moved to global
 
@@ -53,6 +53,7 @@ void UART3Handler (void)
 
     if ( IIRValue == IIR_RLS )		/* Receive Line Status */
     {
+		printLED(1);
 	LSRValue = U3LSR;
 	/* Receive Line Status */
 	//handles interrupt by first checking if any of the RLS interrupts exist, then clears the RBR by
@@ -70,6 +71,7 @@ void UART3Handler (void)
 	}
 	if ( LSRValue & LSR_RDR )	/* Receive Data Ready */
 	{
+
 	    /* If no error on RLS, normal ready, save into the data buffer. */
 	    /* Note: read RBR will clear the interrupt */
 		//16bit UART3 buffer.
@@ -93,11 +95,14 @@ void UART3Handler (void)
 
     else if ( IIRValue == IIR_RDA )	/* Receive Data Available */
     {
+		printLED(2);
 	/* Receive Data Available */
 	UART3Buffer[UART3Count] = U3RBR;
+	dummy3 = UART3Buffer[UART3Count];
 	UART3Count++;
 	if ( UART3Count == UART_BUFSIZE )
 	{
+		printLED(7);
 	    UART3Count = 0;		/* buffer overflow */
 	}
     }
@@ -115,6 +120,7 @@ void UART3Handler (void)
 
     else if ( IIRValue == IIR_CTI )	/* Character timeout indicator */
     {
+		printLED(3);
 	/* Character Time-out indicator */
 	UART3Status |= 0x100;		/* Bit 9 as the CTI error */
     }
@@ -133,6 +139,7 @@ void UART3Handler (void)
     		a read of the U3IIR occurs and the THRE is the highest interrupt (U3IIR[3:1] = 001).* */
     else if ( IIRValue == IIR_THRE )	/* THRE, transmit holding register empty */
     {
+		printLED(4);
 
 	LSRValue = U3LSR;		/* Check status in the LSR to see if
 					valid data in U3THR or not */
@@ -142,6 +149,7 @@ void UART3Handler (void)
 	}
 	else
 	{
+		printLED(5);
 	    UART3TxEmpty = 0; //uart THR is not empty
 	}
     }
@@ -182,7 +190,7 @@ PCONP |= 1<<25;
     U3DLM = 0x0;
     U3FDR = 0x21;
     U3LCR = 0x03;       /*DLAB = 0 */
-    //U3FCR = 0x47;		/* Enable and reset TX and RX FIFO. */
+    U3FCR = 0x47;		/* Enable and reset TX and RX FIFO. */
     U3FCR = 0x40;
     if ( install_irq( UART3_INT, (void *)UART3Handler, HIGHEST_PRIORITY+1 ) == FALSE )
     {
@@ -193,54 +201,7 @@ PCONP |= 1<<25;
     return (TRUE);
 }
 
-/*****************************************************************************
-** Function name:		UARTSend
-**
-** Descriptions:		Send a block of data to the UART 0 port based
-**				on the data length
-**
-** parameters:			buffer pointer, and data length
-** Returned value:		None
-**
-*****************************************************************************/
-void UART3Send(BYTE *BufferPtr, DWORD Length )
-//void UARTSend()
-{
-	while ( *BufferPtr != 0 )
-	    {
-			while ( !(UART3TxEmpty & 0x01) );	/* THRE status, contain valid
-								data */
-			U3THR = *BufferPtr;
-			UART3TxEmpty = 0;	/* not empty in the THR until it shifts out */
-			BufferPtr++;
-			Length--;
-	    }
-	    return;
 
-}
-
-void UART3SendChar(BYTE ch)
-{
-	while ( !(UART3TxEmpty & 0x01) );	/* THRE status, contain valid
-						data */
-	U3THR = ch;
-	UART3TxEmpty = 0;	/* not empty in the THR until it shifts out */
-}
-
-void UART3SendHexWord(WORD hex)
-{
-	BYTE i;
-	BYTE temp;
-	for (i=0; i<4; i++)
-	{
-		temp = hexToChar((hex & 0xF000) >> 12);
-		while ( !(UART3TxEmpty & 0x01) );	/* THRE status, contain valid
-										data */
-		U3THR = temp;
-		UART3TxEmpty = 0;	/* not empty in the THR until it shifts out */
-		hex = hex << 4;
-	}
-}
 
 
 

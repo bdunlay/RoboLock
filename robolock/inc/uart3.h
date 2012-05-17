@@ -43,15 +43,10 @@
 DWORD UART3Init( DWORD Baudrate );
 //DWORD UARTInit(  );
 void UART3Handler( void ) __irq;
-//void UARTSend( BYTE *BufferPtr, DWORD Length );
-void UART3Send(BYTE *, DWORD );
-void UART3SendHexWord(WORD);
-void UART3SendChar(BYTE);
-
 
 extern volatile DWORD UART3Status;
 extern volatile BYTE UART3TxEmpty;
-extern /*volatile*/ BYTE UART3Buffer[UART_BUFSIZE];
+extern volatile BYTE UART3Buffer[UART_BUFSIZE];
 extern volatile DWORD UART3Count;
 
 
