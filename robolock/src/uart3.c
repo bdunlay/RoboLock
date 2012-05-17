@@ -95,7 +95,7 @@ void UART3Handler (void)
 
 	else if ( IIRValue == IIR_RDA )	/* Receive Data Available */
 	{
-		printLED(255);
+		printLED(2);
 		/* Receive Data Available */
 		UART3Buffer[UART3Count] = U3RBR;
 		dummy3 = UART3Buffer[UART3Count];

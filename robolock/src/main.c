@@ -17,7 +17,7 @@
 #include "ethernet.h"
 #include "strike.h"
 #include "robolock.h"
-#define UIP_ENABLED 0
+#define UIP_ENABLED 1
 
 #if UIP_ENABLED
 
@@ -158,7 +158,6 @@ int main (void)
 				uip_len = tapdev_read(uip_buf);
 				if(uip_len > 0)		/* received packet */
 				{
-					printLED(2);
 			  		if(BUF->type == htons(UIP_ETHTYPE_IP))	/* IP packet */
 			  		{
 			      		uip_arp_ipin();
@@ -181,13 +180,14 @@ int main (void)
 				         	uip_len is set to a value > 0. */
 				      	if(uip_len > 0)
 			        	{
-				      		printLED(255);
-				      		busyWait(100);
-				      		printLED(0);
-				      		busyWait(100);
 				        	tapdev_send(uip_buf,uip_len);	/* ARP ack*/
 				      	}
 			      	}
+				} else  {
+
+					uip_arp_out();
+		        	tapdev_send(uip_buf,uip_len);	/* ARP ack*/
+
 				}
 //				else if(timer_expired(&periodic_timer))	/* no packet but periodic_timer time out (0.5s)*/
 //				{
