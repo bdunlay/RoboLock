@@ -7,11 +7,13 @@
 #include "led.h"
 #include "dip.h"
 #include "LCD.h"
+#include "keypad.h"
 #include "ex_sdram.h"
 #include "timer.h"
 #include "uart.h"
 #include "adc.h"
 #include "uart.h"
+#include "uart3.h"
 #include "ethernet.h"
 #include "strike.h"
 #include "robolock.h"
@@ -30,6 +32,7 @@ int main (void)
 	init_dip();
 
 	UARTInit(9600);
+	UART3Init(9600);
 	ADCInit();
 	SDRAMInit();
 	strikeInit();
@@ -88,6 +91,7 @@ int main (void)
 				break;
 
 			case 10:
+				testKeypad();
 				break;
 
 			case 11:
