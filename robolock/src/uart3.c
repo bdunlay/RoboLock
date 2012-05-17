@@ -34,7 +34,7 @@ void UART3Handler (void)
 {
 	//printLED(0xAA);
 	BYTE IIRValue, LSRValue; //value in IIR, LSR
-	//BYTE dummy3;   moved to global
+	//BYTE keypadValue;   moved to global
 
 	IENABLE;				/* handles nested interrupt */
 	IIRValue = U3IIR;
@@ -57,13 +57,13 @@ void UART3Handler (void)
 		LSRValue = U3LSR;
 		/* Receive Line Status */
 		//handles interrupt by first checking if any of the RLS interrupts exist, then clears the RBR by
-		//reading the RBR into dummy3 and then disables interrupts then acknowledges it
+		//reading the RBR into keypadValue and then disables interrupts then acknowledges it
 		if ( LSRValue & (LSR_OE|LSR_PE|LSR_FE|LSR_RXFE|LSR_BI) )
 		{
 			/* There are errors or break interrupt */
 			/* Read LSR will clear the interrupt */
 			UART3Status = LSRValue;
-			dummy3 = U3RBR;		/* dummy3 read on RX to clear
+			keypadValue = U3RBR;		/* keypadValue read on RX to clear
 					interrupt, then bail out */
 			IDISABLE;
 			VICVectAddr = 0;		/* Acknowledge Interrupt */
@@ -95,10 +95,11 @@ void UART3Handler (void)
 
 	else if ( IIRValue == IIR_RDA )	/* Receive Data Available */
 	{
-		printLED(255);
+		//printLED(255);
 		/* Receive Data Available */
 		UART3Buffer[UART3Count] = U3RBR;
-		dummy3 = UART3Buffer[UART3Count];
+		keypadValue = UART3Buffer[UART3Count];
+		keypadCount++;
 		UART3Count++;
 		if ( UART3Count == UART_BUFSIZE ) {
 			printLED(7);
