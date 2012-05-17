@@ -17,5 +17,5 @@ BYTE hexToChar(BYTE hex)
 	if (hex < 10)
 		return hex + 0x30;
 	else
-		return hex + 0x41;
+		return hex + 55;
 }

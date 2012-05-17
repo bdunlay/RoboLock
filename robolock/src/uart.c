@@ -216,18 +216,26 @@ void UARTSend(BYTE *BufferPtr, DWORD Length )
 
 }
 
+void UARTSendChar(BYTE ch)
+{
+	while ( !(UART0TxEmpty & 0x01) );	/* THRE status, contain valid
+						data */
+	U0THR = ch;
+	UART0TxEmpty = 0;	/* not empty in the THR until it shifts out */
+}
+
 void UARTSendHexWord(WORD hex)
 {
 	BYTE i;
 	BYTE temp;
 	for (i=0; i<4; i++)
 	{
-		temp = hexToChar((BYTE)hex & 0xF);
+		temp = hexToChar((hex & 0xF000) >> 12);
 		while ( !(UART0TxEmpty & 0x01) );	/* THRE status, contain valid
 										data */
 		U0THR = temp;
 		UART0TxEmpty = 0;	/* not empty in the THR until it shifts out */
-		hex = hex >> 4;
+		hex = hex << 4;
 	}
 }
 

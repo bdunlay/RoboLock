@@ -1,3 +1,4 @@
+
 /*****************************************************************************
  *   uart.h:  Header file for Philips LPC214x Family Microprocessors
  *
@@ -12,10 +13,9 @@
 #define __UART_H
 
 
-
+#include "type.h"
 #include "common.h"
 #include "LPC23xx.h"                        /* LPC21xx definitions */
-#include "type.h"
 #include "target.h"
 #include "irq.h"
 
@@ -48,6 +48,8 @@ DWORD UARTInit( DWORD Baudrate );
 void UART0Handler( void ) __irq;
 //void UARTSend( BYTE *BufferPtr, DWORD Length );
 void UARTSend(BYTE *, DWORD );
+void UARTSendHexWord(WORD);
+void UARTSendChar(BYTE);
 void testUART(void);
 
 extern volatile DWORD UART0Status;
