@@ -261,7 +261,7 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
   if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, 0x08 ) == FALSE )
   {
 	  printLED(0xAA);
-	  busyWait(100);
+	 // busyWait(100);
 	return( FALSE );
   }
   IENABLE;
