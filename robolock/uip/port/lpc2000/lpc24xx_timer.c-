@@ -1,0 +1,77 @@
+/*****************************************************************************
+ *   timer.c:  Timer C file for NXP LPC23xx/24xx Family Microprocessors
+ *
+ *   Copyright(C) 2006, NXP Semiconductor
+ *   All rights reserved.
+ *
+ *   History
+ *   2006.09.01  ver 1.00    Prelimnary version, first Release
+ *
+******************************************************************************/
+#include "LPC24xx.h"		/* LPC23xx/24xx Peripheral Registers	*/
+#include "lpc24xx_irq.h"
+#include "target.h"
+#include "lpc24xx_timer.h"
+
+volatile UNS_32 timer0_counter = 0;
+
+/******************************************************************************
+** Function name:		Timer0Handler
+**
+** Descriptions:		Timer/Counter 0 interrupt handler
+**						executes each 10ms @ 60 MHz CPU Clock
+**
+** parameters:			None
+** Returned value:		None
+** 
+******************************************************************************/
+void Timer0Handler (void) __irq 
+{  
+  T0IR = 1;			/* clear interrupt flag */
+  IENABLE;			/* handles nested interrupt */
+
+  timer0_counter++;
+
+  IDISABLE;
+  VICVectAddr = 0;	/* Acknowledge Interrupt */
+}
+
+
+/******************************************************************************
+** Function name:		init_timer
+**
+** Descriptions:		Initialize timer0, set timer interval, reset timer,
+**						install timer interrupt handler
+**
+** parameters:			timer interval
+** Returned value:		none
+** 
+******************************************************************************/
+void init_timer ( UNS_32 TimerInterval ) 
+{
+
+	timer0_counter = 0;
+
+	// Init Time0
+	PCONP |= (1<<1); // Enable TMR0 clk
+	T0TCR = 0x2;	// counting  disable and set reset
+	T0TCR = 0x0; 	// release reset
+	T0CTCR = 0;	// Timer Mode: every rising PCLK edge
+	T0MCR = 0x3;	// Enable Interrupt on MR0, Enable reset on MR0
+	
+	// set timer 0 period
+	T0PR = 0;
+	T0MR0 = Fpclk / (TimerInterval) - 1;
+	
+	// init timer 0 interrupt
+	T0IR |= (1<<0);	// clear pending interrupt
+	
+	install_irq( TIMER0_INT, (void *)Timer0Handler, HIGHEST_PRIORITY+1 );
+	
+	T0TCR |= (1<<0);	// counting Enable 
+
+}
+
+/******************************************************************************
+**                            End Of File
+******************************************************************************/

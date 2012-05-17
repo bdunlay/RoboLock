@@ -14,7 +14,9 @@
 #include "target.h"
 #include "type.h"
 #include "led.h"
+#include "clock-arch.h"
 #include "timer.h"
+
 
 volatile DWORD timer0_counter = 0;
 volatile DWORD timer1_counter = 0;
@@ -320,6 +322,7 @@ void testTimer1Handler(void)
 	IDISABLE;
 	VICVectAddr = 0;	/* Acknowledge Interrupt */
 }
+
 
 /******************************************************************************
 **                            End Of File
