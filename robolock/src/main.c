@@ -41,6 +41,7 @@ int main(void) {
 	initLED();
 	initLCD();
 	init_dip();
+	init_network();
 
 	UARTInit(9600);
 	UART3Init(9600);

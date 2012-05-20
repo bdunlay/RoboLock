@@ -186,7 +186,7 @@ void robolock() {
 
 }
 
-void initialize_network() {
+void init_network() {
 	int i = 0;
 
 	uip_ipaddr_t ipaddr; /* local IP address */
