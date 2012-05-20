@@ -27,7 +27,7 @@
 
 
 
-void permission_granted() {
+unsigned int permission_granted() {
 	return so.permission;
 }
 

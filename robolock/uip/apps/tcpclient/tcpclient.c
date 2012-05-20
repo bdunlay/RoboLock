@@ -5,29 +5,19 @@
 #include "common.h"
 #include "timer.h"
 #include "robolock.h"
-#include <string.h>
 
 
-
-
-void generate_header() {
-
-}
-
-
-
-
-void go(void);
+void connect(void);
 
 
 void tcp_client_init(void) {
-go();
+connect();
 
 }
 
 int state = 0;
 
-void go() {
+void connect() {
 	u16_t ipaddr[2];
 
 	uip_ipaddr(ipaddr, 128,111,56,203); // server address
@@ -40,7 +30,7 @@ void tcp_client_appcall(void) {
 	int k;
 
 	if (uip_aborted() || uip_timedout() || uip_closed()) {
-		updateState(ERROR);
+		update_state(ERROR);
 		uip_close(); // do i want to do this?
 		for (k = 0; k < 3; k++) {
 			printLED(255);
