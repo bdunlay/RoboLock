@@ -23,7 +23,7 @@ public class Main extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		function();
+		fetch_image();
 	}
 
 	
@@ -62,13 +62,11 @@ public class Main extends Activity {
 	    return null;
 	}
 	
-	void function() {
-		
-
-		Bitmap image = downloadBitmap("http://192.168.0.1/image.png");
-
+	
+	/* should put this in an async task */
+	void fetch_image() {
+		Bitmap image = downloadBitmap("http://127.0.0.1/logo.png");
 		ImageView imview = (ImageView) findViewById(R.id.photo);
-		
 		imview.setImageBitmap(image);
 	}
 
