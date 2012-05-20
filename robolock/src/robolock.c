@@ -27,15 +27,10 @@
 
 
 
+void permission_granted() {
+	return so.permission;
+}
 
-
-enum {
-	IDLE, PROMPT, PHOTO, AUTH_PHOTO, AUTH_CODE, OPEN_DOOR, ERROR
-} states;
-
-struct state_object {
-	unsigned int state;
-} so;
 
 void update_state(unsigned int new_state) {
 	so.state = new_state;
@@ -105,6 +100,7 @@ void robolock() {
 		while (1 /*!timeout()*/) {
 			if (1/*permission_granted()*/) {
 				update_state(OPEN_DOOR);
+				so.permission = 0;
 				break;
 			}
 		}

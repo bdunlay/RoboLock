@@ -28,7 +28,6 @@ int main(void) {
 	initLED();
 	initLCD();
 	init_dip();
-	init_network();
 
 	UARTInit(9600);
 	UART3Init(9600);
@@ -36,6 +35,7 @@ int main(void) {
 	SDRAMInit();
 	strikeInit();
 	init_robolock();
+	init_network();
 
 
 	while (1) {
