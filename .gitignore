@@ -1,5 +1,9 @@
 # These are things for git to ignore!
 
+#######
+# ARM #
+#######
+
 *.o
 *.lst
 *.hex
@@ -11,4 +15,15 @@ path.txt
 Thumbs.db
 .DS_Store
 *.map
+
+
+###########
+# ANDROID #
+###########
+
 .metadata/
+.classpath
+gen/
+*.cfg
+bin/
+*.properties
