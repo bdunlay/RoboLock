@@ -31,7 +31,6 @@
 
 #endif
 
-
 /*****************************************************************************
  *    Main Function  main()													 *
  *****************************************************************************/
@@ -49,39 +48,6 @@ int main(void) {
 	SDRAMInit();
 	strikeInit();
 	init_robolock();
-
-#if UIP_ENABLED
-
-	int i = 0;
-
-	uip_ipaddr_t ipaddr; /* local IP address */
-	//	struct timer periodic_timer, arp_timer;
-
-	// clock init
-	clock_init();
-	// two timers for tcp/ip
-	//	timer_set(&periodic_timer, CLOCK_SECOND / 2); /* 0.5s */
-	//	timer_set(&arp_timer, CLOCK_SECOND * 10);	/* 10s */
-
-	// ethernet init
-	tapdev_init();
-
-	// Initialize the uIP TCP/IP stack.
-	uip_init();
-	//	uip_ipaddr(ipaddr, 128,111,56,53);
-	//	uip_ipaddr(ipaddr, 169,254,255,255);
-	uip_ipaddr(ipaddr, 128,111,56,53);
-	uip_sethostaddr(ipaddr); /* host IP address */
-	uip_ipaddr(ipaddr, 128,111,56,1);
-	uip_setdraddr(ipaddr); /* router IP address */
-	uip_ipaddr(ipaddr, 255,255,255,0);
-	uip_setnetmask(ipaddr); /* mask */
-
-	// Initialize the HTTP server, listen to port 80.
-	tcp_client_init();
-
-#endif
-
 
 
 	while (1) {
@@ -121,49 +87,6 @@ int main(void) {
 			break;
 
 		case 7:
-#if UIP_ENABLED
-			/* receive packet and put in uip_buf */
-			uip_len = tapdev_read(uip_buf);
-
-			if (uip_len > 0) { // packed received
-
-				if (BUF->type == htons(UIP_ETHTYPE_IP)) { // IP Packet
-					uip_arp_ipin();
-					uip_input();
-
-					if (uip_len > 0) {
-						uip_arp_out();
-						tapdev_send(uip_buf, uip_len);
-					}
-				} else if (BUF->type == htons(UIP_ETHTYPE_ARP)) { // ARP Packet
-					uip_arp_arpin();
-
-					if (uip_len > 0) {
-						tapdev_send(uip_buf, uip_len); /* ARP ack*/
-					}
-				}
-			} else if (1) /* no packet but periodic_timer time out (0.5s)*/
-			{
-				// timer_reset(&periodic_timer);
-				/* Call the ARP timer function every 10 seconds. */
-				if (1) {
-					//timer_reset(&arp_timer);
-					uip_arp_timer();
-				}
-			}
-
-			for (i = 0; i < UIP_CONNS; i++) {
-				uip_periodic(i);
-				/* If the above function invocation resulted in data that
-				 should be sent out on the network, the global variable
-				 uip_len is set to a value > 0. */
-				if (uip_len > 0) {
-					uip_arp_out();
-					tapdev_send(uip_buf, uip_len);
-				}
-			}
-
-#endif
 
 			break;
 
@@ -197,8 +120,9 @@ int main(void) {
 		default:
 			break;
 		}
+
+		return 0;
 	}
 
-	return 0;
 }
 

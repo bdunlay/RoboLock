@@ -42,7 +42,7 @@ void robolock() {
 		// waiting for data on ADC or a key press
 
 		while (1) {
-			if ( 1/*keypress || knock*/) {
+			if (1/*keypress || knock*/) {
 				update_state(PROMPT);
 				break;
 			}
@@ -58,12 +58,12 @@ void robolock() {
 		// # to enter code
 		// * to take photo
 
-		while ( 1 /* !timeout() */) {
+		while (1 /* !timeout() */) {
 
 			if (1 /*user_entry == '*' */) {
 				update_state(AUTH_CODE);
 				break;
-			} else if ( 1/*user_entry == '#' */) {
+			} else if (1/*user_entry == '#' */) {
 				update_state(PHOTO);
 				break;
 			}
@@ -77,7 +77,7 @@ void robolock() {
 		// print LCD countdown
 		// 3.. 2.. 1..
 
-		if ( 1 /*SUCCESS == take_photo()*/) {
+		if (1 /*SUCCESS == take_photo()*/) {
 			update_state(AUTH_PHOTO);
 		} else {
 			update_state(ERROR);
@@ -89,8 +89,8 @@ void robolock() {
 
 		// set timeout
 
-		while ( 1 /*!timeout()*/) {
-			if ( 1/*permission_granted()*/) {
+		while (1 /*!timeout()*/) {
+			if (1/*permission_granted()*/) {
 				update_state(OPEN_DOOR);
 				break;
 			}
@@ -104,8 +104,8 @@ void robolock() {
 
 		// set timeout
 
-		while ( 1/* !timeout() */) {
-			if ( 1/*valid_code(user_entry()) */) {
+		while (1/* !timeout() */) {
+			if (1/*valid_code(user_entry()) */) {
 				update_state(OPEN_DOOR);
 				break;
 			}
@@ -120,7 +120,7 @@ void robolock() {
 		// set timeout
 
 		// print welcome message to LCD
-		while ( 1/*!timeout() */)
+		while (1/*!timeout() */)
 			;
 
 		update_state(IDLE);
@@ -184,4 +184,80 @@ void robolock() {
 	//				lcdBacklightOff();
 	////			}
 
+}
+
+void initialize_network() {
+	int i = 0;
+
+	uip_ipaddr_t ipaddr; /* local IP address */
+	//	struct timer periodic_timer, arp_timer;
+
+	// clock init
+	clock_init();
+	// two timers for tcp/ip
+	//	timer_set(&periodic_timer, CLOCK_SECOND / 2); /* 0.5s */
+	//	timer_set(&arp_timer, CLOCK_SECOND * 10);	/* 10s */
+
+	// ethernet init
+	tapdev_init();
+
+	// Initialize the uIP TCP/IP stack.
+	uip_init();
+	//	uip_ipaddr(ipaddr, 128,111,56,53);
+	//	uip_ipaddr(ipaddr, 169,254,255,255);
+	uip_ipaddr(ipaddr, 128, 111, 56, 53);
+	uip_sethostaddr(ipaddr); /* host IP address */
+	uip_ipaddr(ipaddr, 128, 111, 56, 1);
+	uip_setdraddr(ipaddr); /* router IP address */
+	uip_ipaddr(ipaddr, 255, 255, 255, 0);
+	uip_setnetmask(ipaddr); /* mask */
+
+	tcp_client_init();
+}
+
+
+// need to discuss this with will
+void periodic_network() {
+
+	int i;
+
+	uip_len = tapdev_read(uip_buf);
+
+	if (uip_len > 0) { // packed received
+
+		if (BUF->type == htons(UIP_ETHTYPE_IP)) { // IP Packet
+			uip_arp_ipin();
+			uip_input();
+
+			if (uip_len > 0) {
+				uip_arp_out();
+				tapdev_send(uip_buf, uip_len);
+			}
+		} else if (BUF->type == htons(UIP_ETHTYPE_ARP)) { // ARP Packet
+			uip_arp_arpin();
+
+			if (uip_len > 0) {
+				tapdev_send(uip_buf, uip_len); /* ARP ack*/
+			}
+		}
+	} else if (1) /* no packet but periodic_timer time out (0.5s)*/
+	{
+		// timer_reset(&periodic_timer);
+		/* Call the ARP timer function every 10 seconds. */
+		if (1) {
+			//timer_reset(&arp_timer);
+			uip_arp_timer();
+		}
+	}
+
+	for (i = 0; i < UIP_CONNS; i++) {
+		uip_periodic(i);
+		/* If the above function invocation resulted in data that
+		 should be sent out on the network, the global variable
+		 uip_len is set to a value > 0. */
+		if (uip_len > 0) {
+			uip_arp_out();
+			tapdev_send(uip_buf, uip_len);
+		}
+	}
 }

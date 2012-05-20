@@ -11,6 +11,8 @@
 
 void init_robolock(void);
 void robolock(void);
+void init_network(void);
+void periodic_network(void);
 
 
 #endif
