@@ -6,7 +6,8 @@
 void busyWait(unsigned int);
 BYTE hexToChar(BYTE);
 
-volatile BYTE dummy3;
+volatile BYTE keypadValue;
+volatile int keypadCount;
 
 
 #endif

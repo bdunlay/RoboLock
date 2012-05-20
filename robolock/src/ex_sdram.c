@@ -41,7 +41,8 @@ void SDRAMInit( void )
   /*************************************************************************
   * Initialize EMC and SDRAM
   *************************************************************************/
-//  SCS     |= 0x00000002;		/* Reset EMC */ 
+//  SCS     |= 0x00000002;		/* Reset EMC */
+//  SCS     |= 0x00000004;        /* Disable burst control */
   EMC_CTRL = 0x00000001;		/*Disable Address mirror*/
   PCONP   |= 0x00000800;		/* Turn On EMC PCLK */
 
@@ -55,8 +56,10 @@ void SDRAMInit( void )
   PINMODE5 &= 0xF0F0F000;       /* zero out the necessary bits */
   PINMODE5 |= 0x0A0A0AAA;       /* neither pullup nor pulldown resistors on CASn, RASn, CLKOUT[1:0], DYCS[1:0], CKEOUT[1:0], DQMOUT[1:0] */
   PINMODE6  = 0xAAAAAAAA;       /* neither PUP nor PDN rs on D[0:15] */
-  PINMODE8 &= 0xE0000000;       /* zero out the necessary bits */
+  PINMODE8 &= 0xC0000000;       /* zero out the necessary bits */
   PINMODE8 |= 0x2AAAAAAA;       /* neither PUP nor PDN rs on A[0:14] */
+  PINMODE9 &= 0xFFF0FFFF;       /* zero out the necessary bits */
+  PINMODE9 |= 0x000A0000;  		/* neither PUP nor PDN rs on OEn, WEn */
   
   EMC_DYN_RP     = 1;		/* command period: 2 clock cycles (1 clock cycle @ 72Mhz = 13.89ns) */
   EMC_DYN_RAS    = 3;		/* RAS command period: 4 clock cycles */
@@ -108,7 +111,7 @@ void SDRAMInit( void )
 	 row position is 12 */
   dummy = *((volatile DWORD *)(SDRAM_BASE_ADDR | (0x33 << 12)));
   
-  EMC_DYN_CTRL = 0x00000003;	  /* Send command: NORMAL */
+  EMC_DYN_CTRL = 0x00000000;	  /* Send command: NORMAL */
 
   EMC_DYN_CFG0 = 0x00080480;	  /* Enable buffer */
   delayMs(1, 1);				  /* Use timer 1 */
@@ -226,19 +229,20 @@ void testSDRAM_simple(void)
 	volatile DWORD *wr_ptr;
 	volatile BYTE *char_wr_ptr;
 	volatile WORD *short_wr_ptr;
-	WORD  i;
+	DWORD  i;
 	WORD temp;
 
 	short_wr_ptr = (WORD *)SDRAM_BASE_ADDR;
-#define TESTLEN 0xFF
-#define TESTVAL i
-	for (i=0; i<TESTLEN; i++)
+#define TESTSTART 0
+#define TESTLEN 0xFFFF
+#define TESTVAL (i)
+	for (i=TESTSTART; i<TESTSTART+TESTLEN; i++)
 		short_wr_ptr[i] = 0xFFFF; // clear memory
 
-	for (i=0; i<TESTLEN; i++)
+	for (i=TESTSTART; i<TESTSTART+TESTLEN; i++)
 		short_wr_ptr[i] = TESTVAL; // write memory
 
-	for (i=0; i <TESTLEN; i++)
+	for (i=TESTSTART; i<TESTSTART+TESTLEN; i++)
 	{
 		temp = short_wr_ptr[i];
 //		if (temp != TESTVAL)

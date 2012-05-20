@@ -14,6 +14,7 @@
 #include "LCD.h"
 #include "led.h"
 #include "strike.h"
+#include "keypad.h"
 
 void robolock() {
 
@@ -21,8 +22,9 @@ void robolock() {
 
 	//wait for knock
 	lcdInit();
-	lcdDisplay("waiting         ","for knock       ");
-	busyWait(500);
+	lcdDisplay("waiting         ","for keypad       ");
+	keypadVerify();
+	busyWait(40);
 //	while(1){
 //		if(peizoListen()==1);
 //			break;
@@ -31,13 +33,13 @@ void robolock() {
 	//Activate  LCD Message
 	lcdBacklight();
 			lcdDisplay("Hello           ","                ");
-			busyWait(500);
+			busyWait(200);
 			lcdDisplay("Please          ","Face Camera     ");
-			busyWait(500);
+			busyWait(200);
 
 	//Take Picture
 //			cameraTake();
-			busyWait(500);
+			busyWait(200);
 
     //Send Picture to server
 //			ethernetSend();
@@ -53,8 +55,9 @@ void robolock() {
 			lcdClear();
 				lcdDisplay("Acess           ","Granted         ");
 				strikeOpen();
-				busyWait(500);
+				busyWait(200);
 				strikeClose();
+				busyWait(200);
 				lcdBacklightOff();
 //			}
 
