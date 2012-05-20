@@ -16,6 +16,19 @@
 #include "strike.h"
 #include "keypad.h"
 
+
+//#include "uip_timer.h"
+#include "uip.h"
+#include "uip_arp.h"
+#include "tapdev.h"
+#include "clock-arch.h"
+#include "clock.h"
+#define BUF ((struct uip_eth_hdr *)&uip_buf[0])
+
+
+
+
+
 enum {
 	IDLE, PROMPT, PHOTO, AUTH_PHOTO, AUTH_CODE, OPEN_DOOR, ERROR
 } states;
@@ -187,7 +200,6 @@ void robolock() {
 }
 
 void init_network() {
-	int i = 0;
 
 	uip_ipaddr_t ipaddr; /* local IP address */
 	//	struct timer periodic_timer, arp_timer;

@@ -17,19 +17,6 @@
 #include "ethernet.h"
 #include "strike.h"
 #include "robolock.h"
-#define UIP_ENABLED 1
-
-#if UIP_ENABLED
-
-//#include "uip_timer.h"
-#include "uip.h"
-#include "uip_arp.h"
-#include "tapdev.h"
-#include "clock-arch.h"
-#include "clock.h"
-#define BUF ((struct uip_eth_hdr *)&uip_buf[0])
-
-#endif
 
 /*****************************************************************************
  *    Main Function  main()													 *
