@@ -20,12 +20,11 @@ enum {
 	IDLE, PROMPT, PHOTO, AUTH_PHOTO, AUTH_CODE, OPEN_DOOR, ERROR
 } states;
 
-
 struct state_object {
 	unsigned int state;
 } so;
 
-void updateState(unsigned int new_state) {
+void update_state(unsigned int new_state) {
 	so.state = new_state;
 }
 
@@ -38,48 +37,51 @@ void robolock() {
 	switch (so.state) {
 
 	case IDLE:
-		// screen is off
+		// clear LCD
+		// turn off backlight
 		// waiting for data on ADC or a key press
 
-		// if (keypress || knock)
-		// update_state(PROMPT);
-
-		break;
+		while (1) {
+			if ( 1/*keypress || knock*/) {
+				update_state(PROMPT);
+				break;
+			}
+		}
 
 	case PROMPT:
 
-		// set timer
+		//turn on backlight
 
-		// if (timeout) {
-		//	update_state(ERROR);
-		// }
+		// set_timer()
 
 		// print to LCD
 		// # to enter code
 		// * to take photo
 
-		// read keypad buffer
+		while ( 1 /* !timeout() */) {
 
-		// if (user_entry == '*') {
-		//		update_state(AUTH_CODE);
-		// } else if (user_entry == '#') {
-		//		updateState(PHOTO);
-		// }
+			if (1 /*user_entry == '*' */) {
+				update_state(AUTH_CODE);
+				break;
+			} else if ( 1/*user_entry == '#' */) {
+				update_state(PHOTO);
+				break;
+			}
+		}
 
+		update_state(ERROR);
 		break;
 
 	case PHOTO:
 
-		// set timeout
-
 		// print LCD countdown
 		// 3.. 2.. 1..
 
-		// if(SUCCESS == take_photo()) {
-		// 	update_state(AUTH_PHOTO);
-		// else {
-		//	update_state(ERROR);
-		//}
+		if ( 1 /*SUCCESS == take_photo()*/) {
+			update_state(AUTH_PHOTO);
+		} else {
+			update_state(ERROR);
+		}
 
 		break;
 
@@ -87,9 +89,14 @@ void robolock() {
 
 		// set timeout
 
-		// if (permission_granted) {
-		//	update_state(OPEN_DOOR);
-		// }
+		while ( 1 /*!timeout()*/) {
+			if ( 1/*permission_granted()*/) {
+				update_state(OPEN_DOOR);
+				break;
+			}
+		}
+
+		update_state(ERROR);
 
 		break;
 
@@ -97,13 +104,14 @@ void robolock() {
 
 		// set timeout
 
+		while ( 1/* !timeout() */) {
+			if ( 1/*valid_code(user_entry()) */) {
+				update_state(OPEN_DOOR);
+				break;
+			}
+		}
 
-		// read buffer
-		// if (valid_code(user_entry)) {
-		//	update_state(OPEN_DOOR);
-		// } else {
-		//	update_state(ERROR);
-		// }
+		update_state(ERROR);
 
 		break;
 
@@ -112,16 +120,22 @@ void robolock() {
 		// set timeout
 
 		// print welcome message to LCD
-		// if (timeout) {
-		// 	update_state(IDLE);
-		// }
+		while ( 1/*!timeout() */)
+			;
+
+		update_state(IDLE);
+
 		break;
 
 	case ERROR:
+
 		// set timeout
 
 		// print error message
-		// update_state(IDLE);
+
+		while (1 /*!timeout() */)
+			;
+		update_state(IDLE);
 
 		break;
 
