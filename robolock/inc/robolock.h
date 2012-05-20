@@ -9,6 +9,8 @@
 #ifndef __ROBOLOCK_H
 #define __ROBOLOCK_H
 
+void init_robolock(void);
 void robolock(void);
+
 
 #endif
