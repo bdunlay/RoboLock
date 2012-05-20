@@ -1,6 +1,6 @@
 #include <string.h>
 #include "lpc24xx_emac.h"
-
+#include "led.h"
 #include "uip-conf.h"
 #include "uipopt.h"
 
@@ -187,6 +187,8 @@ BOOL_32 EMAC_Init(void)
   MAC_SA0 = (MYMAC_6 << 8) | MYMAC_5;
   MAC_SA1 = (MYMAC_4 << 8) | MYMAC_3;
   MAC_SA2 = (MYMAC_2 << 8) | MYMAC_1;
+
+
 //  MAC_SA0 = (UIP_ETHADDR1<<8) | UIP_ETHADDR0;
 //  MAC_SA1 = (UIP_ETHADDR3<<8) | UIP_ETHADDR2;
 //  MAC_SA2 = (UIP_ETHADDR5<<8) | UIP_ETHADDR4;

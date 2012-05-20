@@ -62,6 +62,7 @@ function process_packet(data) {
 
   header = parseHeader(h, header);
 
+
   console.log(header);
 
   switch(header.type) {
@@ -141,6 +142,8 @@ var net = require('net');
 var http = require('http');
 var url = require('url');
 
+var state = 0;
+
 // TCP SERVER (ROBOLOCK INTERFACE
 var tcp_server = net.createServer(function(c) { //'connection' listener
   console.log('server connected');
@@ -150,7 +153,16 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
   });
 
   c.on('data', function(data) {
-        process_packet(data);
+        console.log("[client] "+data.toString());
+	if (state === 0) {
+		c.write("Yes, I am here!");
+	        console.log("[server]: Yes, I am here!");
+		state = 1;
+	} else if (state === 1) {
+		c.write("Ok! Goodbye.");
+		console.log("[server]: Ok! Goodbye.");
+	}
+//      }  process_packet(data);
     });  
 
 });
