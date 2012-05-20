@@ -2,19 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
+	
 	<TextView android:layout_width="fill_parent" android:gravity="center"
 		android:layout_height="wrap_content" android:text="Someone is at your door!"
 		android:textSize="25sp" android:paddingBottom="10sp" />
 	<ImageView android:id="@+id/photo" android:src="@drawable/robolock"
 		android:gravity="center_vertical" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:paddingBottom="10sp"></ImageView>
+		android:layout_height="wrap_content" android:paddingBottom="10sp"
+		android:onClick="loadImage"></ImageView>
+		
 	<LinearLayout android:id="@+id/linearLayout1"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:gravity="center">
-		<ImageButton android:src="@drawable/open_door" android:id="@+id/imageButton1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="0sp"></ImageButton>
+		
+		<ImageButton android:src="@drawable/open_door" android:id="@+id/open_door"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:padding="0sp" android:onClick="openDoor"></ImageButton>
 		<ImageButton android:padding="0sp" android:src="@drawable/ignore"
-			android:id="@+id/imageButton2" android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
-		</ImageButton>
+			android:id="@+id/ignore" android:layout_width="wrap_content"
+			android:layout_height="wrap_content"></ImageButton>
+			
 	</LinearLayout>
 </LinearLayout>
