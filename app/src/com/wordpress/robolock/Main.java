@@ -47,71 +47,8 @@ public class Main extends Activity {
 		Log.v("RoboLock", "Starting service...");
 	}
 
-	public void onReceive(Context context, Intent intent) {
-	    if (intent.getAction().equals("com.google.android.c2dm.intent.REGISTRATION")) {
-	        handleRegistration(context, intent);
-	    } else if (intent.getAction().equals("com.google.android.c2dm.intent.RECEIVE")) {
-	        handleMessage(context, intent);
-	     }
-	    
-		Log.v("RoboLock", "Something received...");
-
-	 }
 	
-	private void handleRegistration(Context context, Intent intent) {
-		Log.v("RoboLock", "Handling registration...");
-
-		
-	    String registration = intent.getStringExtra("registration_id"); 
-	    if (intent.getStringExtra("error") != null) {
-	        // Registration failed, should try again later.
-	    	
-	    	
-			Context c = getApplicationContext();
-			int duration = Toast.LENGTH_SHORT;
-
-			Toast toast = Toast.makeText(c,
-					"Failed", duration);
-			toast.show();
-
-	    	
-	    } else if (intent.getStringExtra("unregistered") != null) {
-	        // unregistration done, new messages from the authorized sender will be rejected
-	    	
-			Context c = getApplicationContext();
-			int duration = Toast.LENGTH_SHORT;
-
-			Toast toast = Toast.makeText(c,
-					"Unregistered", duration);
-			toast.show();
-
-	    	
-	    } else if (registration != null) {
-	       // Send the registration ID to the 3rd party site that is sending the messages.
-	       // This should be done in a separate thread.
-	       // When done, remember that all registration is done. 
-	    	
-	    	httpRequest(server + "/register?id=" + registration);
-	    	
-	    	
-	    }
-	}
-
-	private void handleMessage(Context context, Intent intent) {
-	    String message = intent.getExtras().getString("Message");
-	    
-	    if (message.toUpperCase() == "REQUEST") {
-			Context c = getApplicationContext();
-			int duration = Toast.LENGTH_SHORT;
-
-			Toast toast = Toast.makeText(c,
-					"Someone is at your door", duration);
-			toast.show();
-	    }
-
-	}
-
-	
+	/* button actions */
 	public void openDoor(View v) {
 		httpRequest(server);
 	}
@@ -125,7 +62,6 @@ public class Main extends Activity {
 		ImageView imview = (ImageView) findViewById(R.id.photo);
 		imview.setImageBitmap(image);
 	}
-
 
 	public Bitmap bitmapDownloader(String url) {
 		final DefaultHttpClient client = new DefaultHttpClient();
@@ -177,7 +113,7 @@ public class Main extends Activity {
 			HttpResponse response = client.execute(getRequest);
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode != HttpStatus.SC_OK) {
-				Log.w("ImageDownloader [0]", "Error " + statusCode
+				Log.w("RoboLock", "BitMap Error " + statusCode
 						+ " while retrieving bitmap from " + url);
 			}
 
