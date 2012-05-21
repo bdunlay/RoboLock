@@ -46,6 +46,7 @@
  */
 
 #include "clock.h"
+#include "lpc24xx.h"
 #include "uip_timer.h"
 
 /*---------------------------------------------------------------------------*/
@@ -63,8 +64,8 @@
 void
 timer_set(struct timer *t, clock_time_t interval)
 {
-  t->interval = interval;
-  t->start = clock_time();
+	T3MR0 = interval;
+  //t->start = clock_time();
 }
 /*---------------------------------------------------------------------------*/
 /**
@@ -83,7 +84,7 @@ timer_set(struct timer *t, clock_time_t interval)
 void
 timer_reset(struct timer *t)
 {
-  t->start += t->interval;
+  reset_timer(3);
 }
 /*---------------------------------------------------------------------------*/
 /**
@@ -103,7 +104,9 @@ timer_reset(struct timer *t)
 void
 timer_restart(struct timer *t)
 {
-  t->start = clock_time();
+  disable_timer(3);
+  reset_timer(3);
+  enable_timer(3);
 }
 /*---------------------------------------------------------------------------*/
 /**
@@ -120,7 +123,7 @@ timer_restart(struct timer *t)
 int
 timer_expired(struct timer *t)
 {
-  return (clock_time_t)(clock_time() - t->start) >= (clock_time_t)t->interval;
+  return !(T0TCR & 0x01);
 }
 /*---------------------------------------------------------------------------*/
 

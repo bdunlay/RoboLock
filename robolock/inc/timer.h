@@ -12,24 +12,25 @@
 #define __TIMER_H
 
 #include "type.h"
-/* depending on the CCLK and PCLK setting, e.g. CCLK = 60Mhz, 
-PCLK = 1/4 CCLK, then, 10mSec = 150.000-1 counts */
-// #define TIME_INTERVAL	149999
+#include "irq.h"
 	
 #define TIME_INTERVAL	(180000-1)
 
-void Timer0Handler (void) __attribute__ ((interrupt ("IRQ")));
-void Timer1Handler (void) __attribute__ ((interrupt ("IRQ")));
-extern void delayMs(BYTE timer_num, DWORD delayInMs);
-extern DWORD init_timer( BYTE timer_num, DWORD timerInterval );
+enum timerOptions
+{
+	TIMEROPT_NONE = 0,
+	TIMEROPT_INT = 1,
+	TIMEROPT_RST = 2,
+	TIMEROPT_INT_RST = 3
+};
+
+extern DWORD init_timer( BYTE timer_num, DWORD timerInterval, void* irqHandler, BYTE timerOpt );
 extern void enable_timer( BYTE timer_num );
 extern void disable_timer( BYTE timer_num );
 extern void reset_timer( BYTE timer_num );
-extern void Timer0FIQHandler( void );
-extern void Timer1FIQHandler( void );
 void testTimerIRQ(void);
-extern void testTimer0Handler(void) __attribute__ ((interrupt ("IRQ")));
-extern void testTimer1Handler(void) __attribute__ ((interrupt ("IRQ")));
+extern void testTimer0Handler(void) __irq;
+extern void testTimer1Handler(void) __irq;
 
 #endif /* end __TIMER_H */
 /*****************************************************************************
