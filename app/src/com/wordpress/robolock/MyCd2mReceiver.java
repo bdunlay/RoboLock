@@ -13,6 +13,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.util.Log;
 
 public class MyCd2mReceiver extends BroadcastReceiver{
@@ -64,8 +65,6 @@ public class MyCd2mReceiver extends BroadcastReceiver{
 	       // This should be done in a separate thread.
 	       // When done, remember that all registration is done.
     		
-    		
-
     		httpRequest(server + "/register?id=" + registration);
 
 	    }
@@ -114,21 +113,24 @@ public class MyCd2mReceiver extends BroadcastReceiver{
 	        (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		int icon = R.drawable.ic_robolock; // TODO will change this
-		CharSequence tickerText = "New Visitor";
+		CharSequence tickerText = "Someone is at your door";
 		long when = System.currentTimeMillis();
 	
 		Notification notification = new Notification(icon, tickerText, when);
 		
-		CharSequence contentTitle = "My notification";
-		CharSequence contentText = "Hello World!";
-		//Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("robolock://launch"));
+		notification.flags = Notification.FLAG_AUTO_CANCEL;
+		
+		CharSequence contentTitle = "RoboLock";
+		CharSequence contentText = "Someone is at your door";
 		
 		  Intent notificationIntent = new Intent(context, RoboLock.class)
-          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  
+          	.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  
 
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+		PendingIntent contentIntent = PendingIntent
+			.getActivity(context, 0, notificationIntent, 0);
 	
 		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+		notification.sound = Uri.parse("file:///sdcard/robolock/doorbell.mp3");
 		
 		int HELLO_ID = 1;
 	

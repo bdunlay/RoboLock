@@ -27,7 +27,7 @@ import android.widget.Toast;
 public class RoboLock extends Activity {
 
 	
-	final String server = "http://192.168.1.149:8080";
+	final String server = "http://128.111.56.203:8080";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -50,7 +50,7 @@ public class RoboLock extends Activity {
 
 	
 	/* button actions */
-	public void openDoor(View v) {
+	public void unlock(View v) {
 		httpRequest(server);
 	}
 	

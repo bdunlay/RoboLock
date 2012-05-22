@@ -8,19 +8,32 @@
 		android:textSize="25sp" android:paddingBottom="10sp" />
 	<ImageView android:id="@+id/photo" android:src="@drawable/robolock"
 		android:gravity="center_vertical" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:paddingBottom="10sp"
-		android:onClick="loadImage"></ImageView>
+		android:layout_height="wrap_content" android:onClick="loadImage"></ImageView>
 		
 	<LinearLayout android:id="@+id/linearLayout1"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:gravity="center">
+		android:gravity="center"  android:paddingTop="20px" android:paddingBottom="20px">
 		
-		<ImageButton android:src="@drawable/open_door" android:id="@+id/open_door"
+		<ImageButton android:src="@drawable/unlock" android:id="@+id/open_door"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:padding="0sp" android:onClick="openDoor"></ImageButton>
-		<ImageButton android:padding="0sp" android:src="@drawable/ignore"
-			android:id="@+id/ignore" android:layout_width="wrap_content"
-			android:layout_height="wrap_content"></ImageButton>
+			android:padding="0sp" android:onClick="unlock" android:layout_marginRight="10px"></ImageButton>
+			
+		<ImageButton android:padding="0sp" android:src="@drawable/decline"
+			android:id="@+id/decline" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:layout_marginLeft="10px"></ImageButton>
 			
 	</LinearLayout>
+		<LinearLayout android:id="@+id/linearLayout2"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:gravity="center">
+		
+			<ImageButton android:padding="0sp" android:src="@drawable/manage"
+			android:id="@+id/decline" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			></ImageButton>
+			
+	
+	
+	</LinearLayout>
+	
 </LinearLayout>
