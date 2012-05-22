@@ -15,6 +15,7 @@
 #include "uart2.h"
 #include "common.h"
 #include "led.h"
+#include "cameraB.h"
 
 volatile DWORD UART2Status;
 volatile BYTE UART2TxEmpty = 1;

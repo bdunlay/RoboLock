@@ -15,6 +15,9 @@
 #include "led.h"
 #include "strike.h"
 #include "keypad.h"
+#include "timer.h"
+#include "cameraB.h"
+#include "adc.h"
 
 
 //#include "uip_timer.h"
@@ -25,51 +28,56 @@
 #include "clock.h"
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])
 
-DWORD knockThresh;
-
 void robolock() {
-	DWORD adcVal;
 
 	switch (so.state) {
 
 	case IDLE:
-		clearLCD();
-		// turn off backlight
-		adcVal = get_ADCval();
+		clearLCD();  				// cls
+		lcdBacklightOff(); 			// backlight OFF
 
-		if (1/*keypress || knock*/) {
+		ADC0Read(); 				// start reading from the piezo
+
+		if (keypadValue != -1 || adcValue > knockThresh) // if someone pressed a key or knocked hard enough
+		{
+			keypadValue = -1; 		// reset the keypad value to "unpressed"
 			update_state(PROMPT);
 		}
 		break;
 
 	case PROMPT:
+		lcdBacklight(); 			// backlight ON
 
-		//turn on backlight
+		enable_timer(2); 			// start prompt timeout
 
-		// set_timer()
+		lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
-		// print to LCD
-		// # to enter code
-		// * to take photo
-
-		while (1 /* !timeout() */) {
-
-			if (1 /*user_entry == '*' */) {
+		while (!promptTimedout) {
+			if (keypadValue == 0) { // TODO: !!!!!!! change value to * !!!!!!!
 				update_state(AUTH_CODE);
 				break;
-			} else if (1/*user_entry == '#' */) {
+			} else if (keypadValue == 1) { // TODO: !!!!!! change value to # !!!!!!
 				update_state(PHOTO);
 				break;
+			} else if (keypadValue == -1) {
+				continue;
+			}
+			else {
+				reset_timer(2);
+				promptTimeoutCount = 0; // reset the timeout counter if a non-recognized character is seen
+				keypadValue = -1;
 			}
 		}
 
-		update_state(ERROR);
+		if (promptTimedout) update_state(ERROR);
 		break;
 
 	case PHOTO:
+		disable_timer(2); 			// disable the timer while the camera takes a picture
 
-		// print LCD countdown
-		// 3.. 2.. 1..
+		sayCheese();				// print LCD countdown
+									// 3.. 2.. 1..
+		// take photo
 
 		if (1 /*SUCCESS == take_photo()*/) {
 			update_state(AUTH_PHOTO);
@@ -80,8 +88,8 @@ void robolock() {
 		break;
 
 	case AUTH_PHOTO:
-
-		// set timeout
+		reset_timer(2);
+		promptTimeoutCount = 0;  // reset timeout counter
 
 		while (1 /*!timeout()*/) {
 			if (1/*permission_granted()*/) {
@@ -130,6 +138,8 @@ void robolock() {
 
 		while (1 /*!timeout() */)
 			;
+
+		promptTimedout = FALSE; // reset timeout flag
 		update_state(IDLE);
 
 		break;
@@ -190,8 +200,39 @@ void update_state(unsigned int new_state) {
 }
 
 void init_robolock() {
+	/* set initial values */
 	so.state = IDLE;
+	promptTimedout = FALSE;
+	promptTimeoutCount = 0;
 	knockThresh = 512;
+	keypadValue = -1;
+	/* initialize some systems */
+	init_timer(2, Fpclk, (void*)promptTimeoutHandler, TIMEROPT_INT_RST);
+}
+
+void promptTimeoutHandler() {
+	T2IR = 1;
+	IENABLE;
+
+	if (promptTimeoutCount++ > PROMPT_TIMEOUT_LEN)
+	{
+		promptTimedout = TRUE;
+		promptTimeoutCount = 0; // reset timeout countdown
+		disable_timer(2); // disable itself
+		reset_timer(2);
+	}
+
+	IDISABLE;
+	VICVectAddr = 0;
+}
+
+void sayCheese() {
+	lcdDisplay(CHEESE_TEXT_1, CHEESE_TEXT_2);
+	busyWait(1000);
+	lcdDisplay(CHEESE_TEXT_1, CHEESE_TEXT_3);
+	busyWait(1000);
+	lcdDisplay(CHEESE_TEXT_1, CHEESE_TEXT_4);
+	busyWait(1000);
 }
 
 void init_network() {
