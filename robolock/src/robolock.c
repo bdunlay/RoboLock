@@ -38,7 +38,7 @@ void robolock() {
 
 		ADC0Read(); 				// start reading from the piezo
 
-		if (keypadValue != -1 || adcValue > knockThresh) // if someone pressed a key or knocked hard enough
+		if (keypadValue != -1 || ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
 		{
 			keypadValue = -1; 		// reset the keypad value to "unpressed"
 			update_state(PROMPT);
@@ -77,7 +77,7 @@ void robolock() {
 
 		sayCheese();				// print LCD countdown
 									// 3.. 2.. 1..
-		// take photo
+		// TODO: take photo
 
 		if (1 /*SUCCESS == take_photo()*/) {
 			update_state(AUTH_PHOTO);
@@ -88,106 +88,64 @@ void robolock() {
 		break;
 
 	case AUTH_PHOTO:
-		reset_timer(2);
 		promptTimeoutCount = 0;  // reset timeout counter
+		reset_timer(2);
+		enable_timer(2);
 
-		while (1 /*!timeout()*/) {
-			if (1/*permission_granted()*/) {
+		while (!promptTimedout) {
+			if (1/*permission_granted()*/) { // TODO: photo authenticated
 				update_state(OPEN_DOOR);
 				so.permission = 0;
 				break;
 			}
 		}
 
-		update_state(ERROR);
+		if (promptTimedout) update_state(ERROR);
 
 		break;
 
 	case AUTH_CODE:
+		promptTimeoutCount = 0;  // reset timeout counter
+		reset_timer(2);
+		enable_timer(2);
 
-		// set timeout
-
-		while (1/* !timeout() */) {
+		while (!promptTimedout) {
+			// TODO: implement method to enter and check codes
 			if (1/*valid_code(user_entry()) */) {
 				update_state(OPEN_DOOR);
 				break;
 			}
 		}
 
-		update_state(ERROR);
-
+		if (promptTimedout) update_state(ERROR);
 		break;
 
 	case OPEN_DOOR:
 
-		// set timeout
+		lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
 
-		// print welcome message to LCD
-		while (1/*!timeout() */)
-			;
+		strikeOpen();
+		busyWait(5000);
+		strikeClose();
 
 		update_state(IDLE);
 
 		break;
 
 	case ERROR:
+		disable_timer(2);
+		reset_timer(2);
+		promptTimeoutCount = 0;
+		promptTimedout = FALSE; 		// reset timeout flag
 
-		// set timeout
+		lcdDisplay(ERROR_TEXT_1, BLANK_TEXT);
+		busyWait(5000);
 
-		// print error message
-
-		while (1 /*!timeout() */)
-			;
-
-		promptTimedout = FALSE; // reset timeout flag
 		update_state(IDLE);
 
 		break;
 
 	}
-
-	//	// muahahahahaha
-	//
-	//	//wait for knock
-	//	lcdInit();
-	//	lcdDisplay("waiting         ","for keypad       ");
-	//	keypadVerify();
-	//	busyWait(40);
-	////	while(1){
-	////		if(peizoListen()==1);
-	////			break;
-	////	}
-	//
-	//	//Activate  LCD Message
-	//	lcdBacklight();
-	//			lcdDisplay("Hello           ","                ");
-	//			busyWait(200);
-	//			lcdDisplay("Please          ","Face Camera     ");
-	//			busyWait(200);
-	//
-	//	//Take Picture
-	////			cameraTake();
-	//			busyWait(200);
-	//
-	//    //Send Picture to server
-	////			ethernetSend();
-	//
-	//	//wait for response
-	////			while(1){
-	////				if(networkFlag)
-	////					break;
-	////			}
-	//
-	//	//Handle response
-	////			if(networkResponse== VALID_USER){
-	//			lcdClear();
-	//				lcdDisplay("Acess           ","Granted         ");
-	//				strikeOpen();
-	//				busyWait(200);
-	//				strikeClose();
-	//				busyWait(200);
-	//				lcdBacklightOff();
-	////			}
 
 }
 

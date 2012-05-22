@@ -25,6 +25,12 @@ enum {
 #define CHEESE_TEXT_3            ".......2........"
 #define CHEESE_TEXT_4            "...........1...."
 
+#define WELCOME_TEXT_!           "    Welcome!    "
+
+#define ERROR_TEXT_1             "     ERROR      "
+
+#define BLANK_TEXT               "                "
+
 /* Structs */
 
 struct state_object {
@@ -52,9 +58,9 @@ void sayCheese(void);
 
 volatile DWORD adcValue;
 
-DWORD knockThresh;
+volatile DWORD knockThresh;
 
-BYTE promptTimedout;
-BYTE promptTimeoutCount;
+volatile BYTE promptTimedout;
+volatile BYTE promptTimeoutCount;
 
 #endif
