@@ -8,11 +8,13 @@
 #include "dip.h"
 #include "LCD.h"
 #include "keypad.h"
+#include "cameraB.h"
 #include "ex_sdram.h"
 #include "timer.h"
 #include "uart.h"
 #include "adc.h"
 #include "uart.h"
+#include "uart2.h"
 #include "uart3.h"
 #include "ethernet.h"
 #include "strike.h"
@@ -29,13 +31,14 @@ int main(void) {
 	initLCD();
 	init_dip();
 
-	UARTInit(9600);
-	UART3Init(9600);
-	ADCInit();
-	SDRAMInit();
+	//UARTInit(9600);
+	UART2Init(38400);
+	//UART3Init(9600);
+	//ADCInit();
+	//SDRAMInit();
 	strikeInit();
 	init_robolock();
-	init_network();
+	//init_network();
 
 
 	while (1) {
@@ -75,7 +78,7 @@ int main(void) {
 			break;
 
 		case 7:
-
+			testCamera();
 			break;
 
 		case 8:

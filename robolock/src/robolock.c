@@ -25,36 +25,22 @@
 #include "clock.h"
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])
 
-
-
-unsigned int permission_granted() {
-	return so.permission;
-}
-
-
-void update_state(unsigned int new_state) {
-	so.state = new_state;
-}
-
-void init_robolock() {
-	so.state = IDLE;
-}
+DWORD knockThresh;
 
 void robolock() {
+	DWORD adcVal;
 
 	switch (so.state) {
 
 	case IDLE:
-		// clear LCD
+		clearLCD();
 		// turn off backlight
-		// waiting for data on ADC or a key press
+		adcVal = get_ADCval();
 
-		while (1) {
-			if (1/*keypress || knock*/) {
-				update_state(PROMPT);
-				break;
-			}
+		if (1/*keypress || knock*/) {
+			update_state(PROMPT);
 		}
+		break;
 
 	case PROMPT:
 
@@ -193,6 +179,19 @@ void robolock() {
 	//				lcdBacklightOff();
 	////			}
 
+}
+
+unsigned int permission_granted() {
+	return so.permission;
+}
+
+void update_state(unsigned int new_state) {
+	so.state = new_state;
+}
+
+void init_robolock() {
+	so.state = IDLE;
+	knockThresh = 512;
 }
 
 void init_network() {

@@ -9,7 +9,7 @@ void busyWait(DWORD delay_period) {
 
 	for (a = 0; a < delay_period; a++)
 	{
-		for (b = 0; b < (Fpclk / 1000-1); b++) ;
+		for (b = 0; b < (3600); b++) ;//for (b = 0; b < (Fpclk / 1000-1); b++) ;
 	}
 }
 

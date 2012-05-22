@@ -26,6 +26,7 @@
 extern void ADC0Handler( void ) __irq;
 extern DWORD ADCInit( void );
 extern void ADC0Read( void );
+DWORD get_ADCval( void );
 void testADC(void);
 
 #endif /* end __ADC_H */

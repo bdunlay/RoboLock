@@ -130,6 +130,14 @@ void ADC0Read( void )
 #endif
 }
 
+DWORD get_ADCval()
+{
+	ADC0Read();
+	while (!ADC0IntDone);
+	ADC0IntDone = 0;
+	return ADC0Value;
+}
+
 #include "led.h"
 #include "common.h"
 void testADC(void)
