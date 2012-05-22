@@ -12,5 +12,7 @@ volatile int keypadCount;
 volatile BYTE cameraValue;
 volatile int cameraCount;
 
+volatile DWORD endFC;
+volatile BYTE picSize;
 
 #endif
