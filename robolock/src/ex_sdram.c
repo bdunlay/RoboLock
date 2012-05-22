@@ -80,11 +80,11 @@ void SDRAMInit( void )
 
   /* 128MB, 8Mx16, 4 banks, row=12, column=9 */
   EMC_DYN_CFG0 = 0x00080480;
-  delayMs(1, 100);			/* use timer 1, wait for 100ms */
+  busyWait(100);			/* use timer 1, wait for 100ms */
 
   /* Mem clock enable, CLKOUT runs, send command: NOP */
   EMC_DYN_CTRL = 0x00000183;
-  delayMs(1, 200);			/* use timer 1, wait for 200ms */
+  busyWait(200);			/* use timer 1, wait for 200ms */
     
   /* Send command: PRECHARGE-ALL, shortest possible refresh period */
   EMC_DYN_CTRL = 0x00000103;
@@ -114,7 +114,7 @@ void SDRAMInit( void )
   EMC_DYN_CTRL = 0x00000000;	  /* Send command: NORMAL */
 
   EMC_DYN_CFG0 = 0x00080480;	  /* Enable buffer */
-  delayMs(1, 1);				  /* Use timer 1 */
+  busyWait(1);				  /* Use timer 1 */
   return;
 
 }

@@ -49,7 +49,7 @@ extern volatile uint32_t timer0_counter;
 
 void clock_init(void)
 {
-	init_timer(0, CLOCK_CONF_SECOND);
+	init_timer(3, CLOCK_CONF_SECOND, (void*)0, TIMEROPT_INT_RST); // TODO: change timeout time, Brian
 }
 
 /*--------------------------- clock_time ---------------------------------*/

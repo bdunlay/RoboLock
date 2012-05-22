@@ -3,7 +3,7 @@
 
 
 
-void busyWait(unsigned int);
+void busyWait(DWORD);
 BYTE hexToChar(BYTE);
 
 volatile BYTE keypadValue;
