@@ -6,19 +6,21 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
-import android.widget.Toast;
 
-
-public class MyCd2mReceiver extends BroadcastReceiver {
-	private static String KEY = "c2dmPref";
-	private static String REGISTRATION_KEY = "registrationKey";
+public class MyCd2mReceiver extends BroadcastReceiver{
+	private static final String KEY = "c2dmPref";
+	private static final String REGISTRATION_KEY = "registrationKey";
 
 	private Context context;
+	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 	    this.context = context;
@@ -75,6 +77,7 @@ public class MyCd2mReceiver extends BroadcastReceiver {
 	
 		//httpRequest(server + "/hello");
 		Log.v("RoboLock", "CD2M SUCCESS!");
+		serverNotification(context);
 	}
 
 
@@ -103,6 +106,39 @@ public class MyCd2mReceiver extends BroadcastReceiver {
 					+ url + e.toString());
 		}
 	}
+	
+	
+	public void serverNotification(Context context) {
+		String ns = Context.NOTIFICATION_SERVICE;
+	    NotificationManager nm =
+	        (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+		
+		int icon = R.drawable.ic_robolock; // TODO will change this
+		CharSequence tickerText = "New Visitor";
+		long when = System.currentTimeMillis();
+	
+		Notification notification = new Notification(icon, tickerText, when);
+		
+		CharSequence contentTitle = "My notification";
+		CharSequence contentText = "Hello World!";
+		//Intent notificationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("robolock://launch"));
+		
+		  Intent notificationIntent = new Intent(context, RoboLock.class)
+          .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  
 
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+	
+		notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+		
+		int HELLO_ID = 1;
+	
+		nm.notify(HELLO_ID, notification);
+
+
+
+		
+	}	
+
+	
+	
 }
-

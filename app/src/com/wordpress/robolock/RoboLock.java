@@ -9,6 +9,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,19 +24,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class Main extends Activity {
+public class RoboLock extends Activity {
 
 	
 	final String server = "http://192.168.1.149:8080";
 
-	
-	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-//		cd2mSetup();
+	//	cd2mSetup();
+	//	serverNotification();
 
 	}
 	
@@ -135,4 +136,13 @@ public class Main extends Activity {
 					+ url + e.toString());
 		}
 	}
+	
+
+		
 }
+
+
+
+
+
+
