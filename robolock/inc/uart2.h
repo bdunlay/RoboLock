@@ -9,14 +9,14 @@
  *   2005.10.01  ver 1.00    Prelimnary version, first Release
  *
 ******************************************************************************/
-#ifndef __UART3_H
-#define __UART3_H
+#ifndef __UART2_H
+#define __UART2_H
 
 
-//#include "type.h"
-//#include "common.h"
-//#include "LPC23xx.h"                        /* LPC21xx definitions */
-//#include "target.h"
+#include "type.h"
+#include "common.h"
+#include "LPC23xx.h"                        /* LPC21xx definitions */
+#include "target.h"
 #include "irq.h"
 #define IER_RBR		0x01
 #define IER_THRE	0x02
@@ -40,14 +40,15 @@
 #define UART_BUFSIZE		0x10
 
 
-DWORD UART3Init( DWORD Baudrate );
+DWORD UART2Init( DWORD Baudrate );
 //DWORD UARTInit(  );
-void UART3Handler( void ) __irq;
+void UART2Handler( void ) __irq;
+void UART2Send(BYTE *, DWORD);
 
-extern volatile DWORD UART3Status;
-extern volatile BYTE UART3TxEmpty;
-extern volatile BYTE UART3Buffer[UART_BUFSIZE];
-extern volatile DWORD UART3Count;
+extern volatile DWORD UART2Status;
+extern volatile BYTE UART2TxEmpty;
+extern volatile BYTE UART2Buffer[UART_BUFSIZE];
+extern volatile DWORD UART2Count;
 
 
 #endif /* end __UART_H */

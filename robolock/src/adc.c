@@ -14,7 +14,7 @@
 #include "target.h"
 #include "adc.h"
 
-volatile DWORD ADC0Value;
+volatile DWORD ADC0Value = 0;
 volatile DWORD ADC0IntDone = 0;
 
 #if ADC_INTERRUPT_FLAG
@@ -46,7 +46,7 @@ void ADC0Handler (void)
 	if (regVal & 0x10) // if AD0[4] is done
 		ADC0Value = ( AD0DR4 >> 6 ) & 0x3FF;
   }
-  AD0CR &= 0xF8FFFFFF;	/* stop ADC now */ 
+  AD0CR &= 0xF8FFFFFF;	/* stop ADC now */
   ADC0IntDone = 1;
   VICVectAddr = 0;		/* Acknowledge Interrupt */
 }
@@ -128,6 +128,14 @@ void ADC0Read( void )
 #else
   return ;
 #endif
+}
+
+DWORD get_ADCval()
+{
+	ADC0Read();
+	while (!ADC0IntDone);
+	ADC0IntDone = 0;
+	return ADC0Value;
 }
 
 #include "led.h"

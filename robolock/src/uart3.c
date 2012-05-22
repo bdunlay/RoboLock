@@ -15,6 +15,7 @@
 #include "uart3.h"
 #include "common.h"
 #include "led.h"
+#include "keypad.h"
 
 volatile DWORD UART3Status;
 volatile BYTE UART3TxEmpty = 1;
