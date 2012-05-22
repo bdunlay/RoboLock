@@ -100,6 +100,8 @@ void UART2Handler (void)
 		/* Receive Data Available */
 		UART2Buffer[UART2Count] = U2RBR;
 		cameraValue = UART2Buffer[UART2Count];
+		if(UART2Buffer[cameraCount] == 0xD9)
+			endFC = 1;
 		cameraCount++;
 		UART2Count++;
 		if ( UART2Count == UART_BUFSIZE ) {
