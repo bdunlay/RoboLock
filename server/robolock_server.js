@@ -8,21 +8,70 @@ var fs = require('fs');
 //var fd = fs.openSync('./images/photo.jpg', 'w+');
 
 
+function sendPhotoToPhone(fd) {
 
-function writeData(fd, buffer, length) {
-  fs.writeSync(fd, buffer, 0, length, null);
 }
+
+var FILE_OPEN = false;
+var fd;
 
 // TCP SERVER (ROBOLOCK INTERFACE
 var tcp_server = net.createServer(function(c) { //'connection' listener
-  console.log('[Server] Connected');
+  console.log('[TCP-Server] Connected');
 
   c.on('end', function() {
-    console.log('[Server] Disconnected');
+    console.log('[TCP-Server] Disconnected');
   });
 
   c.on('data', function(data) {
-    console.log("[RoboLock] "+data.toString());
+
+    var splitData = data.toString().split("/", 2);
+
+    var header = splitData[0].split(":")
+    var payload = splitData[1]
+
+    // photo:0:500:1500, codes
+
+    console.log(header + "\n");
+    console.log(payload + "\n");
+
+
+    // switch(header[0] /* payload type (photo, codes) */) {
+
+    //   case "photo":
+    //     if (FILE_OPEN) {
+
+    //       fs.write(fd, payload, header[1], 'utf8');
+    //       c.write("OK")
+          
+    //       if (header[2] == header[3] /* if last byte written == total bytes */) {
+    //         sendPhotoToPhone(fd);
+    //         fd.close();
+    //         FILE_OPEN = false;
+    //       }
+    //     } else {
+
+    //       fd = fs.open('./images/photo.jpg', 'w+', 0666, function() {
+    //         FILE_OPEN = true;
+    //       });
+
+    //     }
+
+
+    //     //fs.write(fd, buffer, offset, length, position, [callback])
+    //   break;
+
+    //   case "codes":
+    //     // read codes
+    //     // send to phone
+    //   break;
+
+
+
+    // }
+
+
+   // console.log("[RoboLock] "+data.toString());
    });  
 
 });
@@ -58,7 +107,7 @@ console.log(req);
 
      res.writeHead(200, {'Content-Type': 'text/plain' });
      res.end('Registration successful ' + registration_id + "\n");
-     console.log("Hello!");
+     console.log("[HTTP-Server] Registered ID " + registration_id);
   }
 
   else { 
@@ -69,9 +118,11 @@ console.log(req);
 });
 
 
-http_server.listen(8080);
+http_server.listen(8080, function() {
+    console.log('[HTTP-Server] Bound on port 8080');
+});
 
 
 tcp_server.listen(9090, function() { //'listening' listener
-  console.log('[Server] Bound');
+  console.log('[TCP-Server] Bound on port 8081');
 });
