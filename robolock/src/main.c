@@ -28,17 +28,24 @@ int main(void) {
 
 	TargetResetInit();
 	initLED();
+	printLED(0x01);
 	initLCD();
 	init_dip();
-
-	//UARTInit(9600);
+	UARTInit(9600);
+	printLED(0x03);
 	UART2Init(38400);
-	//UART3Init(9600);
-	//ADCInit();
+	printLED(0x07);
+	UART3Init(9600);
+	printLED(0x0F);
+	ADCInit();
+	printLED(0x1F);
 	//SDRAMInit();
 	strikeInit();
+	printLED(0x3F);
 	init_robolock();
+	printLED(0x7F);
 	init_network();
+	printLED(0xFF);
 
 
 	while (1) {

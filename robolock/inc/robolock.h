@@ -15,6 +15,9 @@ enum {
 	IDLE, PROMPT, PHOTO, AUTH_PHOTO, AUTH_CODE, OPEN_DOOR, ERROR
 } states;
 
+#define MAX_CODES                16
+#define CODE_LEN                 4
+
 #define PROMPT_TIMEOUT_LEN       30
 
 #define PROMPT_TEXT_1            "# to enter code "
@@ -25,7 +28,7 @@ enum {
 #define CHEESE_TEXT_3            ".......2........"
 #define CHEESE_TEXT_4            "...........1...."
 
-#define WELCOME_TEXT_!           "    Welcome!    "
+#define WELCOME_TEXT_1           "    Welcome!    "
 
 #define ERROR_TEXT_1             "     ERROR      "
 
@@ -52,6 +55,7 @@ void init_network(void);
 void periodic_network(void);
 
 void promptTimeoutHandler(void) __irq;
+BYTE codeMatches(BYTE*);
 
 void sayCheese(void);
 
@@ -63,5 +67,7 @@ volatile DWORD knockThresh;
 
 volatile BYTE promptTimedout;
 volatile BYTE promptTimeoutCount;
+
+volatile BYTE validCodes[MAX_CODES][CODE_LEN+1]; // format of each code is [x][x][x][x][valid/invalid]
 
 #endif
