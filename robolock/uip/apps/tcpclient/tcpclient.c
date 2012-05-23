@@ -24,7 +24,6 @@ void connect() {
 
 }
 
-
 int startByte, endByte, totalBytes;
 
 char dataBuffer[1024];
@@ -36,7 +35,6 @@ int formatPacket(char* type, char* data, int bytes) {
 	for (i = 0; i < 1024; i++) {
 		dataBuffer[i] = 0;
 	}
-
 
 	for (i = 0; type[i] != '\0'; i++) {
 		dataBuffer[i] = type[i];
@@ -52,9 +50,7 @@ int formatPacket(char* type, char* data, int bytes) {
 }
 
 int mm = 0;
-
-int START = 1;
-int END = 1;
+int counter;
 
 void tcp_client_appcall(void) {
 	int k;
@@ -69,74 +65,87 @@ void tcp_client_appcall(void) {
 
 		connect();
 	} else if (uip_connected() || uip_newdata()) {
-
-		// heartbeat to indicate that we're connected
-		for (k = 0; k < 8; k++) {
-			printLED(1 << k);
-			busyWait(20);
-		}
+		counter++;
 
 		int length;
 
-		switch(so.state) {
+		switch (so.state) {
 
 		case PHOTO:
-//			if (photoChunkSize()) {
-//				length = formatPacket("photo\0", photoChunk(), photoChunkSize());
-//			} else {
-//				length = formatPacket("photo\0", "END", 3);
-//				so.photo_sent = 0;
-//			}
+			if (photoChunkSize() && uip_acked()) { // TODO photoChunkSize should return next chunk size
+				length // TODO photoChunk should return next photo chunk in buffer
+						= formatPacket("photo\0", photoChunk(),
+								photoChunkSize());
+			} else {
+				length = formatPacket("photo\0", "END", 3);
+				so.photo_sent = 0;
+			}
+
+			uip_send(dataBuffer, length);
 
 			break;
 		case AUTH_PHOTO:
+			if (uip_newdata()) {
+				if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'O'
+						&& uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
+					so.permission = 1;
+				}
+			}
 			break;
 
-		uip_send(dataBuffer, length);
+		default:
+			if (counter >= 1000) {
+				length = formatPacket("heartbeat\0", "thump thump", 11);
+				uip_send(dataBuffer, length);
+				// heartbeat to indicate that we're connected
+				for (k = 0; k < 8; k++) {
+					printLED(1 << k);
+					busyWait(20);
+				}
+			}
 
+			counter = 0;
 		}
 
-
-//		if (START) {
-//			START = 0;
-//			uip_send(dataBuffer, length);
-//
-//		} else if (END)
-//
-//		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN]== 'O' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
-//			END = 0;
-//
-//		}
-
+		//		if (START) {
+		//			START = 0;
+		//			uip_send(dataBuffer, length);
+		//
+		//		} else if (END)
+		//
+		//		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN]== 'O' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
+		//			END = 0;
+		//
+		//		}
 
 
-			//		switch (so.state) {
-//
-//		case PHOTO:
-//			// need to make sure that photo has actually been taken and saved
-//			// send "New Photo: [filesize in bytes]"
-//			// read N bytes from camera
-//			// send N bytes to server
-//			// if done, send DONE
-//			// uip_send(photo_chunk, size);
-//
-//			totalBytes = getPhotoSize();
-//
-//			formatPacket("photo", startByte, endByte, totalbytes, getChunk());
-//
-//
-//			break;
-//
-//		case AUTH_PHOTO:
-//			if (uip_len > 2 && uip_buf[0] == 'o' && uip_buf[1] == 'k') {
-//				so.permission = 1;
-//			}
-//			break;
-//
-//		default:
-//			break;
-//
-//		}
+		//		switch (so.state) {
+		//
+		//		case PHOTO:
+		//			// need to make sure that photo has actually been taken and saved
+		//			// send "New Photo: [filesize in bytes]"
+		//			// read N bytes from camera
+		//			// send N bytes to server
+		//			// if done, send DONE
+		//			// uip_send(photo_chunk, size);
+		//
+		//			totalBytes = getPhotoSize();
+		//
+		//			formatPacket("photo", startByte, endByte, totalbytes, getChunk());
+		//
+		//
+		//			break;
+		//
+		//		case AUTH_PHOTO:
+		//			if (uip_len > 2 && uip_buf[0] == 'o' && uip_buf[1] == 'k') {
+		//				so.permission = 1;
+		//			}
+		//			break;
+		//
+		//		default:
+		//			break;
+		//
+		//		}
 
 	}
 

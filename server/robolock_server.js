@@ -84,7 +84,7 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
         }
 
         console.log(startIndex+ "\n")
-        sendData("OK", "Received last chunk");
+      //  sendData("OK", "Received last chunk");
 
 
       break;
@@ -153,7 +153,7 @@ http_server.on('request', function(req, res) {
 
   else if (action == '/unlock') {
 
-    sendData("COMMAND/unlock");
+    sendData("OK");
 
     res.writeHead(200, {'Content-Type': 'text/plain' });
     res.end("Unlocking");

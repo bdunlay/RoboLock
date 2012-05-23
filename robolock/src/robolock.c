@@ -84,6 +84,11 @@ void robolock() {
 		// TODO: take photo
 
 		while(!so.photo_sent);
+		so.photo_sent = 0;
+
+		update_state(AUTH_PHOTO);
+
+		// TODO timeout in case of error?
 
 		break;
 
@@ -93,9 +98,9 @@ void robolock() {
 		enable_timer(2);
 
 		while (!promptTimedout) {
-			if (1/*permission_granted()*/) { // TODO: photo authenticated
-				update_state(OPEN_DOOR);
+			if (so.permission) {
 				so.permission = 0;
+				update_state(OPEN_DOOR);
 				break;
 			}
 		}
