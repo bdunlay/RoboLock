@@ -14,7 +14,6 @@
 #include "target.h"
 #include "adc.h"
 
-volatile DWORD ADC0Value = 0;
 volatile DWORD ADC0IntDone = 0;
 
 #if ADC_INTERRUPT_FLAG
@@ -77,6 +76,8 @@ DWORD ADCInit( void )
 		( 0 << 22 ) |  		/* TEST1:0 = 00 */
 		( 0 << 24 ) |  		/* START = 0 don't do A/D conversion yet */
 		( 0 << 27 );		/* EDGE = 0 (CAP/MAT singal falling,trigger A/D conversion) */ 
+
+  ADC0Value = 0;
 
   /* If POLLING, no need to do the following */
 #if ADC_INTERRUPT_FLAG

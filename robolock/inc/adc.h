@@ -23,6 +23,8 @@
 //#define ADC_NUM			8		/* for LPC23xx */
 //#define ADC_CLK			1000000		/* set to 1Mhz */
 
+volatile DWORD ADC0Value;
+
 extern void ADC0Handler( void ) __irq;
 extern DWORD ADCInit( void );
 extern void ADC0Read( void );
