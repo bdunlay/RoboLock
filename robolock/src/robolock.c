@@ -37,14 +37,14 @@ void robolock() {
 	switch (so.state) {
 
 	case IDLE:
-		clearLCD();  				// cls
+		lcdClear();  				// cls
 		lcdBacklightOff(); 			// backlight OFF
 
 		ADC0Read(); 				// start reading from the piezo
 
-		if (keypadValue != -1 || ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+		if (keypadValue != 0 || ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
 		{
-			keypadValue = -1; 		// reset the keypad value to "unpressed"
+			keypadValue = 0; 		// reset the keypad value to "unpressed"
 			update_state(PROMPT);
 		}
 		break;
@@ -57,7 +57,7 @@ void robolock() {
 		lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 		while (!promptTimedout) {
-			if (keypadValue == -1) {
+			if (keypadValue == 0) {
 				continue;
 			} else if (keypadValue == 0) { // TODO: !!!!!!! change value to * !!!!!!!
 				update_state(AUTH_CODE);
@@ -69,7 +69,7 @@ void robolock() {
 			else {
 				reset_timer(2);
 				promptTimeoutCount = 0; // reset the timeout counter if a non-recognized character is seen
-				keypadValue = -1;
+				keypadValue = 0;
 			}
 		}
 
@@ -117,9 +117,9 @@ void robolock() {
 		codeIdx = 0;			// reset code index to point at the beginning of the code array
 
 		while (!promptTimedout) {
-			if (keypadValue != -1) {
+			if (keypadValue != 0) {
 				codeEntered[codeIdx++] = keypadValue; 	// save digit
-				keypadValue = -1;						// reset digit to unread
+				keypadValue = 0;						// reset digit to unread
 				if (codeIdx >= CODE_LEN && codeMatches(codeEntered)) {
 					update_state(OPEN_DOOR);
 					break;
@@ -175,7 +175,7 @@ void init_robolock() {
 	promptTimedout = FALSE;
 	promptTimeoutCount = 0;
 	knockThresh = 512;
-	keypadValue = -1;
+	keypadValue = 0;
 	/* set initial codes */
 	for (i=0; i<MAX_CODES; i++)			// initialize all codes to invalid
 		validCodes[i][CODE_LEN] = FALSE;

@@ -198,6 +198,8 @@ DWORD UART3Init( DWORD baudrate )
 		return (FALSE);
 	}
 
+	keypadValue = 0; // set keypadValue to "unpressed"
+
 	U3IER = IER_RBR | IER_THRE | IER_RLS;	/* Enable UART3 interrupt */
 	return (TRUE);
 }

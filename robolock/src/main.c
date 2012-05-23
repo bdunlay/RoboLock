@@ -29,7 +29,7 @@ int main(void) {
 	TargetResetInit();
 	initLED();
 	printLED(0x01);
-	initLCD();
+	initLCD(); lcdInit();
 	init_dip();
 	UARTInit(9600);
 	printLED(0x03);
