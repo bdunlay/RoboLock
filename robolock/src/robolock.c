@@ -26,9 +26,14 @@
 #include "tapdev.h"
 #include "clock-arch.h"
 #include "clock.h"
+#include "tcpclient.h"
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])
 
+
 void robolock() {
+
+	BYTE codeEntered[CODE_LEN];
+	BYTE codeIdx;
 
 	switch (so.state) {
 
@@ -53,14 +58,14 @@ void robolock() {
 		lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 		while (!promptTimedout) {
-			if (keypadValue == 0) { // TODO: !!!!!!! change value to * !!!!!!!
+			if (keypadValue == -1) {
+				continue;
+			} else if (keypadValue == 0) { // TODO: !!!!!!! change value to * !!!!!!!
 				update_state(AUTH_CODE);
 				break;
 			} else if (keypadValue == 1) { // TODO: !!!!!! change value to # !!!!!!
 				update_state(PHOTO);
 				break;
-			} else if (keypadValue == -1) {
-				continue;
 			}
 			else {
 				reset_timer(2);
@@ -79,11 +84,7 @@ void robolock() {
 									// 3.. 2.. 1..
 		// TODO: take photo
 
-		if (1 /*SUCCESS == take_photo()*/) {
-			update_state(AUTH_PHOTO);
-		} else {
-			update_state(ERROR);
-		}
+		while(!so.photo_sent);
 
 		break;
 
@@ -109,11 +110,16 @@ void robolock() {
 		reset_timer(2);
 		enable_timer(2);
 
+		codeIdx = 0;			// reset code index to point at the beginning of the code array
+
 		while (!promptTimedout) {
-			// TODO: implement method to enter and check codes
-			if (1/*valid_code(user_entry()) */) {
-				update_state(OPEN_DOOR);
-				break;
+			if (keypadValue != -1) {
+				codeEntered[codeIdx++] = keypadValue; 	// save digit
+				keypadValue = -1;						// reset digit to unread
+				if (codeIdx >= CODE_LEN && codeMatches(codeEntered)) {
+					update_state(OPEN_DOOR);
+					break;
+				}
 			}
 		}
 
@@ -148,6 +154,7 @@ void robolock() {
 	}
 
 }
+
 
 unsigned int permission_granted() {
 	return so.permission;

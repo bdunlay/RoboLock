@@ -38,11 +38,13 @@ int main(void) {
 	//SDRAMInit();
 	strikeInit();
 	init_robolock();
-	//init_network();
+	init_network();
 
 
 	while (1) {
-
+		robolock();
+	}
+		while(1) {
 		switch (read_dip()) {
 
 		case 0:

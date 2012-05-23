@@ -36,6 +36,7 @@ enum {
 struct state_object {
 	unsigned int state;
 	unsigned int permission;
+	unsigned int photo_sent;
 
 } so;
 

@@ -14,12 +14,14 @@ function sendData(type, message) {
 function notifyPhone() {
 
   //C2DM Code
+  console.log("NOTIFYING PHONE!");
 
 }
 
 var FILE_OPEN = false;
 
 var connection;
+var startIndex = 0;
 
 // TCP SERVER (ROBOLOCK INTERFACE
 var tcp_server = net.createServer(function(c) { //'connection' listener
@@ -36,8 +38,10 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
     var splitData = data.toString().split("/", 2);
 
 
-    var header = splitData[0].split(":")
+    var header = splitData[0]
     var payload = splitData[1]
+
+    console.log(header);
 
     // photo:0:500:1500, codes
 
@@ -49,28 +53,39 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
     console.log(payload);
     console.log("-------------\n");
 
-    switch(header[0] /* payload type (photo, codes) */) {
+    switch(header /* payload type (photo, codes) */) {
 
       case "photo":
 
-      if (FILE_OPEN) {
+        if (FILE_OPEN) {
 
-        fs.writeSync(fd, payload, parseInt(header[1]), 'utf8');
+          if (payload == "END") {
+            fs.closeSync(fd);
+            notifyPhone();
+            FILE_OPEN = false;
+            startIndex = 0;
 
-        if (header[2] == header[3] /* if last byte written == total bytes */) {
-          fs.closeSync(fd);
-          notifyPhone();
-          FILE_OPEN = false;
+          console.log("CLOSING FILE");
+
+          } else {
+            startIndex += fs.writeSync(fd, payload, startIndex, 'utf8');
+            console.log("WRITING FILE");
+
+          }
+
+        } else {
+          console.log("OPENING FILE");
+          fd = fs.openSync('./images/photo.jpg', 'w+', 0666);
+          startIndex = fs.writeSync(fd, payload, startIndex, 'utf8');
+          FILE_OPEN = true;
+
+          console.log("WRITING FILE");
+
         }
-      } else {
 
-        fd = fs.openSync('./images/photo.jpg', 'w+', 0666);
-        fs.writeSync(fd, payload, parseInt(header[1]), 'utf8');
-        FILE_OPEN = true;
+        console.log(startIndex+ "\n")
+        sendData("OK", "Received last chunk");
 
-      }
-
-      sendData("OK", "Received last chunk");
 
       break;
 
