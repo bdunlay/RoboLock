@@ -34,9 +34,6 @@ void robolock() {
 	BYTE codeEntered[CODE_LEN];
 	BYTE codeIdx;
 
-	BYTE codeEntered[CODE_LEN];
-	BYTE codeIdx;
-
 	switch (so.state) {
 
 	case IDLE:

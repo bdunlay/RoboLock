@@ -81,12 +81,12 @@ void tcp_client_appcall(void) {
 		switch(so.state) {
 
 		case PHOTO:
-			if (photoChunkSize()) {
-				length = formatPacket("photo\0", photoChunk(), photoChunkSize());
-			} else {
-				length = formatPacket("photo\0", "END", 3);
-				so.photo_sent = 0;
-			}
+//			if (photoChunkSize()) {
+//				length = formatPacket("photo\0", photoChunk(), photoChunkSize());
+//			} else {
+//				length = formatPacket("photo\0", "END", 3);
+//				so.photo_sent = 0;
+//			}
 
 			break;
 		case AUTH_PHOTO:
