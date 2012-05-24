@@ -32,8 +32,12 @@
 
 
 void robolock() {
+	char displayCode[16];
+	BYTE savedValue;
 	BYTE codeEntered[CODE_LEN];
 	BYTE codeIdx;
+	WORD i;
+
 	IENABLE;
 while(1){  //do forever
 	switch (so.state) {
@@ -42,8 +46,9 @@ while(1){  //do forever
 		lcdClear();  				// cls
 		lcdDisplay("      IDLE      ", "                ");
 		lcdBacklightOff(); 			// backlight OFF
-busyWait(100);
+
 		ADC0Read(); 				// start reading from the piezo
+		busyWait(100);
 
 		if (keypadValue != 0 )//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
 		{
@@ -116,26 +121,40 @@ busyWait(100);
 		break;
 
 	case AUTH_CODE:
-	//	promptTimeoutCount = 0;  // reset timeout counter
-	//	reset_timer(2);
-	//	enable_timer(2);
+		promptTimeoutCount = 0;  						// reset timeout counter
+		reset_timer(2);
+		enable_timer(2);
 
-	//	codeIdx = 0;			// reset code index to point at the beginning of the code array
+		codeIdx = 0;									// reset code index to point at the beginning of the code array
+		for (i=0; i<16; i++)
+			displayCode[i] = ' ';						// clear
 
-//		while (!promptTimedout) {
-//			if (keypadValue != 0) {
-//				codeEntered[codeIdx++] = keypadValue; 	// save digit
-//				keypadValue = 0;						// reset digit to unread
-//				if (codeIdx >= CODE_LEN && codeMatches(codeEntered)) {
-//					update_state(OPEN_DOOR);
-//					break;
-//				}
-//			}
-//		}
-//
-//		if (promptTimedout) update_state(ERROR);
-		keypadVerify();
-		update_state(OPEN_DOOR);
+		while (!promptTimedout) {
+			savedValue = keypadValue;					// save the value in case it changes
+			keypadValue = 0;							// reset digit to unread
+			if (savedValue != 0) {
+				displayCode[codeIdx] = savedValue;		// show the last digit entered
+				codeEntered[codeIdx] = savedValue; 		// save digit
+				if (codeIdx > 0)
+					displayCode[codeIdx-1] = '*';		// mask the old digits with an asterisk
+				codeIdx++;								// move to next digit of code
+				if (codeIdx >= CODE_LEN) { // if the # digits entered = code length and there is a code that matches
+					if (codeMatches(codeEntered)) {
+						update_state(OPEN_DOOR);
+						break;
+					}
+					else {
+						update_state(ERROR);
+						break;
+					}
+				}
+
+			}
+			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
+		}
+
+//		keypadVerify();									// this function is supplanted by the above code
+		if (promptTimedout) update_state(ERROR); 		// the only way to break out the loop is to timeout (ERR), enter a wrong code (ERR), or enter a right code (OK)
 		break;
 
 	case OPEN_DOOR:
@@ -155,6 +174,8 @@ busyWait(100);
 		reset_timer(2);
 		promptTimeoutCount = 0;
 		promptTimedout = FALSE; 		// reset timeout flag
+
+		strikeClose();					// close door, just in case
 
 		lcdDisplay(ERROR_TEXT_1, BLANK_TEXT);
 		busyWait(5000);
@@ -178,6 +199,7 @@ void update_state(unsigned int new_state) {
 
 void init_robolock() {
 	WORD i;
+	BYTE defaultCode[CODE_LEN];
 	/* set initial values */
 	so.state = IDLE;
 	promptTimedout = FALSE;
@@ -185,11 +207,10 @@ void init_robolock() {
 	knockThresh = 512;
 	keypadValue = 0;
 	/* set initial codes */
-	for (i=0; i<MAX_CODES; i++)			// initialize all codes to invalid
-		setInvalid(&codeList[i]);
+	resetCodes();			// initialize all codes to invalid
 	for (i=0; i<CODE_LEN; i++)			// create a valid default code "5555"
-		codeList[0].value[i] = 5;
-	setValid(&codeList[0]);
+		defaultCode[i] = 5;
+	addNewCode(defaultCode);
 	/* initialize some systems */
 	init_timer(2, Fpclk, (void*)promptTimeoutHandler, TIMEROPT_INT_RST);
 

@@ -11,6 +11,7 @@
 #include "type.h"
 
 #define CODE_LEN                 4
+#define MAX_CODES                16
 
 typedef struct {
 	BYTE value[CODE_LEN];
@@ -18,10 +19,17 @@ typedef struct {
 	// time expires?
 } Code;
 
-BYTE compareCode(Code*, BYTE*);
-
+/* Private methods */
 void setValid(Code*);
 void setInvalid(Code*);
 void setCode(Code*, BYTE*);
+
+/* Public methods */
+void resetCodes(void);
+BYTE addNewCode(BYTE*);
+BYTE invalidateOldCode(BYTE*);
+BYTE compareCode(Code*, BYTE*);
+
+Code codeList[MAX_CODES];
 
 #endif /* CODE_H_ */
