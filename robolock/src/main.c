@@ -40,7 +40,7 @@ int main(void) {
 	printLED(0x0F);
 	ADCInit();
 	printLED(0x1F);
-	//SDRAMInit();
+	PCONP &= ~(1<<11); // turn off EMC :(    //SDRAMInit();
 	strikeInit();
 	printLED(0x3F);
 	init_robolock();

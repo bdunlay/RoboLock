@@ -9,6 +9,7 @@
 #define CODE_H_
 
 #include "type.h"
+#include "rtc.h"
 
 #define CODE_LEN                 4
 #define MAX_CODES                16
@@ -16,7 +17,8 @@
 typedef struct {
 	BYTE value[CODE_LEN];
 	BYTE valid;
-	// time expires?
+	BYTE expires;
+	RTCTime expTime;
 } Code;
 
 /* Private methods */

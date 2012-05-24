@@ -68,10 +68,10 @@ while(1){  //do forever
 		while (!promptTimedout) {
 			if (keypadValue == 0) {
 				continue;
-			} else if (keypadValue == '#') { // TODO: !!!!!!! change value to * !!!!!!!
+			} else if (keypadValue == '#') {
 				update_state(AUTH_CODE);
 				break;
-			} else if (keypadValue == '*') { // TODO: !!!!!! change value to # !!!!!!
+			} else if (keypadValue == '*') {
 				update_state(PHOTO);
 				break;
 			}
@@ -138,17 +138,16 @@ while(1){  //do forever
 				if (codeIdx > 0)
 					displayCode[codeIdx-1] = '*';		// mask the old digits with an asterisk
 				codeIdx++;								// move to next digit of code
-				if (codeIdx >= CODE_LEN) { // if the # digits entered = code length and there is a code that matches
-					if (codeMatches(codeEntered)) {
+				if (codeIdx >= CODE_LEN) { 				// if the # digits entered = code length
+					if (codeMatches(codeEntered)) {		// if there is a code that matches
 						update_state(OPEN_DOOR);
 						break;
 					}
-					else {
+					else {								// otherwise, it's a wrong code
 						update_state(ERROR);
 						break;
 					}
 				}
-
 			}
 			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
 		}
