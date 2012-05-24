@@ -12,6 +12,7 @@
 #include "target.h"
 #include "common.h"
 #include "led.h"
+#include "robolock.h"
 
 extern volatile DWORD I2CCount;
 extern volatile BYTE I2CMasterBuffer[BUFSIZE];
@@ -83,7 +84,8 @@ void printLCD(BYTE val) {
 
 
 void testLCD() {
-		volatile int i;
+		//volatile int i;
+		init_robolock();
 
 		lcdBacklight();
 
@@ -143,6 +145,7 @@ void lcdClear(){
 		  /* configuration value, no change from default */
 		 // I2CCmd = LCD_CONFIG;
 		  I2CEngine();
+		  for(i=0;i<600;i++);
 }
 
 void LCDWrite(char* buffer){

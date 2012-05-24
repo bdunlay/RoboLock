@@ -37,7 +37,7 @@
 #define LSR_TEMT	0x40
 #define LSR_RXFE	0x80
 
-#define UART_BUFSIZE		0x10
+#define UART2_BUFSIZE		0x20
 
 
 DWORD UART2Init( DWORD Baudrate );
@@ -47,7 +47,7 @@ void UART2Send(BYTE *, DWORD);
 
 extern volatile DWORD UART2Status;
 extern volatile BYTE UART2TxEmpty;
-extern volatile BYTE UART2Buffer[UART_BUFSIZE];
+extern volatile BYTE UART2Buffer[UART2_BUFSIZE];
 extern volatile DWORD UART2Count;
 
 

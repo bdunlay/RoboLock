@@ -19,14 +19,19 @@ void testKeypad(void){
 void keypadVerify(void){
 	IENABLE;
 	keypadCount=-1;
-	lcdInit();
+	//lcdInit();
 	lcdClear();
 	char displayCode[16] = "                ";
 	while(keypadCount<4){
-		if(keypadCount == 0)	lcdBacklight();
-		if(keypadCount>=0)displayCode[keypadCount]=keypadValue;
+		busyWait(40);
+		//if(keypadCount == 0)	lcdBacklight();
+		if(keypadCount>=0)
+			{
+			displayCode[keypadCount]=keypadValue;
+			if(keypadCount>0)displayCode[keypadCount-1]='*';
+			}
+
 		lcdDisplay(displayCode,"                ");
-		busyWait(60);
 	}
 	//keypadCount = 0;
 	busyWait(40);

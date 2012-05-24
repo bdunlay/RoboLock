@@ -26,10 +26,11 @@
 
 int main(void) {
 
+	//IENABLE;
 	TargetResetInit();
 	initLED();
 	printLED(0x01);
-	initLCD(); lcdInit();
+	initLCD();
 	init_dip();
 	UARTInit(9600);
 	printLED(0x03);
@@ -44,8 +45,10 @@ int main(void) {
 	printLED(0x3F);
 	init_robolock();
 	printLED(0x7F);
-	init_network();
+	//init_network();
 	printLED(0xFF);
+	IENABLE;
+	lcdInit();  //this needs inturrupts
 
 
 	while (1) {
