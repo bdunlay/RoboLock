@@ -18,6 +18,7 @@
 #include "timer.h"
 #include "cameraB.h"
 #include "adc.h"
+#include "code.h"
 
 
 //#include "uip_timer.h"
@@ -178,10 +179,10 @@ void init_robolock() {
 	keypadValue = 0;
 	/* set initial codes */
 	for (i=0; i<MAX_CODES; i++)			// initialize all codes to invalid
-		validCodes[i][CODE_LEN] = FALSE;
+		setInvalid(&codeList[i]);
 	for (i=0; i<CODE_LEN; i++)			// create a valid default code "5555"
-		validCodes[0][i] = 5;
-	validCodes[0][CODE_LEN] = TRUE;
+		codeList[0].value[i] = 5;
+	setValid(&codeList[0]);
 	/* initialize some systems */
 	init_timer(2, Fpclk, (void*)promptTimeoutHandler, TIMEROPT_INT_RST);
 	IENABLE;
@@ -204,14 +205,10 @@ void promptTimeoutHandler() {
 }
 
 BYTE codeMatches(BYTE* toTest) {
-	WORD i,j;
+	WORD i;
 	BYTE match;
 	for (i=0; i<MAX_CODES; i++) {
-		match = validCodes[i][CODE_LEN]; 				// check if code is valid
-		if (!match) continue; 							// if invalid, then skip
-		for (j=0; j<CODE_LEN; j++) {
-			match &= (toTest[j] == validCodes[i][j]); 	// if test[j] = validCode[j], then stay true
-		}
+		match = compareCode(&codeList[i], toTest);
 		if (match) return TRUE;  						// if match = TRUE after iterating through a code, return TRUE
 	}
 	return FALSE;
