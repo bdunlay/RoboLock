@@ -26,7 +26,7 @@
 
 int main(void) {
 
-	//IENABLE;
+	IENABLE;
 	TargetResetInit();
 	initLED();
 	printLED(0x01);

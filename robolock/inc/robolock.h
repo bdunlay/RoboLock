@@ -9,6 +9,10 @@
 #ifndef __ROBOLOCK_H
 #define __ROBOLOCK_H
 
+/* Includes for objects */
+#include "type.h"
+#include "code.h"
+
 /* Constants */
 
 enum {
@@ -16,7 +20,6 @@ enum {
 } states;
 
 #define MAX_CODES                16
-#define CODE_LEN                 4
 
 #define PROMPT_TIMEOUT_LEN       30
 
@@ -55,6 +58,7 @@ void init_network(void);
 void periodic_network(void);
 
 void promptTimeoutHandler(void) __irq;
+
 BYTE codeMatches(BYTE*);
 
 void sayCheese(void);
@@ -68,6 +72,6 @@ volatile DWORD knockThresh;
 volatile BYTE promptTimedout;
 volatile BYTE promptTimeoutCount;
 
-volatile BYTE validCodes[MAX_CODES][CODE_LEN+1]; // format of each code is [x][x][x][x][valid/invalid]
+volatile Code codeList[MAX_CODES];
 
 #endif
