@@ -7,32 +7,32 @@
 #include "led.h"
 #include "LCD.h"
 
-
-void testKeypad(void){
+void testKeypad(void) {
 	IENABLE;
-	while(1){
+	while (1) {
 		printLED(keypadValue);
 		busyWait(50);
 	}
 }
 
-void keypadVerify(void){
+void keypadVerify(void) {
 	IENABLE;
-	keypadCount=-1;
-	//lcdInit();
+	keypadCount = 0;
+	int last = 0;
 	lcdClear();
 	char displayCode[16] = "                ";
-	while(keypadCount<4){
-		busyWait(40);
-		//if(keypadCount == 0)	lcdBacklight();
-		if(keypadCount>=0)
-			{
-			displayCode[keypadCount]=keypadValue;
-			if(keypadCount>0)displayCode[keypadCount-1]='*';
-			}
-
-		lcdDisplay(displayCode,"                ");
+	lcdDisplay(displayCode, "Enter Code      ");
+	while (keypadCount <= 4) {
+		if (keypadCount >= 1) {
+			displayCode[keypadCount-1] = keypadValue;
+			if (keypadCount >= 2)
+				displayCode[keypadCount-2] = '*';
+		}
+		if (last < keypadCount) {
+			last = keypadCount;
+			lcdDisplay(displayCode, "Enter Code      ");
+			printLED(keypadCount);
+		}
 	}
-	//keypadCount = 0;
-	busyWait(40);
+	keypadCount = 0;
 }

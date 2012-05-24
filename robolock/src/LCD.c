@@ -160,6 +160,7 @@ void LCDWrite(char* buffer){
 	}
 	for(i=0;i<600;i++);
 	 I2CEngine();
+	 for(i=0;i<600;i++);
 
 }
 

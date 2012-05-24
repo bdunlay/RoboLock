@@ -174,7 +174,7 @@ void I2C1MasterHandler(void)// __irq
 DWORD I2CStart( void )
 {
 	volatile int i=0;
-	printLED(0x03);
+	//printLED(0x03);
 //	for(i=0;i<1000;i++);//busyWait(10);
   DWORD timeout = 0;
   DWORD retVal = FALSE;

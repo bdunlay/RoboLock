@@ -34,11 +34,12 @@ void robolock() {
 	BYTE codeEntered[CODE_LEN];
 	BYTE codeIdx;
 	IENABLE;
-
+while(1){  //do forever
 	switch (so.state) {
 
 	case IDLE:
 		lcdClear();  				// cls
+		lcdDisplay("      IDLE      ", "                ");
 		lcdBacklightOff(); 			// backlight OFF
 busyWait(100);
 		ADC0Read(); 				// start reading from the piezo
@@ -118,7 +119,7 @@ busyWait(100);
 	//	reset_timer(2);
 	//	enable_timer(2);
 
-		codeIdx = 0;			// reset code index to point at the beginning of the code array
+	//	codeIdx = 0;			// reset code index to point at the beginning of the code array
 
 //		while (!promptTimedout) {
 //			if (keypadValue != 0) {
@@ -162,7 +163,7 @@ busyWait(100);
 		break;
 
 	}
-
+}
 }
 
 

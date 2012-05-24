@@ -51,15 +51,13 @@ int main(void) {
 	lcdInit();  //this needs inturrupts
 
 
-	while (1) {
-		robolock();
-	}
+//	while (1) {
+//		robolock();
+//	}
 		while(1) {
 		switch (read_dip()) {
 
 		case 0:
-
-			robolock();
 
 			break;
 
@@ -106,6 +104,7 @@ int main(void) {
 			break;
 
 		case 11:
+			robolock();
 			break;
 
 		case 12:
