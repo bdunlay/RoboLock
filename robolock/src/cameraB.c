@@ -11,7 +11,8 @@
 
 void testCamera(void){
 	a = 0x0000;
-
+	cameraCount = 0;
+	camSize = 0;
 	IENABLE;
 	endFC = 0;
 	//cameraInit();
@@ -19,12 +20,13 @@ void testCamera(void){
 	busyWait(4000);
 	cameraTake();
 	busyWait(10);
-//	cameraTake2();
-//	busyWait(10);
-	while(!endFC){
-	cameraData();
-	busyWait(30);
-	}
+	cameraTake2();
+	busyWait(10);
+
+//	while(!endFC){
+//	cameraData();
+//	busyWait(30);
+
 }
 
 void cameraInit(void){
@@ -109,7 +111,7 @@ void cameraTake2(void)
 
 }
 
-int photoSize(void)
+BYTE cameraSize(void)
 {
 	DWORD Length = 5;
 	BYTE BufferPtr[Length];
@@ -120,8 +122,11 @@ int photoSize(void)
 	BufferPtr[4]=0x00;
 	UART2Send(BufferPtr, Length);
 
+	if(camSize)
+		return cameraValue;
 	//need to find some way to return XH XL of return string
-
+	else
+		return -1;
 }
 
 void cameraRead(void)

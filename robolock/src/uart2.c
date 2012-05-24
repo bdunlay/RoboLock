@@ -19,7 +19,7 @@
 
 volatile DWORD UART2Status;
 volatile BYTE UART2TxEmpty = 1;
-volatile BYTE UART2Buffer[UART_BUFSIZE];
+volatile BYTE UART2Buffer[UART2_BUFSIZE];
 volatile DWORD UART2Count = 0;
 
 /*****************************************************************************
@@ -54,7 +54,6 @@ void UART2Handler (void)
 
 	if ( IIRValue == IIR_RLS )		/* Receive Line Status */
 	{
-		printLED(1);
 		LSRValue = U2LSR;
 		/* Receive Line Status */
 		//handles interrupt by first checking if any of the RLS interrupts exist, then clears the RBR by
@@ -78,7 +77,7 @@ void UART2Handler (void)
 			//16bit UART2 buffer.
 			UART2Buffer[UART2Count] = U2RBR;
 			UART2Count++;
-			if ( UART2Count == UART_BUFSIZE )
+			if ( UART2Count == UART2_BUFSIZE )
 			{
 				UART2Count = 0;		/* buffer overflow */
 			}
@@ -99,12 +98,24 @@ void UART2Handler (void)
 		//printLED(255);
 		/* Receive Data Available */
 		UART2Buffer[UART2Count] = U2RBR;
-		cameraValue = UART2Buffer[UART2Count];
-		if(UART2Buffer[cameraCount] == 0xD9)
+		//cameraValue = UART2Buffer[UART2Count];
+		if(UART2Buffer[cameraCount] == 0xD9){
 			endFC = 1;
+			busyWait(10);
+			printLED(0xFF);
+		}
+
+		if(UART2Buffer[0] ==  76 && UART2Buffer[1] == 00 && UART2Buffer[2] == 34)
+		{
+			busyWait(10);
+			camSize = 1;
+			cameraValue = UART2Buffer[7];
+			cameraValue+= UART2Buffer[8];
+			printLED(0x11);
+		}
 		cameraCount++;
 		UART2Count++;
-		if ( UART2Count == UART_BUFSIZE ) {
+		if ( UART2Count == UART2_BUFSIZE ) {
 			printLED(7);
 			UART2Count = 0;		/* buffer overflow */
 		}
@@ -179,7 +190,7 @@ DWORD UART2Init( DWORD baudrate )
 {
 	DWORD Fdiv;
 	PCONP |= 1<<24;
-	PINSEL0 &= ~0xF<<20;       /* Enable RxD3 and Not TxD1,  */
+	PINSEL0 &= ~(0xF<<20);       /* Enable RxD3 and Not TxD1,  */
 	PINSEL0 |= 0x5<<20;
 
 	//LCR value determines format of data character that is to be transmitted or received

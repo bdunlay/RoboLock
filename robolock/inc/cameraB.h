@@ -12,12 +12,13 @@ void cameraRead(void);
 void cameraStop(void);
 void cameraInit(void);
 void cameraData(void);
-int photoSize(void);
+BYTE cameraSize(void);
 
 volatile BYTE cameraValue;
 volatile int cameraCount;
 
 volatile DWORD endFC;
+volatile DWORD camSize;
 volatile BYTE picSize;
 
 #endif

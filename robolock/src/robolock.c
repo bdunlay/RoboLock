@@ -34,18 +34,20 @@
 void robolock() {
 	BYTE codeEntered[CODE_LEN];
 	BYTE codeIdx;
+	IENABLE;
 
 	switch (so.state) {
 
 	case IDLE:
 		lcdClear();  				// cls
 		lcdBacklightOff(); 			// backlight OFF
-
+busyWait(100);
 		ADC0Read(); 				// start reading from the piezo
 
-		if (keypadValue != 0 || ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+		if (keypadValue != 0 )//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
 		{
-			keypadValue = 0; 		// reset the keypad value to "unpressed"
+			printLED(keypadValue);
+			keypadValue = 0; 		// no need?  reset the keypad value to "unpressed"
 			update_state(PROMPT);
 		}
 		break;
@@ -60,10 +62,10 @@ void robolock() {
 		while (!promptTimedout) {
 			if (keypadValue == 0) {
 				continue;
-			} else if (keypadValue == 0) { // TODO: !!!!!!! change value to * !!!!!!!
+			} else if (keypadValue == '#') { // TODO: !!!!!!! change value to * !!!!!!!
 				update_state(AUTH_CODE);
 				break;
-			} else if (keypadValue == 1) { // TODO: !!!!!! change value to # !!!!!!
+			} else if (keypadValue == '*') { // TODO: !!!!!! change value to # !!!!!!
 				update_state(PHOTO);
 				break;
 			}
@@ -84,12 +86,14 @@ void robolock() {
 									// 3.. 2.. 1..
 		// TODO: take photo
 
-		while(!so.photo_sent);
+		reset_timer(2);
+		enable_timer(2);
+		promptTimeoutCount = 0;
+		while(!so.photo_sent && !promptTimedout);
 		so.photo_sent = 0;
 
-		update_state(AUTH_PHOTO);
-
-		// TODO timeout in case of error?
+		if (!promptTimedout) update_state(AUTH_PHOTO);
+		else update_state(ERROR);
 
 		break;
 
@@ -111,24 +115,26 @@ void robolock() {
 		break;
 
 	case AUTH_CODE:
-		promptTimeoutCount = 0;  // reset timeout counter
-		reset_timer(2);
-		enable_timer(2);
+	//	promptTimeoutCount = 0;  // reset timeout counter
+	//	reset_timer(2);
+	//	enable_timer(2);
 
 		codeIdx = 0;			// reset code index to point at the beginning of the code array
 
-		while (!promptTimedout) {
-			if (keypadValue != 0) {
-				codeEntered[codeIdx++] = keypadValue; 	// save digit
-				keypadValue = 0;						// reset digit to unread
-				if (codeIdx >= CODE_LEN && codeMatches(codeEntered)) {
-					update_state(OPEN_DOOR);
-					break;
-				}
-			}
-		}
-
-		if (promptTimedout) update_state(ERROR);
+//		while (!promptTimedout) {
+//			if (keypadValue != 0) {
+//				codeEntered[codeIdx++] = keypadValue; 	// save digit
+//				keypadValue = 0;						// reset digit to unread
+//				if (codeIdx >= CODE_LEN && codeMatches(codeEntered)) {
+//					update_state(OPEN_DOOR);
+//					break;
+//				}
+//			}
+//		}
+//
+//		if (promptTimedout) update_state(ERROR);
+		keypadVerify();
+		update_state(OPEN_DOOR);
 		break;
 
 	case OPEN_DOOR:
@@ -185,7 +191,7 @@ void init_robolock() {
 	setValid(&codeList[0]);
 	/* initialize some systems */
 	init_timer(2, Fpclk, (void*)promptTimeoutHandler, TIMEROPT_INT_RST);
-	IENABLE;
+
 }
 
 void promptTimeoutHandler() {

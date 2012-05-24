@@ -35,9 +35,13 @@ void strikeOpen(){
 }
 
 void testStrike(){
-	busyWait(400);
+	busyWait(2000);
 	strikeClose();
-	busyWait(400);
+	busyWait(2000);
 	strikeOpen();
+	busyWait(2000);
+		strikeClose();
+		busyWait(2000);
+		strikeOpen();
 
 }

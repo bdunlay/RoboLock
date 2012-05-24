@@ -72,10 +72,10 @@ void tcp_client_appcall(void) {
 		switch (so.state) {
 
 		case PHOTO:
-			if (photoChunkSize() && uip_acked()) { // TODO photoChunkSize should return next chunk size
+			if (1/*photoChunkSize() && uip_acked()*/) { // TODO photoChunkSize should return next chunk size
 				length // TODO photoChunk should return next photo chunk in buffer
-						= formatPacket("photo\0", photoChunk(),
-								photoChunkSize());
+						= formatPacket("photo\0", "1"/*photoChunk()*/,
+								1/*photoChunkSize()*/);
 			} else {
 				length = formatPacket("photo\0", "END", 3);
 				so.photo_sent = 0;
