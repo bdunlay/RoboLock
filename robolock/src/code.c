@@ -82,7 +82,7 @@ BYTE addNewCode(BYTE* a, BYTE expire)
 			if (expire != NO_EXPIRE)
 			{
 				setExpireable(&codeList[i]);
-				setExpirationTime(&codeList[i], expire);
+				setExpireTime(&codeList[i], expire);
 				updateAlarmTime();
 			}
 			else setNotExpireable(&codeList[i]);
@@ -94,7 +94,7 @@ BYTE addNewCode(BYTE* a, BYTE expire)
 	if (expire != NO_EXPIRE)
 	{
 		setExpireable(&codeList[i]);
-		setExpirationTime(&codeList[i], expire);
+		setExpireTime(&codeList[i], expire);
 		updateAlarmTime();
 	}
 	else setNotExpireable(&codeList[i]);
@@ -172,10 +172,10 @@ void updateAlarmTime(void)
 	for (i=0; i<MAX_CODES; i++)
 	{
 		if (codeList[i].valid && codeList[i].expires)					// if it's a valid, expiring code
-			if (compareTime(&closest, &(codeList[i].expires)) < 0) 		// if the valid, not-expired code is earlier than the "closest" time
-				closest = codeList[i].expires;
+			if (compareTime(&closest, &(codeList[i].expTime)) < 0) 		// if the valid, not-expired code is earlier than the "closest" time
+				closest = codeList[i].expTime;
 	}
-	RTCSetAlarmTime(closest);
+	RTCSetAlarm(closest);
 }
 
 /*
@@ -275,6 +275,8 @@ void setExpireTime(Code* a, BYTE expire)
 		}
 		break;
 	default:
+		currTime.RTC_Year = 4000;
 		break;
 	}
+	a->expTime = currTime;
 }
