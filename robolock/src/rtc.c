@@ -13,29 +13,6 @@
 #include "irq.h"
 #include "rtc.h"
 
-volatile DWORD alarm_on = 0;
-
-/*****************************************************************************
-** Function name:		RTCHandler
-**
-** Descriptions:		RTC interrupt handler, it executes based on the
-**				the alarm setting
-**
-** parameters:			None
-** Returned value:		None
-** 
-*****************************************************************************/
-void RTCHandler (void)
-{  
-  RTC_ILR |= ILR_RTCCIF;		/* clear interrupt flag */
-  IENABLE;			/* handles nested interrupt */
-
-  alarm_on = 1;
-
-  IDISABLE;
-  VICVectAddr = 0;		/* Acknowledge Interrupt */
-}
-
 /*****************************************************************************
 ** Function name:		RTCInit
 **
@@ -47,14 +24,28 @@ void RTCHandler (void)
 *****************************************************************************/
 void RTCInit( void )
 {
-  alarm_on = 0;
+  RTCTime currTime;
+  currTime.RTC_Hour = 0;
+  currTime.RTC_Mday = 31;
+  currTime.RTC_Min = 0;
+  currTime.RTC_Mon = 5;
+  currTime.RTC_Sec = 0;
+  currTime.RTC_Wday = 4;
+  currTime.RTC_Yday = 152;
+  currTime.RTC_Year = 2012;
 
   /*--- Initialize registers ---*/    
   RTC_AMR = 0;
   RTC_CIIR = 0;
-  RTC_CCR = 0x10;			// set the clock source as the 32kHz external osc and initialize the clock
+  RTC_CCR = 0x10;					// set the clock source as the 32kHz external osc and initialize the clock
   //RTC_PREINT = PREINT_RTC;
   //RTC_PREFRAC = PREFRAC_RTC;
+
+  install_irq( RTC_INT, (void *)RTCHandler, HIGHEST_PRIORITY+3 );
+
+  RTCSetAlarmMask(AMRDOM|AMRDOW|AMRMON);	// don't care about day of month, day of week, or month for alarm
+  RTCSetTime(currTime);
+  RTCStart();
   return;
 }
 
@@ -189,6 +180,49 @@ void RTCSetAlarmMask( DWORD AlarmMask )
   /*--- Set alarm mask ---*/    
   RTC_AMR = AlarmMask;
   return;
+}
+
+/*
+ * compareRTC
+ *
+ * parameters:
+ *   a: Time "a"
+ *   b: Time "b"
+ *
+ * returns:
+ *   -1 if "a" is later
+ *   0 if a = b
+ *   1 if "b" is later
+ */
+
+int compareTime(RTCTime* a, RTCTime* b)
+{
+	if (a->RTC_Year > b->RTC_Year)
+		return -1;
+	else
+	{
+		if (a->RTC_Yday > b->RTC_Yday)
+			return -1;
+		else
+		{
+			if (a->RTC_Hour > b->RTC_Hour)
+				return -1;
+			else
+			{
+				if (a->RTC_Min > b->RTC_Min)
+					return -1;
+				else
+				{
+					if (a->RTC_Sec > b->RTC_Sec)
+						return -1;
+					else if (a->RTC_Sec == b->RTC_Sec)
+						return 0;
+					else
+						return 1;
+				}
+			}
+		}
+	}
 }
 
 /*****************************************************************************

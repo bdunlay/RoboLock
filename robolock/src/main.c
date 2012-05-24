@@ -29,6 +29,7 @@ int main(void) {
 	IENABLE;
 	TargetResetInit();
 	initLED();
+	RTCInit();
 	printLED(0x01);
 	initLCD();
 	init_dip();

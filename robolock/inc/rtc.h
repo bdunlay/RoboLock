@@ -12,6 +12,7 @@
 #define __RTC_H
 
 #include "irq.h"
+#include "type.h"
 
 typedef struct {
     BYTE RTC_Sec;     /* Second value - [0,59] */
@@ -62,6 +63,8 @@ extern void RTCSetTime( RTCTime );
 extern RTCTime RTCGetTime( void );
 extern void RTCSetAlarm( RTCTime );
 extern void RTCSetAlarmMask( DWORD AlarmMask );
+
+int compareTime(RTCTime*, RTCTime*);
 
 #endif /* end __RTC_H */
 /*****************************************************************************

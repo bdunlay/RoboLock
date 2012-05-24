@@ -209,10 +209,9 @@ void init_robolock() {
 	resetCodes();			// initialize all codes to invalid
 	for (i=0; i<CODE_LEN; i++)			// create a valid default code "5555"
 		defaultCode[i] = 5;
-	addNewCode(defaultCode);
+	addNewCode(defaultCode, NO_EXPIRE);
 	/* initialize some systems */
 	init_timer(2, Fpclk, (void*)promptTimeoutHandler, TIMEROPT_INT_RST);
-
 }
 
 void promptTimeoutHandler() {
