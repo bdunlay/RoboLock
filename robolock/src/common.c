@@ -1,7 +1,8 @@
 #include "type.h"
 #include "common.h"
 #include "target.h"
-
+#include "cameraB.h"
+#include "uart2.h"
 
 void busyWait(DWORD delay_period) {
 	volatile int a;
@@ -12,6 +13,7 @@ void busyWait(DWORD delay_period) {
 		for (b = 0; b < (3600); b++) ;//for (b = 0; b < (Fpclk / 1000-1); b++) ;
 	}
 }
+
 
 BYTE hexToChar(BYTE hex)
 {

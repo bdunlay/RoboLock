@@ -45,7 +45,7 @@ int main(void) {
 	printLED(0x3F);
 	init_robolock();
 	printLED(0x7F);
-	//init_network();
+	init_network();
 	printLED(0xFF);
 	IENABLE;
 	lcdInit();  //this needs inturrupts

@@ -99,24 +99,22 @@ void UART2Handler (void)
 		/* Receive Data Available */
 		UART2Buffer[UART2Count] = U2RBR;
 		//cameraValue = UART2Buffer[UART2Count];
-		if(UART2Buffer[cameraCount] == 0xD9){
+
 			endFC = 1;
-			busyWait(10);
-			printLED(0xFF);
-		}
+
 
 		if(UART2Buffer[0] ==  76 && UART2Buffer[1] == 00 && UART2Buffer[2] == 34)
 		{
 			busyWait(10);
 			camSize = 1;
-			cameraValue = UART2Buffer[7];
-			cameraValue+= UART2Buffer[8];
+//			cameraValue = UART2Buffer[7];
+//			cameraValue+= UART2Buffer[8];
 			printLED(0x11);
 		}
 		cameraCount++;
 		UART2Count++;
 		if ( UART2Count == UART2_BUFSIZE ) {
-			printLED(7);
+			//printLED(7);
 			UART2Count = 0;		/* buffer overflow */
 		}
 	}
@@ -134,7 +132,7 @@ void UART2Handler (void)
 
 	else if ( IIRValue == IIR_CTI )	/* Character timeout indicator */
 	{
-		printLED(3);
+		//printLED(3);
 		/* Character Time-out indicator */
 		UART2Status |= 0x100;		/* Bit 9 as the CTI error */
 	}
@@ -153,7 +151,6 @@ void UART2Handler (void)
     		a read of the U2IIR occurs and the THRE is the highest interrupt (U2IIR[3:1] = 001).* */
 	else if ( IIRValue == IIR_THRE )	/* THRE, transmit holding register empty */
 	{
-		printLED(4);
 
 		LSRValue = U2LSR;		/* Check status in the LSR to see if
 					valid data in U2THR or not */
@@ -163,7 +160,7 @@ void UART2Handler (void)
 		}
 		else
 		{
-			printLED(5);
+	//		printLED(5);
 			UART2TxEmpty = 0; //uart THR is not empty
 		}
 	}

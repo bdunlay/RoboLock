@@ -6,4 +6,5 @@
 void busyWait(DWORD);
 BYTE hexToChar(BYTE);
 
+
 #endif

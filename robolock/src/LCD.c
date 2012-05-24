@@ -131,7 +131,6 @@ void lcdInit(){
 
 void lcdClear(){
 	volatile int i=0;
-	for(i=0;i<600;i++);
 		  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
 		  {
 			I2CMasterBuffer[i] = 0;
@@ -144,8 +143,8 @@ void lcdClear(){
 		  I2CMasterBuffer[3] = 0x01;
 		  /* configuration value, no change from default */
 		 // I2CCmd = LCD_CONFIG;
-		  I2CEngine();
 		  for(i=0;i<600;i++);
+		  I2CEngine();
 }
 
 void LCDWrite(char* buffer){
@@ -160,7 +159,6 @@ void LCDWrite(char* buffer){
 	}
 	for(i=0;i<600;i++);
 	 I2CEngine();
-	 for(i=0;i<600;i++);
 
 }
 

@@ -44,7 +44,7 @@ void enable_timer( BYTE timer_num )
 		T2TCR = 1;
 		break;
 	case 3:
-		T2TCR = 1;
+		T3TCR = 1;
 		break;
 	default:
 		break;
@@ -75,7 +75,7 @@ void disable_timer( BYTE timer_num )
 		T2TCR = 0;
 		break;
 	case 3:
-		T2TCR = 0;
+		T3TCR = 0;
 		break;
 	default:
 		break;

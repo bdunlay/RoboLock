@@ -5,6 +5,7 @@
 #include "common.h"
 #include "timer.h"
 #include "robolock.h"
+#include "cameraB.h"
 
 void connect(void);
 
@@ -17,10 +18,15 @@ void tcp_client_init(void) {
 int state = 0;
 
 void connect() {
+
+
+
 	u16_t ipaddr[2];
 
+	//uip_ipaddr(ipaddr, 184,189,241,29); // server address
 	uip_ipaddr(ipaddr, 128,111,56,203); // server address
-	uip_connect(ipaddr, HTONS(9090)); // serer port
+
+	uip_connect(ipaddr, HTONS(9090)); // server port
 
 }
 
@@ -49,15 +55,18 @@ int formatPacket(char* type, char* data, int bytes) {
 	return i;
 }
 
-int mm = 0;
+int mm = 0xAA;
 int counter;
+
+BYTE chunkBuffer[64];
+int chunkSize;
 
 void tcp_client_appcall(void) {
 	int k;
+	chunkSize = 0;
 
 	if (uip_aborted() || uip_timedout() || uip_closed()) {
 		printLED(mm);
-		busyWait(1000);
 		mm = ~mm;
 
 		//		update_state(ERROR);
@@ -71,14 +80,15 @@ void tcp_client_appcall(void) {
 
 		switch (so.state) {
 
-		case PHOTO:
-			if (1/*photoChunkSize() && uip_acked()*/) { // TODO photoChunkSize should return next chunk size
-				length // TODO photoChunk should return next photo chunk in buffer
-						= formatPacket("photo\0", "1"/*photoChunk()*/,
-								1/*photoChunkSize()*/);
+		case SEND_PHOTO:
+
+			chunkSize = getChunk(&chunkBuffer, 0x20);
+
+			if (chunkSize) {
+				length = formatPacket("photo\0", chunkBuffer, chunkSize);
 			} else {
 				length = formatPacket("photo\0", "END", 3);
-				so.photo_sent = 0;
+				so.photo_sent = 1;
 			}
 
 			uip_send(dataBuffer, length);
@@ -94,7 +104,7 @@ void tcp_client_appcall(void) {
 			break;
 
 		default:
-			if (counter >= 1000) {
+		//	if (counter >= 120) {
 				length = formatPacket("heartbeat\0", "thump thump", 11);
 				uip_send(dataBuffer, length);
 				// heartbeat to indicate that we're connected
@@ -102,9 +112,10 @@ void tcp_client_appcall(void) {
 					printLED(1 << k);
 					busyWait(20);
 				}
-			}
+				counter = 0;
 
-			counter = 0;
+		//	}
+
 		}
 
 		//		if (START) {

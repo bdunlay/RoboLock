@@ -20,18 +20,18 @@ void keypadVerify(void) {
 	keypadCount = 0;
 	int last = 0;
 	lcdClear();
-	char displayCode[16] = "                ";
-	lcdDisplay(displayCode, "Enter Code      ");
-	while (keypadCount <= 4) {
+	char displayCode[16] = "Enter Code:     ";
+	lcdDisplay(displayCode, "                ");
+	while (keypadCount < 4) {
 		if (keypadCount >= 1) {
-			displayCode[keypadCount-1] = keypadValue;
+			displayCode[10 + keypadCount] = keypadValue;
 			if (keypadCount >= 2)
-				displayCode[keypadCount-2] = '*';
+				displayCode[10 + keypadCount - 1] = '*';
 		}
 		if (last < keypadCount) {
-			last = keypadCount;
-			lcdDisplay(displayCode, "Enter Code      ");
-			printLED(keypadCount);
+			last++;//last = keypadCount;
+			lcdDisplay(displayCode, "                ");
+			//printLED(keypadCount);
 		}
 	}
 	keypadCount = 0;

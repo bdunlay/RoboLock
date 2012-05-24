@@ -16,7 +16,7 @@
 /* Constants */
 
 enum {
-	IDLE, PROMPT, PHOTO, AUTH_PHOTO, AUTH_CODE, OPEN_DOOR, ERROR
+	IDLE, PROMPT, PHOTO, AUTH_PHOTO, SEND_PHOTO, AUTH_CODE, OPEN_DOOR, ERROR
 } states;
 
 #define MAX_CODES                16
@@ -55,7 +55,7 @@ void update_state(unsigned int);
 unsigned int permission_granted(void);
 
 void init_network(void);
-void periodic_network(void);
+void periodic_network(void) __irq;
 
 void promptTimeoutHandler(void) __irq;
 

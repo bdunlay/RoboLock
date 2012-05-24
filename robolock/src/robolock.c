@@ -36,6 +36,8 @@ void robolock() {
 	BYTE codeIdx;
 	IENABLE;
 while(1){  //do forever
+	//while(1); //periodic network
+
 	switch (so.state) {
 
 	case IDLE:
@@ -84,34 +86,53 @@ busyWait(100);
 		disable_timer(2); 			// disable the timer while the camera takes a picture
 
 		sayCheese();				// print LCD countdown
-									// 3.. 2.. 1..
+		cameraTake();
+		update_state(SEND_PHOTO);
+
+		// 3.. 2.. 1..
 		// TODO: take photo
+//
+//		reset_timer(2);
+//		enable_timer(2);
+//		promptTimeoutCount = 0;
 
-		reset_timer(2);
-		enable_timer(2);
-		promptTimeoutCount = 0;
-		while(!so.photo_sent && !promptTimedout);
-		so.photo_sent = 0;
-
-		if (!promptTimedout) update_state(AUTH_PHOTO);
-		else update_state(ERROR);
+		// if (!promptTimedout) update_state(AUTH_PHOTO);
+//		else
+		//update_state(ERROR);
 
 		break;
 
+
+
+	case SEND_PHOTO:
+		lcdDisplay("Sending photo...", "----------------");
+		busyWait(1000);
+		while (!so.photo_sent);
+		so.photo_sent = 0;
+		update_state(AUTH_PHOTO);
+
+		break;
+
+
 	case AUTH_PHOTO:
-		promptTimeoutCount = 0;  // reset timeout counter
-		reset_timer(2);
-		enable_timer(2);
 
-		while (!promptTimedout) {
-			if (so.permission) {
-				so.permission = 0;
-				update_state(OPEN_DOOR);
-				break;
-			}
-		}
+		lcdDisplay("TOOK PHOTO!!!!!!", "SENT PHOTO!!!!!!");
+		busyWait(4000);
+		update_state(IDLE);
 
-		if (promptTimedout) update_state(ERROR);
+//		promptTimeoutCount = 0;  // reset timeout counter
+//		reset_timer(2);
+//		enable_timer(2);
+//
+//		while (!promptTimedout) {
+//			if (so.permission) {
+//				so.permission = 0;
+//				update_state(OPEN_DOOR);
+//				break;
+//			}
+//		}
+//
+//		if (promptTimedout) update_state(ERROR);
 
 		break;
 
@@ -145,7 +166,7 @@ busyWait(100);
 		strikeOpen();
 		busyWait(5000);
 		strikeClose();
-
+keypadValue=0;
 		update_state(IDLE);
 
 		break;
@@ -193,6 +214,9 @@ void init_robolock() {
 	/* initialize some systems */
 	init_timer(2, Fpclk, (void*)promptTimeoutHandler, TIMEROPT_INT_RST);
 
+
+	cameraReset();
+
 }
 
 void promptTimeoutHandler() {
@@ -235,8 +259,11 @@ void init_network() {
 	uip_ipaddr_t ipaddr; /* local IP address */
 	//	struct timer periodic_timer, arp_timer;
 
-	// clock init
-	clock_init();
+	// Start periodic timer
+	init_timer(3, Fpclk/2, (void*)periodic_network, TIMEROPT_INT_RST);
+	reset_timer(3);
+	enable_timer(3);
+
 	// two timers for tcp/ip
 	//	timer_set(&periodic_timer, CLOCK_SECOND / 2); /* 0.5s */
 	//	timer_set(&arp_timer, CLOCK_SECOND * 10);	/* 10s */
@@ -261,6 +288,13 @@ void init_network() {
 
 // need to discuss this with will
 void periodic_network() {
+	T3IR = 1;			/* clear interrupt flag */
+	IENABLE;			/* handles nested interrupt */
+
+//	printLED(0xF0);
+//	busyWait(50);
+//	printLED(0x0F);
+//	busyWait(50);
 
 	int i;
 
@@ -303,4 +337,7 @@ void periodic_network() {
 			tapdev_send(uip_buf, uip_len);
 		}
 	}
+
+	IDISABLE;
+	VICVectAddr = 0;	/* Acknowledge Interrupt */
 }
