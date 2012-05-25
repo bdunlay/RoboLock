@@ -149,7 +149,6 @@ void lcdClear(){
 
 void LCDWrite(char* buffer){
 	volatile int i = 0;
-	for(i=0;i<600;i++);
 	I2CWriteLength = 17;
 	I2CReadLength = 0;
 	I2CMasterBuffer[0] = LCD_ADDR;

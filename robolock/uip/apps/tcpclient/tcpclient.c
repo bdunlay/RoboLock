@@ -19,8 +19,6 @@ int state = 0;
 
 void connect() {
 
-
-
 	u16_t ipaddr[2];
 
 	//uip_ipaddr(ipaddr, 184,189,241,29); // server address
@@ -32,13 +30,13 @@ void connect() {
 
 int startByte, endByte, totalBytes;
 
-char dataBuffer[1024];
+char dataBuffer[64];
 
 int formatPacket(char* type, char* data, int bytes) {
 
 	int i, k;
 
-	for (i = 0; i < 1024; i++) {
+	for (i = 0; i < 64; i++) {
 		dataBuffer[i] = 0;
 	}
 
@@ -66,8 +64,9 @@ void tcp_client_appcall(void) {
 	chunkSize = 0;
 
 	if (uip_aborted() || uip_timedout() || uip_closed()) {
-		printLED(mm);
-		mm = ~mm;
+//		printLED(mm);
+//		mm = ~mm;
+		//busyWait(1000);
 
 		//		update_state(ERROR);
 		//		uip_close(); // do i want to do this?
@@ -104,17 +103,16 @@ void tcp_client_appcall(void) {
 			break;
 
 		default:
-		//	if (counter >= 120) {
-				length = formatPacket("heartbeat\0", "thump thump", 11);
-				uip_send(dataBuffer, length);
-				// heartbeat to indicate that we're connected
-				for (k = 0; k < 8; k++) {
-					printLED(1 << k);
-					busyWait(20);
-				}
-				counter = 0;
+			length = formatPacket("heartbeat\0", "thump thump", 11);
+			uip_send(dataBuffer, length);
+			// heartbeat to indicate that we're connected
+//			for (k = 0; k < 8; k++) {
+//				printLED(1 << k);
+//				busyWait(20);
+//			}
+			counter = 0;
 
-		//	}
+			break;
 
 		}
 

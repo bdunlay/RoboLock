@@ -61,7 +61,7 @@ MEMORY {    /* memory map of LPC2294 */
 }
 
 /* The sizes of the stacks used by the application. NOTE: you need to adjust */
-C_STACK_SIZE   = 1024;
+C_STACK_SIZE   = 2048;
 IRQ_STACK_SIZE = 64;
 FIQ_STACK_SIZE = 0;
 SVC_STACK_SIZE = 0;

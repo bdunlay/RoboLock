@@ -21,7 +21,7 @@ enum {
 
 #define MAX_CODES                16
 
-#define PROMPT_TIMEOUT_LEN       30
+#define PROMPT_TIMEOUT_LEN       10
 
 #define PROMPT_TEXT_1            "# to enter code "
 #define PROMPT_TEXT_2            "* to take photo "

@@ -20,7 +20,6 @@
 #include "adc.h"
 #include "code.h"
 
-
 //#include "uip_timer.h"
 #include "uip.h"
 #include "uip_arp.h"
@@ -30,183 +29,186 @@
 #include "tcpclient.h"
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])
 
-
 void robolock() {
 
 	IENABLE;
-while(1){  //do forever
-	//while(1); //periodic network
-
-	switch (so.state) {
-
-	case IDLE:
-		lcdClear();
-		lcdDisplay("      IDLE      ", "                ");
-		lcdBacklightOff(); 			// backlight OFF
-
-		ADC0Read(); 				// start reading from the piezo
-		//busyWait(100);
-
-		if (keypadValue != 0 )//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
-		{
-			printLED(keypadValue);
-			keypadValue = 0; 		// no need?  reset the keypad value to "unpressed"
-			update_state(PROMPT);
-		}
-		break;
-
-	case PROMPT:
-		lcdBacklight(); 			// backlight ON
-
-		enable_timer(2); 			// start prompt timeout
-
-		lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
-
-		while (!promptTimedout) {
-			if (keypadValue == 0) {
-				continue;
-			} else if (keypadValue == '#') {
-				keypadValue = 0;
-				update_state(AUTH_CODE);
-				break;
-			} else if (keypadValue == '*') {
-				keypadValue = 0;
-				update_state(PHOTO);
-				break;
-			}
-			else {
-				reset_timer(2);
-				promptTimeoutCount = 0; // reset the timeout counter if a non-recognized character is seen
-				keypadValue = 0;
-			}
+	while (1) { //do forever
+		while(1){
+			periodic_network();
+			//busyWait(1000);
 		}
 
-		if (promptTimedout) update_state(ERROR);
-		break;
+		switch (so.state) {
 
-	case PHOTO:
-		disable_timer(2); 			// disable the timer while the camera takes a picture
+		case IDLE:
+			lcdDisplay("      IDLE      ", "                ");
+			lcdBacklightOff(); // backlight OFF
 
-		sayCheese();				// print LCD countdown
-		cameraTake();
-		update_state(SEND_PHOTO);
+			ADC0Read(); // start reading from the piezo
+			busyWait(100);
 
-		// 3.. 2.. 1..
-		// TODO: take photo
-//
-//		reset_timer(2);
-//		enable_timer(2);
-//		promptTimeoutCount = 0;
+			if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+			{
+				printLED(keypadValue);
+				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
+				update_state(PROMPT);
+			}
+			break;
 
-		// if (!promptTimedout) update_state(AUTH_PHOTO);
-//		else
-		//update_state(ERROR);
+		case PROMPT:
+			lcdBacklight(); // backlight ON
 
-		break;
+			enable_timer(2); // start prompt timeout
 
+			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
+			while (!promptTimedout) {
+				if (keypadValue == 0) {
+					continue;
+				} else if (keypadValue == '#') {
+					keypadValue = 0;
+					update_state(AUTH_CODE);
+					break;
+				} else if (keypadValue == '*') {
+					keypadValue = 0;
+					update_state(PHOTO);
+					break;
+				} else {
+					reset_timer(2);
+					promptTimeoutCount = 0; // reset the timeout counter if a non-recognized character is seen
+					keypadValue = 0;
+				}
+			}
 
-	case SEND_PHOTO:
-		lcdDisplay("Sending photo...", "----------------");
-		busyWait(1000);
-		while (!so.photo_sent);
-		so.photo_sent = 0;
-		update_state(AUTH_PHOTO);
+			if (promptTimedout)
+				update_state(ERROR);
+			break;
 
-		break;
+		case PHOTO:
+			disable_timer(2); // disable the timer while the camera takes a picture
 
+			sayCheese(); // print LCD countdown
+			cameraTake();
+			update_state(SEND_PHOTO);
 
-	case AUTH_PHOTO:
+			// 3.. 2.. 1..
+			// TODO: take photo
+			//
+			//		reset_timer(2);
+			//		enable_timer(2);
+			//		promptTimeoutCount = 0;
 
-		lcdDisplay("TOOK PHOTO!!!!!!", "SENT PHOTO!!!!!!");
-		busyWait(4000);
-		update_state(IDLE);
+			// if (!promptTimedout) update_state(AUTH_PHOTO);
+			//		else
+			//update_state(ERROR);
 
-//		promptTimeoutCount = 0;  // reset timeout counter
-//		reset_timer(2);
-//		enable_timer(2);
-//
-//		while (!promptTimedout) {
-//			if (so.permission) {
-//				so.permission = 0;
-//				update_state(OPEN_DOOR);
-//				break;
-//			}
-//		}
-//
-//		if (promptTimedout) update_state(ERROR);
+			break;
 
-		break;
+		case SEND_PHOTO:
+			lcdDisplay("Sending photo...", "----------------");
+			busyWait(1000);
+			while (!so.photo_sent)
+				;
+			so.photo_sent = 0;
+			update_state(AUTH_PHOTO);
 
-	case AUTH_CODE:
-		promptTimeoutCount = 0;  						// reset timeout counter
-		reset_timer(2);
-		enable_timer(2);
+			break;
 
-//		codeIdx = 0;									// reset code index to point at the beginning of the code array
-//		for (i=0; i<16; i++)
-//			displayCode[i] = ' ';						// clear
+		case AUTH_PHOTO:
 
-//		while (!promptTimedout) {
-//			savedValue = keypadValue;					// save the value in case it changes
-//			keypadValue = 0;							// reset digit to unread
-//			if (savedValue != 0) {
-//				displayCode[codeIdx] = savedValue;		// show the last digit entered
-//				codeEntered[codeIdx] = savedValue; 		// save digit
-//				if (codeIdx > 0)
-//					displayCode[codeIdx-1] = '*';		// mask the old digits with an asterisk
-//				codeIdx++;								// move to next digit of code
-//				if (codeIdx >= CODE_LEN) { 				// if the # digits entered = code length
-//					if (codeMatches(codeEntered)) {		// if there is a code that matches
-//						update_state(OPEN_DOOR);
-//						break;
-//					}
-//					else {								// otherwise, it's a wrong code
-//						update_state(ERROR);
-//						break;
-//					}
-//				}
-//			}
-//			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
-//		}
-		// TODO: merge Matt's keypadVerify with this ^ code
+			lcdDisplay("TOOK PHOTO!!!!!!", "SENT PHOTO!!!!!!");
+			busyWait(4000);
+			update_state(IDLE);
 
-		if (keypadVerify()) update_state(OPEN_DOOR);									// this function is supplanted by the above code
-		else update_state(ERROR);
-		if (promptTimedout) update_state(ERROR); 		// the only way to break out the loop is to timeout (ERR), enter a wrong code (ERR), or enter a right code (OK)
-		break;
+			//		promptTimeoutCount = 0;  // reset timeout counter
+			//		reset_timer(2);
+			//		enable_timer(2);
+			//
+			//		while (!promptTimedout) {
+			//			if (so.permission) {
+			//				so.permission = 0;
+			//				update_state(OPEN_DOOR);
+			//				break;
+			//			}
+			//		}
+			//
+			//		if (promptTimedout) update_state(ERROR);
 
-	case OPEN_DOOR:
+			break;
 
-		lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
+		case AUTH_CODE:
+			promptTimeoutCount = 0; // reset timeout counter
+			reset_timer(2);
+			enable_timer(2);
 
-		strikeOpen();
-		busyWait(5000);
-		strikeClose();
-		keypadValue=0;
-		update_state(IDLE);
+			//		codeIdx = 0;									// reset code index to point at the beginning of the code array
+			//		for (i=0; i<16; i++)
+			//			displayCode[i] = ' ';						// clear
 
-		break;
+			//		while (!promptTimedout) {
+			//			savedValue = keypadValue;					// save the value in case it changes
+			//			keypadValue = 0;							// reset digit to unread
+			//			if (savedValue != 0) {
+			//				displayCode[codeIdx] = savedValue;		// show the last digit entered
+			//				codeEntered[codeIdx] = savedValue; 		// save digit
+			//				if (codeIdx > 0)
+			//					displayCode[codeIdx-1] = '*';		// mask the old digits with an asterisk
+			//				codeIdx++;								// move to next digit of code
+			//				if (codeIdx >= CODE_LEN) { 				// if the # digits entered = code length
+			//					if (codeMatches(codeEntered)) {		// if there is a code that matches
+			//						update_state(OPEN_DOOR);
+			//						break;
+			//					}
+			//					else {								// otherwise, it's a wrong code
+			//						update_state(ERROR);
+			//						break;
+			//					}
+			//				}
+			//			}
+			//			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
+			//		}
+			// TODO: merge Matt's keypadVerify with this ^ code
 
-	case ERROR:
-		disable_timer(2);
-		reset_timer(2);
-		promptTimeoutCount = 0;
-		promptTimedout = FALSE; 		// reset timeout flag
+			if (keypadVerify())
+				update_state(OPEN_DOOR); // this function is supplanted by the above code
+			else
+				update_state(ERROR);
+			if (promptTimedout)
+				update_state(ERROR); // the only way to break out the loop is to timeout (ERR), enter a wrong code (ERR), or enter a right code (OK)
+			break;
 
-		strikeClose();					// close door, just in case
+		case OPEN_DOOR:
 
-		lcdDisplay(ERROR_TEXT_1, BLANK_TEXT);
-		busyWait(5000);
+			lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
 
-		update_state(IDLE);
+			strikeOpen();
+			busyWait(5000);
+			strikeClose();
+			keypadValue = 0;
+			update_state(IDLE);
 
-		break;
+			break;
 
+		case ERROR:
+			disable_timer(2);
+			reset_timer(2);
+			promptTimeoutCount = 0;
+			promptTimedout = FALSE; // reset timeout flag
+
+			keypadValue = 0;
+
+			strikeClose(); // close door, just in case
+
+			lcdDisplay(ERROR_TEXT_1, BLANK_TEXT);
+			busyWait(5000);
+
+			update_state(IDLE);
+
+			break;
+
+		}
 	}
 }
-}
-
 
 unsigned int permission_granted() {
 	return so.permission;
@@ -226,12 +228,12 @@ void init_robolock() {
 	knockThresh = 512;
 	keypadValue = 0;
 	/* set initial codes */
-	resetCodes();			// initialize all codes to invalid
-	for (i=0; i<CODE_LEN; i++)			// create a valid default code "5555"
+	resetCodes(); // initialize all codes to invalid
+	for (i = 0; i < CODE_LEN; i++) // create a valid default code "5555"
 		defaultCode[i] = 5;
 	addNewCode(defaultCode, NO_EXPIRE);
 	/* initialize some systems */
-	init_timer(2, Fpclk, (void*)promptTimeoutHandler, TIMEROPT_INT_RST);
+	init_timer(2, Fpclk, (void*) promptTimeoutHandler, TIMEROPT_INT_RST);
 	cameraReset();
 }
 
@@ -239,11 +241,10 @@ void promptTimeoutHandler() {
 	T2IR = 1;
 	IENABLE;
 
-	if (promptTimeoutCount++ > PROMPT_TIMEOUT_LEN)
-	{
+	if (promptTimeoutCount++ > PROMPT_TIMEOUT_LEN) {
 		promptTimedout = TRUE;
-		promptTimeoutCount = 0; 		// reset timeout countdown
-		disable_timer(2); 				// disable itself
+		promptTimeoutCount = 0; // reset timeout countdown
+		disable_timer(2); // disable itself
 		reset_timer(2);
 	}
 
@@ -265,10 +266,6 @@ void init_network() {
 	uip_ipaddr_t ipaddr; /* local IP address */
 	//	struct timer periodic_timer, arp_timer;
 
-	// Start periodic timer
-	init_timer(3, Fpclk/2, (void*)periodic_network, TIMEROPT_INT_RST);
-	reset_timer(3);
-	//enable_timer(3);
 
 	// two timers for tcp/ip
 	//	timer_set(&periodic_timer, CLOCK_SECOND / 2); /* 0.5s */
@@ -289,24 +286,37 @@ void init_network() {
 	uip_setnetmask(ipaddr); /* mask */
 
 	tcp_client_init();
+
+
+//	// Start periodic timer
+//	init_timer(3, Fpclk / 10, (void*) periodic_network, TIMEROPT_INT_RST);
+//	reset_timer(3);
+//
+//	enable_timer(3);
+
 }
-
-
+int x = 0;
 // need to discuss this with will
 void periodic_network() {
-	T3IR = 1;			/* clear interrupt flag */
-	IENABLE;			/* handles nested interrupt */
+	T3IR = 1; /* clear interrupt flag */
+	IENABLE; /* handles nested interrupt */
 
-//	printLED(0xF0);
-//	busyWait(50);
-//	printLED(0x0F);
-//	busyWait(50);
 
-	int i;
 
 	uip_len = tapdev_read(uip_buf);
-
+	int i;
+	printLED(0xAA);
+//
+//
+//
 	if (uip_len > 0) { // packed received
+
+
+
+//		printLED(0xF0);
+//		busyWait(50);
+//		printLED(0x0F);
+//		busyWait(50);
 
 		if (BUF->type == htons(UIP_ETHTYPE_IP)) { // IP Packet
 			uip_arp_ipin();
@@ -343,7 +353,7 @@ void periodic_network() {
 			tapdev_send(uip_buf, uip_len);
 		}
 	}
-
+//
 	IDISABLE;
-	VICVectAddr = 0;	/* Acknowledge Interrupt */
+	VICVectAddr = 0; /* Acknowledge Interrupt */
 }
