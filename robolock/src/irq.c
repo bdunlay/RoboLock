@@ -30,6 +30,7 @@ void init_VIC(void)
     VICIntEnClr = 0xffffffff;
     VICVectAddr = 0;
     VICIntSelect = 0;
+    //VICDefVectAddr = spuriousHandler;
 
     /* set all the vector and vector control register to 0 */
     for ( i = 0; i < VIC_SIZE; i++ )

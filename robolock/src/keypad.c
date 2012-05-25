@@ -6,6 +6,8 @@
 #include "common.h"
 #include "led.h"
 #include "LCD.h"
+#include "code.h"
+#include "uart.h"
 
 void testKeypad(void) {
 	IENABLE;
@@ -15,16 +17,19 @@ void testKeypad(void) {
 	}
 }
 
-void keypadVerify(void) {
+BYTE keypadVerify(void) {
 	IENABLE;
+	BYTE code[CODE_LEN];
+
 	keypadCount = 0;
 	int last = 0;
 	lcdClear();
 	char displayCode[16] = "Enter Code:     ";
 	lcdDisplay(displayCode, "                ");
-	while (keypadCount < 4) {
+	while (keypadCount < CODE_LEN) {
 		if (keypadCount >= 1) {
 			displayCode[10 + keypadCount] = keypadValue;
+			code[keypadCount-1] = keypadValue;
 			if (keypadCount >= 2)
 				displayCode[10 + keypadCount - 1] = '*';
 		}
@@ -35,4 +40,10 @@ void keypadVerify(void) {
 		}
 	}
 	keypadCount = 0;
+	UARTSendChar(code[0]);
+	UARTSendChar(code[1]);
+	UARTSendChar(code[2]);
+	UARTSendChar(code[3]);
+	UARTSendChar(' ');
+	return codeMatches((BYTE*)code);
 }

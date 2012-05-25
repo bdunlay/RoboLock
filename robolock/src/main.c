@@ -29,6 +29,7 @@ int main(void) {
 	IENABLE;
 	TargetResetInit();
 	initLED();
+	RTCInit();
 	printLED(0x01);
 	initLCD();
 	init_dip();
@@ -40,7 +41,7 @@ int main(void) {
 	printLED(0x0F);
 	ADCInit();
 	printLED(0x1F);
-	//SDRAMInit();
+	PCONP &= ~(1<<11); // turn off EMC :(    //SDRAMInit();
 	strikeInit();
 	printLED(0x3F);
 	init_robolock();

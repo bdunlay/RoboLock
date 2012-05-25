@@ -161,7 +161,7 @@ int getChunk(BYTE** buffer, int size){
 	printLED(0xF0);
 	int i;
 	for(i = 0; i<size ||(UART2Buffer[i] == 0xD9); i++) {
-		buffer[i] = UART2Buffer[i];
+		*buffer[i] = UART2Buffer[i];
 		printLED(i);
 		busyWait(200);
 		//printBuf[i] = *buffer[i];
@@ -175,7 +175,7 @@ int getChunk(BYTE** buffer, int size){
 	init_robolock();
 
 	lcdInit();
-	lcdDisplay(*buffer[0], *buffer[31]);
+	lcdDisplay(*buffer, &((*buffer)[31]));
 
 	endFC = 0;
 	return i;

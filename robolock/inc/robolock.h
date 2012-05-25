@@ -31,7 +31,10 @@ enum {
 #define CHEESE_TEXT_3            ".......2........"
 #define CHEESE_TEXT_4            "...........1...."
 
+#define ENTER_CODE_TEXT_1        "Enter code      "
+
 #define WELCOME_TEXT_1           "    Welcome!    "
+
 
 #define ERROR_TEXT_1             "     ERROR      "
 
@@ -71,7 +74,5 @@ volatile DWORD knockThresh;
 
 volatile BYTE promptTimedout;
 volatile BYTE promptTimeoutCount;
-
-volatile Code codeList[MAX_CODES];
 
 #endif

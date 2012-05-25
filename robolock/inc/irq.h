@@ -85,6 +85,7 @@ using __asm and asm keywords. */
 //extern void FIQ_Handler( void )  __irq;
 void init_VIC( void );
 DWORD install_irq( DWORD IntNumber, void *HandlerAddr, DWORD Priority );
+void spuriousHandler( void ) __irq;
 
 ////////////
 #ifndef __thumb
