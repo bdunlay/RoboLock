@@ -143,12 +143,9 @@ DWORD get_ADCval()
 #include "common.h"
 void testADC(void)
 {
-	int i = 0;
 	ADC0Read();
-	while (!ADC0IntDone)
-		i++;
+	while (!ADC0IntDone);
 	ADC0IntDone = 0;
-//	printLED(i);
 	printLED((BYTE)(0xFF >> (8 - (ADC0Value>>7))));
 	busyWait(10);
 }

@@ -19,6 +19,7 @@
 #include "cameraB.h"
 #include "adc.h"
 #include "code.h"
+#include "button.h"
 
 //#include "uip_timer.h"
 #include "uip.h"
@@ -31,12 +32,19 @@
 
 void robolock() {
 
+	BYTE codeEntered[CODE_LEN];
+	BYTE codeIdx;
+	//BYTE last = 0;
+	char displayCode[16] = "Enter Code:     ";
+	DWORD savedValue;
+	WORD i;
+
 	IENABLE;
 	while (1) { //do forever
-		while(1){
-			periodic_network();
-			//busyWait(1000);
-		}
+//		while(1){
+//			periodic_network();
+//			//busyWait(1000);
+//		}
 
 		switch (so.state) {
 
@@ -44,10 +52,16 @@ void robolock() {
 			lcdDisplay("      IDLE      ", "                ");
 			lcdBacklightOff(); // backlight OFF
 
+			buttonPressed = FALSE;
 			ADC0Read(); // start reading from the piezo
 			busyWait(100);
 
-			if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+			if (buttonPressed)
+			{
+				buttonPressed = FALSE;
+				update_state(CALIBRATE);
+			}
+			else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
 			{
 				printLED(keypadValue);
 				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
@@ -63,20 +77,19 @@ void robolock() {
 			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			while (!promptTimedout) {
-				if (keypadValue == 0) {
+				savedValue = keypadValue;
+				keypadValue =  0;
+				if (savedValue == 0) {
 					continue;
-				} else if (keypadValue == '#') {
-					keypadValue = 0;
+				} else if (savedValue == '#') {
 					update_state(AUTH_CODE);
 					break;
-				} else if (keypadValue == '*') {
-					keypadValue = 0;
+				} else if (savedValue == '*') {
 					update_state(PHOTO);
 					break;
 				} else {
 					reset_timer(2);
 					promptTimeoutCount = 0; // reset the timeout counter if a non-recognized character is seen
-					keypadValue = 0;
 				}
 			}
 
@@ -91,9 +104,6 @@ void robolock() {
 			cameraTake();
 			update_state(SEND_PHOTO);
 
-			// 3.. 2.. 1..
-			// TODO: take photo
-			//
 			//		reset_timer(2);
 			//		enable_timer(2);
 			//		promptTimeoutCount = 0;
@@ -120,19 +130,19 @@ void robolock() {
 			busyWait(4000);
 			update_state(IDLE);
 
-			//		promptTimeoutCount = 0;  // reset timeout counter
-			//		reset_timer(2);
-			//		enable_timer(2);
-			//
-			//		while (!promptTimedout) {
-			//			if (so.permission) {
-			//				so.permission = 0;
-			//				update_state(OPEN_DOOR);
-			//				break;
-			//			}
-			//		}
-			//
-			//		if (promptTimedout) update_state(ERROR);
+//			promptTimeoutCount = 0;  // reset timeout counter
+//			reset_timer(2);
+//			enable_timer(2);
+//
+//			while (!promptTimedout) {
+//				if (so.permission) {
+//					so.permission = 0;
+//					update_state(OPEN_DOOR);
+//					break;
+//				}
+//			}
+//
+//			if (promptTimedout) update_state(ERROR);
 
 			break;
 
@@ -141,38 +151,36 @@ void robolock() {
 			reset_timer(2);
 			enable_timer(2);
 
-			//		codeIdx = 0;									// reset code index to point at the beginning of the code array
-			//		for (i=0; i<16; i++)
-			//			displayCode[i] = ' ';						// clear
+			codeIdx = 0;									// reset code index to point at the beginning of the code array
+			for (i=0; i<16; i++)
+				displayCode[i] = ' ';						// clear
 
-			//		while (!promptTimedout) {
-			//			savedValue = keypadValue;					// save the value in case it changes
-			//			keypadValue = 0;							// reset digit to unread
-			//			if (savedValue != 0) {
-			//				displayCode[codeIdx] = savedValue;		// show the last digit entered
-			//				codeEntered[codeIdx] = savedValue; 		// save digit
-			//				if (codeIdx > 0)
-			//					displayCode[codeIdx-1] = '*';		// mask the old digits with an asterisk
-			//				codeIdx++;								// move to next digit of code
-			//				if (codeIdx >= CODE_LEN) { 				// if the # digits entered = code length
-			//					if (codeMatches(codeEntered)) {		// if there is a code that matches
-			//						update_state(OPEN_DOOR);
-			//						break;
-			//					}
-			//					else {								// otherwise, it's a wrong code
-			//						update_state(ERROR);
-			//						break;
-			//					}
-			//				}
-			//			}
-			//			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
-			//		}
-			// TODO: merge Matt's keypadVerify with this ^ code
-
-			if (keypadVerify())
-				update_state(OPEN_DOOR); // this function is supplanted by the above code
-			else
-				update_state(ERROR);
+			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
+			while (!promptTimedout) {
+				savedValue = keypadValue;					// save the value in case it changes
+				keypadValue = 0;							// reset digit to unread
+				if (savedValue != 0) {
+					if (savedValue == '*' || savedValue == '#')
+						continue;							// ignore * and # characters
+					displayCode[codeIdx] = savedValue;		// show the last digit entered
+					codeEntered[codeIdx] = savedValue; 		// save digit
+					if (codeIdx > 0)
+						displayCode[codeIdx-1] = '*';		// mask the old digits with an asterisk
+					lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
+					++codeIdx;								// move to next digit of code
+					if (codeIdx >= CODE_LEN) { 				// if the # digits entered = code length
+						if (codeMatches(codeEntered)) {		// if there is a code that matches
+							update_state(OPEN_DOOR);
+							break;
+						}
+						else {								// otherwise, it's a wrong code
+							update_state(ERROR);
+							break;
+						}
+					}
+				}
+			}
+			// TODO: merge Matt's keypadVerify with this ^ code...or not?
 			if (promptTimedout)
 				update_state(ERROR); // the only way to break out the loop is to timeout (ERR), enter a wrong code (ERR), or enter a right code (OK)
 			break;
@@ -204,6 +212,22 @@ void robolock() {
 
 			update_state(IDLE);
 
+			break;
+
+		case CALIBRATE:
+			reset_timer(2);
+			enable_timer(2);
+			knockThresh = 0;
+			/* Acquire maximum ADC value from a knock */
+			while (!promptTimedout)
+			{
+				savedValue = get_ADCval();
+				if (savedValue > knockThresh)
+					knockThresh = savedValue;
+			}
+			promptTimedout = FALSE; 		// reset the timeout flag
+			knockThresh = knockThresh / 2;	// anything higher than 0.5 * maximum is a significant value
+			update_state(IDLE);
 			break;
 
 		}

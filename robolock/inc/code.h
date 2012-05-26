@@ -12,8 +12,8 @@
 #include "rtc.h"
 #include "irq.h"
 
-#define CODE_LEN                 4
-#define MAX_CODES                16
+#define CODE_LEN                 (4)	// number of digits in a code
+#define MAX_CODES                (16)	// maximum possible number of codes (valid or invalid)
 
 enum expire_times {
 	NO_EXPIRE,
@@ -25,10 +25,10 @@ enum expire_times {
 };
 
 typedef struct {
-	BYTE value[CODE_LEN];
-	BYTE valid;
-	BYTE expires;
-	RTCTime expTime;
+	BYTE value[CODE_LEN];	/* The digits of the code, of length CODE_LEN */
+	BYTE valid;				/* Boolean that marks if the code is valid */
+	BYTE expires;			/* Boolean that marks if the code will expire */
+	RTCTime expTime;		/* Time struct that defines when the code will expire */
 } Code;
 
 /* Setters, getters */
