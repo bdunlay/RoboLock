@@ -42,45 +42,44 @@ void lcdBacklightOff(void){
 	FIO1SET3 |= 0x04;
 
 }
-void clearLCD(void) {
-//	e.g. Start, DevAddr(W), WRByte1...WRByteN, Repeated-Start, DevAddr(R),
-//	  RDByte1...RDByteN Stop. The content of the reading will be filled
-//	  after (I2CWriteLength + two devaddr) bytes.
+//void clearLCD(void) {
+////	e.g. Start, DevAddr(W), WRByte1...WRByteN, Repeated-Start, DevAddr(R),
+////	  RDByte1...RDByteN Stop. The content of the reading will be filled
+////	  after (I2CWriteLength + two devaddr) bytes.
+//
+//	  /* Configure temp register before reading */
+//	int i=0;
+//	  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
+//	  {
+//		I2CMasterBuffer[i] = 0;
+//	  }
+//	  I2CWriteLength = 3;
+//	  I2CReadLength = 0;
+//	  I2CMasterBuffer[0] = LCD_ADDR;
+//	  I2CMasterBuffer[1] = 0x38;//LCD_CONFIG;
+//	  I2CMasterBuffer[2] = 0x0F;//0x01;
+//	  I2CMasterBuffer[3] = 0x26;
+//	  /* configuration value, no change from default */
+//	  I2CCmd = LCD_CONFIG;
+//	  I2CEngine();
+//
+//}
 
-	  /* Configure temp register before reading */
-	int i=0;
-	  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
-	  {
-		I2CMasterBuffer[i] = 0;
-	  }
-	  I2CWriteLength = 3;
-	  I2CReadLength = 0;
-	  I2CMasterBuffer[0] = LCD_ADDR;
-	  I2CMasterBuffer[1] = 0x38;//LCD_CONFIG;
-	  I2CMasterBuffer[2] = 0x0F;//0x01;
-	  I2CMasterBuffer[3] = 0x26;
-	  /* configuration value, no change from default */
-	  I2CCmd = LCD_CONFIG;
-	  printLED(0x02);
-	 // busyWait(100);
-	  I2CEngine();
-}
 
-
-void printLCD(BYTE val) {
-	int i=0;
-			  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
-			  {
-				I2CMasterBuffer[i] = 0;
-			  }
-			  I2CWriteLength = 2;
-			  I2CReadLength = 0;
-			  I2CMasterBuffer[0] = LCD_ADDR;
-			  I2CMasterBuffer[1] = 0x40;
-			  I2CMasterBuffer[2] = val;
-			  I2CEngine();
-			//  busyWait(200);
-}
+//void printLCD(BYTE val) {
+//	int i=0;
+//			  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
+//			  {
+//				I2CMasterBuffer[i] = 0;
+//			  }
+//			  I2CWriteLength = 2;
+//			  I2CReadLength = 0;
+//			  I2CMasterBuffer[0] = LCD_ADDR;
+//			  I2CMasterBuffer[1] = 0x40;
+//			  I2CMasterBuffer[2] = val;
+//			  I2CEngine();
+//			//  busyWait(200);
+//}
 
 
 void testLCD() {
@@ -90,13 +89,13 @@ void testLCD() {
 		lcdBacklight();
 
 		lcdInit();
-		//for(i=0;i<600;i++);
+		//	for(i=0;i<2000;i++);
 		lcdClear();
-		//for(i=0;i<600;i++);
+		//	for(i=0;i<2000;i++);
 		LCDWrite("Hello There");
-		//for(i=0;i<600;i++);
+		//	for(i=0;i<2000;i++);
 		LCDLine2();
-		//for(i=0;i<600;i++);
+		//	for(i=0;i<2000;i++);
 		LCDWrite("Test Program");
 		busyWait(1000);
 
@@ -104,7 +103,7 @@ void testLCD() {
 
 void lcdInit(){
 	volatile int i=0;
-	for(i=0;i<600;i++);
+		for(i=0;i<2000;i++);
 	for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
 	{
 	I2CMasterBuffer[i] = 0;
@@ -127,6 +126,7 @@ void lcdInit(){
 	/* configuration value, no change from default */
 	I2CCmd = LCD_CONFIG;
 	I2CEngine();
+  	for(i=0;i<2000;i++);
 }
 
 void lcdClear(){
@@ -143,8 +143,8 @@ void lcdClear(){
 		  I2CMasterBuffer[3] = 0x01;
 		  /* configuration value, no change from default */
 		 // I2CCmd = LCD_CONFIG;
-		  for(i=0;i<600;i++);
 		  I2CEngine();
+		  	for(i=0;i<2000;i++);
 }
 
 void LCDWrite(char* buffer){
@@ -156,14 +156,13 @@ void LCDWrite(char* buffer){
 	for(i=0;i<16;i++){
 		I2CMasterBuffer[i+2] = buffer[i];
 	}
-	for(i=0;i<600;i++);
 	 I2CEngine();
+		for(i=0;i<2000;i++);
 
 }
 
 void LCDLine1(){
 	volatile int i=0;
-	for(i=0;i<600;i++);
 			  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
 			  {
 				I2CMasterBuffer[i] = 0;
@@ -173,13 +172,13 @@ void LCDLine1(){
 			  I2CMasterBuffer[0] = LCD_ADDR;
 			  I2CMasterBuffer[1] = 0x00;
 			  I2CMasterBuffer[5] = 0x80;
-
 			  I2CEngine();
+		  	  for(i=0;i<2000;i++);
 }
 
 void LCDLine2(){
 	volatile int i=0;
-	for(i=0;i<600;i++);
+
 			  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
 			  {
 				I2CMasterBuffer[i] = 0;
@@ -189,13 +188,14 @@ void LCDLine2(){
 			  I2CMasterBuffer[0] = LCD_ADDR;
 			  I2CMasterBuffer[1] = 0x00;
 			  I2CMasterBuffer[5] = 0xC0;
-
 			  I2CEngine();
+				for(i=0;i<2000;i++);
 }
 
 void lcdDisplay(char* line1,char* line2){
 
 	lcdClear();
+	LCDLine1();
 	LCDWrite(line1);
 	LCDLine2();
 	LCDWrite(line2);

@@ -258,7 +258,7 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
   }    
 
   /* Install interrupt handler */	
-  if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, 0x08 ) == FALSE )
+  if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, HIGHEST_PRIORITY ) == FALSE )
   {
 	  printLED(0xAA);
 	 // busyWait(100);

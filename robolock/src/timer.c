@@ -143,24 +143,24 @@ DWORD init_timer ( BYTE timerNum, DWORD timerInterval, void* irqHandler, BYTE ti
 	case 0:
 		T0MR0 = timerInterval;	// set timer interval, in units of clock cycles
 		T0MCR = timerOpt;		// set timer to reset/interrupt/both/neither
-		return install_irq( TIMER0_INT, (void *)irqHandler, HIGHEST_PRIORITY );
+		return install_irq( TIMER0_INT, (void *)irqHandler, HIGHEST_PRIORITY +4);
 		break;
 	case 1:
 		T1MR0 = timerInterval;	// set timer interval, in units of clock cycles
 		T1MCR = timerOpt;		// set timer to reset/interrupt/both/neither
-		return install_irq( TIMER1_INT, (void *)irqHandler, HIGHEST_PRIORITY );
+		return install_irq( TIMER1_INT, (void *)irqHandler, HIGHEST_PRIORITY +4 );
 		break;
 	case 2:
 		PCONP |= (1<<22);
 		T2MR0 = timerInterval;	// set timer interval, in units of clock cycles
 		T2MCR = timerOpt;		// set timer to reset/interrupt/both/neither
-		return install_irq( TIMER2_INT, (void *)irqHandler, HIGHEST_PRIORITY );
+		return install_irq( TIMER2_INT, (void *)irqHandler, HIGHEST_PRIORITY + 4 );
 		break;
 	case 3:
 		PCONP |= (1<<23);
 		T3MR0 = timerInterval;	// set timer interval, in units of clock cycles
 		T3MCR = timerOpt;		// set timer to reset/interrupt/both/neither
-		return install_irq( TIMER3_INT, (void *)irqHandler, HIGHEST_PRIORITY );
+		return install_irq( TIMER3_INT, (void *)irqHandler, HIGHEST_PRIORITY + 4 );
 		break;
 	default:
 		break;

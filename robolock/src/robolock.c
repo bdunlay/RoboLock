@@ -47,7 +47,7 @@ void robolock() {
 
 		case IDLE:
 			UARTSendChar('I');
-//			lcdDisplay("      IDLE      ", "                ");
+			lcdDisplay("      IDLE      ", "                ");
 			lcdBacklightOff(); // backlight OFF
 
 			ADC0Read(); // start reading from the piezo
