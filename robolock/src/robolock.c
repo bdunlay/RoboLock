@@ -50,28 +50,25 @@ void robolock() {
 			printLED(i++);
 
 			UARTSendChar('I');
-			//if(lcdSuppress == 0){
+			if(lcdSuppress == 0){
 			lcdDisplay("      IDLE      ", "                ");
 			lcdSuppress = 1;
-			//}
-			lcdBacklightOff(); // backlight OFF
-			while (!promptTimedout) {
-				ADC0Read(); // start reading from the piezo
-				busyWait(500);
-
-				if (buttonPressed) {
-					buttonPressed = FALSE;
-					lcdSuppress = 0;
-					update_state(CALIBRATE);
-				} else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
-				{
-					keypadValue = 0; // no need?  reset the keypad value to "unpressed"
-					lcdSuppress = 0;
-					update_state(PROMPT);
-				}
 			}
-			if (promptTimedout)
-				update_state(ERROR);
+			lcdBacklightOff(); // backlight OFF
+			ADC0Read(); // start reading from the piezo
+			busyWait(500);
+
+			if (buttonPressed) {
+				buttonPressed = FALSE;
+				lcdSuppress = 0;
+				update_state(CALIBRATE);
+			} else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+			{
+				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
+				lcdSuppress = 0;
+				update_state(PROMPT);
+			}
+
 			break;
 
 		case PROMPT:
