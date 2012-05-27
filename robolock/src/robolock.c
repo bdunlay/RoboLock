@@ -51,26 +51,27 @@ void robolock() {
 
 			UARTSendChar('I');
 			//if(lcdSuppress == 0){
-				lcdDisplay("      IDLE      ", "                ");
-				lcdSuppress = 1;
+			lcdDisplay("      IDLE      ", "                ");
+			lcdSuppress = 1;
 			//}
 			lcdBacklightOff(); // backlight OFF
+			while (!promptTimedout) {
+				ADC0Read(); // start reading from the piezo
+				busyWait(500);
 
-			ADC0Read(); // start reading from the piezo
-			busyWait(500);
-
-			if (buttonPressed)
-			{
-				buttonPressed = FALSE;
-				lcdSuppress = 0;
-				update_state(CALIBRATE);
+				if (buttonPressed) {
+					buttonPressed = FALSE;
+					lcdSuppress = 0;
+					update_state(CALIBRATE);
+				} else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+				{
+					keypadValue = 0; // no need?  reset the keypad value to "unpressed"
+					lcdSuppress = 0;
+					update_state(PROMPT);
+				}
 			}
-			else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
-			{
-				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
-				lcdSuppress = 0;
-				update_state(PROMPT);
-			}
+			if (promptTimedout)
+				update_state(ERROR);
 			break;
 
 		case PROMPT:
@@ -83,7 +84,7 @@ void robolock() {
 
 			while (!promptTimedout) {
 				savedKeyValue = keypadValue;
-				keypadValue =  0;
+				keypadValue = 0;
 				if (savedKeyValue == 0) {
 					continue;
 				} else if (savedKeyValue == '#') {
@@ -135,19 +136,19 @@ void robolock() {
 			busyWait(4000);
 			update_state(IDLE);
 
-//			promptTimeoutCount = 0;  // reset timeout counter
-//			reset_timer(2);
-//			enable_timer(2);
-//
-//			while (!promptTimedout) {
-//				if (so.permission) {
-//					so.permission = 0;
-//					update_state(OPEN_DOOR);
-//					break;
-//				}
-//			}
-//
-//			if (promptTimedout) update_state(ERROR);
+			//			promptTimeoutCount = 0;  // reset timeout counter
+			//			reset_timer(2);
+			//			enable_timer(2);
+			//
+			//			while (!promptTimedout) {
+			//				if (so.permission) {
+			//					so.permission = 0;
+			//					update_state(OPEN_DOOR);
+			//					break;
+			//				}
+			//			}
+			//
+			//			if (promptTimedout) update_state(ERROR);
 
 			break;
 
@@ -157,31 +158,30 @@ void robolock() {
 			reset_timer(2);
 			enable_timer(2);
 
-			codeIdx = 0;										// reset code index to point at the beginning of the code array
-			for (i=0; i<16; i++)
-				displayCode[i] = ' ';							// clear
+			codeIdx = 0; // reset code index to point at the beginning of the code array
+			for (i = 0; i < 16; i++)
+				displayCode[i] = ' '; // clear
 
 			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
 			while (!promptTimedout) {
-				savedKeyValue = keypadValue;					// save the value in case it changes
-				keypadValue = 0;								// reset digit to unread
+				savedKeyValue = keypadValue; // save the value in case it changes
+				keypadValue = 0; // reset digit to unread
 				if (savedKeyValue != 0) {
 					if (savedKeyValue == '*' || savedKeyValue == '#')
-						continue;								// ignore * and # characters
-					displayCode[codeIdx] = savedKeyValue;		// show the last digit entered
-					codeEntered[codeIdx] = atoi(savedKeyValue);	// save digit
+						continue; // ignore * and # characters
+					displayCode[codeIdx] = savedKeyValue; // show the last digit entered
+					codeEntered[codeIdx] = atoi(savedKeyValue); // save digit
 					UARTSendChar(savedKeyValue);
 					if (codeIdx > 0)
-						displayCode[codeIdx-1] = '*';			// mask the old digits with an asterisk
+						displayCode[codeIdx - 1] = '*'; // mask the old digits with an asterisk
 					lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
-					++codeIdx;									// move to next digit of code
-					if (codeIdx >= CODE_LEN) { 					// if the # digits entered = code length
-						if (codeMatches(codeEntered)) {			// if there is a code that matches
+					++codeIdx; // move to next digit of code
+					if (codeIdx >= CODE_LEN) { // if the # digits entered = code length
+						if (codeMatches(codeEntered)) { // if there is a code that matches
 							update_state(OPEN_DOOR);
 							UARTSendChar('M');
 							break;
-						}
-						else {									// otherwise, it's a wrong code
+						} else { // otherwise, it's a wrong code
 							update_state(ERROR);
 							UARTSendChar('b');
 							break;
@@ -213,7 +213,7 @@ void robolock() {
 			promptTimeoutCount = 0;
 			promptTimedout = FALSE; // reset timeout flag
 
-			buttonPressed = FALSE;	// reset button flag
+			buttonPressed = FALSE; // reset button flag
 
 			update_state(IDLE);
 
@@ -225,7 +225,7 @@ void robolock() {
 			promptTimeoutCount = 0;
 			promptTimedout = FALSE; // reset timeout flag
 
-			buttonPressed = FALSE;	// reset button flag
+			buttonPressed = FALSE; // reset button flag
 
 			UARTSendChar('E');
 
@@ -246,15 +246,14 @@ void robolock() {
 			UARTSendChar('A');
 			knockThresh = 0;
 			/* Acquire maximum ADC value from a knock */
-			while (!promptTimedout)
-			{
+			while (!promptTimedout) {
 				savedADCValue = get_ADCval();
 				if (savedADCValue > knockThresh)
 					knockThresh = savedADCValue;
 			}
-			promptTimedout = FALSE; 		// reset the timeout flag
-			buttonPressed = FALSE;			// reset button flag
-			knockThresh = knockThresh / 2;	// anything higher than 0.5 * maximum is a significant value
+			promptTimedout = FALSE; // reset the timeout flag
+			buttonPressed = FALSE; // reset button flag
+			knockThresh = knockThresh / 2; // anything higher than 0.5 * maximum is a significant value
 			update_state(IDLE);
 			break;
 
@@ -335,7 +334,6 @@ void init_network() {
 
 	tcp_client_init();
 
-
 	// Start periodic timer
 	init_timer(3, Fpclk / 10, (void*) periodic_network, TIMEROPT_INT_RST);
 	reset_timer(3);
@@ -352,16 +350,15 @@ void periodic_network() {
 	uip_len = tapdev_read(uip_buf);
 	int i;
 	//
-//
-//
+	//
+	//
 	if (uip_len > 0) { // packed received
 
 
-
-//		printLED(0xF0);
-//		busyWait(50);
-//		printLED(0x0F);
-//		busyWait(50);
+		//		printLED(0xF0);
+		//		busyWait(50);
+		//		printLED(0x0F);
+		//		busyWait(50);
 
 		if (BUF->type == htons(UIP_ETHTYPE_IP)) { // IP Packet
 			uip_arp_ipin();
