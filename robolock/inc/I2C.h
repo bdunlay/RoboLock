@@ -50,8 +50,8 @@
 
 //#define I2DAT_I2C			0x00000000  /* I2C Data Reg */
 //#define I2ADR_I2C			0x00000000  /* I2C Slave Address Reg */
-#define I2SCLH_SCLH			0x00000004 //0x00000080  /* I2C SCL Duty Cycle High Reg */
-#define I2SCLL_SCLL			0x00000004 //0x00000080  /* I2C SCL Duty Cycle Low Reg */
+#define I2SCLH_SCLH			0x00000006 // testing at 4...0x00000080  /* I2C SCL Duty Cycle High Reg */
+#define I2SCLL_SCLL			0x00000006 //0x00000080  /* I2C SCL Duty Cycle Low Reg */
 
 #include "type.h"
 #include "irq.h"

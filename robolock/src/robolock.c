@@ -40,14 +40,20 @@ void robolock() {
 	BYTE savedKeyValue;
 	DWORD savedADCValue;
 	WORD i;
+	int lcdSuppress = 0;
 
 	while (1) { //do forever
 
 		switch (so.state) {
 
 		case IDLE:
+			printLED(i++);
+
 			UARTSendChar('I');
-			lcdDisplay("      IDLE      ", "                ");
+			//if(lcdSuppress == 0){
+				lcdDisplay("      IDLE      ", "                ");
+				lcdSuppress = 1;
+			//}
 			lcdBacklightOff(); // backlight OFF
 
 			ADC0Read(); // start reading from the piezo
@@ -56,11 +62,13 @@ void robolock() {
 			if (buttonPressed)
 			{
 				buttonPressed = FALSE;
+				lcdSuppress = 0;
 				update_state(CALIBRATE);
 			}
 			else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
 			{
 				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
+				lcdSuppress = 0;
 				update_state(PROMPT);
 			}
 			break;
@@ -71,7 +79,7 @@ void robolock() {
 
 			enable_timer(2); // start prompt timeout
 
-//			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
+			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			while (!promptTimedout) {
 				savedKeyValue = keypadValue;
@@ -112,7 +120,7 @@ void robolock() {
 			break;
 
 		case SEND_PHOTO:
-//			lcdDisplay("Sending photo...", "----------------");
+			lcdDisplay("Sending photo...", "----------------");
 			busyWait(1000);
 			while (!so.photo_sent)
 				;
@@ -123,7 +131,7 @@ void robolock() {
 
 		case AUTH_PHOTO:
 
-//			lcdDisplay("TOOK PHOTO!!!!!!", "SENT PHOTO!!!!!!");
+			lcdDisplay("TOOK PHOTO!!!!!!", "SENT PHOTO!!!!!!");
 			busyWait(4000);
 			update_state(IDLE);
 
@@ -153,7 +161,7 @@ void robolock() {
 			for (i=0; i<16; i++)
 				displayCode[i] = ' ';							// clear
 
-//			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
+			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
 			while (!promptTimedout) {
 				savedKeyValue = keypadValue;					// save the value in case it changes
 				keypadValue = 0;								// reset digit to unread
@@ -165,7 +173,7 @@ void robolock() {
 					UARTSendChar(savedKeyValue);
 					if (codeIdx > 0)
 						displayCode[codeIdx-1] = '*';			// mask the old digits with an asterisk
-//					lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
+					lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
 					++codeIdx;									// move to next digit of code
 					if (codeIdx >= CODE_LEN) { 					// if the # digits entered = code length
 						if (codeMatches(codeEntered)) {			// if there is a code that matches
@@ -190,7 +198,7 @@ void robolock() {
 
 		case OPEN_DOOR:
 
-//			lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
+			lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
 
 			UARTSendChar('O');
 
@@ -225,7 +233,7 @@ void robolock() {
 
 			strikeClose(); // close door, just in case
 
-//			lcdDisplay(ERROR_TEXT_1, BLANK_TEXT);
+			lcdDisplay(ERROR_TEXT_1, BLANK_TEXT);
 			busyWait(5000);
 
 			update_state(IDLE);

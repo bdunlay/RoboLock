@@ -53,9 +53,7 @@ be READ or WRITE depending on the I2CCmd.
 void I2C1MasterHandler(void)// __irq
 {
   BYTE StatValue;
-  //printLED(0xF0);
-  //busyWait(1);
-  for(i=0;i<1000;i++);
+ // for(i=0;i<100;i++);
   /* this handler deals with master read and master write only */
   StatValue = I21STAT;
   IENABLE;				/* handles nested interrupt */
