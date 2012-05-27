@@ -19,8 +19,8 @@
 
 volatile DWORD UART3Status;
 volatile BYTE UART3TxEmpty = 1;
-volatile BYTE UART3Buffer[UART_BUFSIZE];
-volatile DWORD UART3Count = 0;
+//volatile BYTE UART3Buffer[UART_BUFSIZE];
+//volatile DWORD UART3Count = 0;
 
 /*****************************************************************************
  ** Function name:		UART3Handler
@@ -76,12 +76,12 @@ void UART3Handler (void)
 			/* If no error on RLS, normal ready, save into the data buffer. */
 			/* Note: read RBR will clear the interrupt */
 			//16bit UART3 buffer.
-			UART3Buffer[UART3Count] = U3RBR;
-			UART3Count++;
-			if ( UART3Count == UART_BUFSIZE )
-			{
-				UART3Count = 0;		/* buffer overflow */
-			}
+			keypadValue = U3RBR;
+//			UART3Count++;
+//			if ( UART3Count >= UART_BUFSIZE )
+//			{
+//				UART3Count = 0;		/* buffer overflow */
+//			}
 		}
 	}
 
@@ -98,14 +98,14 @@ void UART3Handler (void)
 	{
 		//printLED(255);
 		/* Receive Data Available */
-		UART3Buffer[UART3Count] = U3RBR;
-		keypadValue = UART3Buffer[UART3Count];
-		keypadCount++;
-		UART3Count++;
-		if ( UART3Count == UART_BUFSIZE ) {
-			printLED(7);
-			UART3Count = 0;		/* buffer overflow */
-		}
+		keypadValue = U3RBR;
+//		keypadValue = UART3Buffer[UART3Count];
+//		keypadCount++;
+//		UART3Count++;
+//		if ( UART3Count == UART_BUFSIZE ) {
+//			printLED(7);
+//			UART3Count = 0;		/* buffer overflow */
+//		}
 	}
 	//    CTI interrupt (U3IIR[3:1] = 110)
 	//    --------------------------------
@@ -121,7 +121,7 @@ void UART3Handler (void)
 
 	else if ( IIRValue == IIR_CTI )	/* Character timeout indicator */
 	{
-		printLED(3);
+//		printLED(3);
 		/* Character Time-out indicator */
 		UART3Status |= 0x100;		/* Bit 9 as the CTI error */
 	}
@@ -140,7 +140,7 @@ void UART3Handler (void)
     		a read of the U3IIR occurs and the THRE is the highest interrupt (U3IIR[3:1] = 001).* */
 	else if ( IIRValue == IIR_THRE )	/* THRE, transmit holding register empty */
 	{
-		printLED(4);
+//		printLED(4);
 
 		LSRValue = U3LSR;		/* Check status in the LSR to see if
 					valid data in U3THR or not */
@@ -150,7 +150,7 @@ void UART3Handler (void)
 		}
 		else
 		{
-			printLED(5);
+//			printLED(5);
 			UART3TxEmpty = 0; //uart THR is not empty
 		}
 	}

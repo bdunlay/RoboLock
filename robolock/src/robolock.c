@@ -39,7 +39,6 @@ void robolock() {
 	DWORD savedValue;
 	WORD i;
 
-	IENABLE;
 	while (1) { //do forever
 //		while(1){
 //			periodic_network();
@@ -49,24 +48,23 @@ void robolock() {
 		switch (so.state) {
 
 		case IDLE:
-			lcdDisplay("      IDLE      ", "                ");
-			lcdBacklightOff(); // backlight OFF
-
-			buttonPressed = FALSE;
-			ADC0Read(); // start reading from the piezo
-			busyWait(100);
-
-			if (buttonPressed)
-			{
-				buttonPressed = FALSE;
-				update_state(CALIBRATE);
-			}
-			else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
-			{
+//			lcdDisplay("      IDLE      ", "                ");
+//			lcdBacklightOff(); // backlight OFF
+//
+//			ADC0Read(); // start reading from the piezo
+			busyWait(500);
+//
+//			if (buttonPressed)
+//			{
+//				buttonPressed = FALSE;
+//				update_state(CALIBRATE);
+//			}
+//			else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+//			{
 				printLED(keypadValue);
-				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
-				update_state(PROMPT);
-			}
+//				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
+//				update_state(PROMPT);
+//			}
 			break;
 
 		case PROMPT:
@@ -250,7 +248,8 @@ void init_robolock() {
 	promptTimedout = FALSE;
 	promptTimeoutCount = 0;
 	knockThresh = 512;
-	keypadValue = 0;
+	keypadValue = 0x0F;
+	buttonPressed = FALSE;
 	/* set initial codes */
 	resetCodes(); // initialize all codes to invalid
 	for (i = 0; i < CODE_LEN; i++) // create a valid default code "5555"
@@ -290,11 +289,6 @@ void init_network() {
 	uip_ipaddr_t ipaddr; /* local IP address */
 	//	struct timer periodic_timer, arp_timer;
 
-
-	// two timers for tcp/ip
-	//	timer_set(&periodic_timer, CLOCK_SECOND / 2); /* 0.5s */
-	//	timer_set(&arp_timer, CLOCK_SECOND * 10);	/* 10s */
-
 	// ethernet init
 	tapdev_init();
 
@@ -312,25 +306,23 @@ void init_network() {
 	tcp_client_init();
 
 
-//	// Start periodic timer
-//	init_timer(3, Fpclk / 10, (void*) periodic_network, TIMEROPT_INT_RST);
-//	reset_timer(3);
-//
-//	enable_timer(3);
+	// Start periodic timer
+	init_timer(3, Fpclk / 10, (void*) periodic_network, TIMEROPT_INT_RST);
+	reset_timer(3);
+
+	enable_timer(3);
 
 }
-int x = 0;
+BYTE x = 0;
+
 // need to discuss this with will
 void periodic_network() {
 	T3IR = 1; /* clear interrupt flag */
 	IENABLE; /* handles nested interrupt */
 
-
-
 	uip_len = tapdev_read(uip_buf);
 	int i;
-	printLED(0xAA);
-//
+	//
 //
 //
 	if (uip_len > 0) { // packed received
@@ -377,7 +369,7 @@ void periodic_network() {
 			tapdev_send(uip_buf, uip_len);
 		}
 	}
-//
+
 	IDISABLE;
 	VICVectAddr = 0; /* Acknowledge Interrupt */
 }

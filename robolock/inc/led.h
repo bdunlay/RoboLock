@@ -9,8 +9,10 @@
 #ifndef __LED_H
 #define __LED_H
 
+#include "type.h"
+
 void initLED(void);
 void clearLED(void);
-void printLED(unsigned int);
+void printLED(BYTE);
 void testLED(void);
 #endif

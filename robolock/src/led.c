@@ -33,7 +33,7 @@ void clearLED(void) {
 }
 
 
-void printLED(unsigned int val) {
+void printLED(BYTE val) {
 
 	clearLED();
 

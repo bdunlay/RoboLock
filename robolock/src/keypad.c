@@ -8,9 +8,15 @@
 #include "LCD.h"
 #include "code.h"
 #include "uart.h"
+#include "robolock.h"
+#include "timer.h"
 
 void testKeypad(void) {
 	IENABLE;
+	init_timer(3, Fpclk * 2, (void*) periodic_network, TIMEROPT_INT_RST);
+	reset_timer(3);
+
+	enable_timer(3);
 	while (1) {
 		printLED(keypadValue);
 		busyWait(50);
@@ -40,10 +46,10 @@ BYTE keypadVerify(void) {
 		}
 	}
 	keypadCount = 0;
-	UARTSendChar(code[0]);
-	UARTSendChar(code[1]);
-	UARTSendChar(code[2]);
-	UARTSendChar(code[3]);
-	UARTSendChar(' ');
+//	UARTSendChar(code[0]);
+//	UARTSendChar(code[1]);
+//	UARTSendChar(code[2]);
+//	UARTSendChar(code[3]);
+//	UARTSendChar(' ');
 	return codeMatches((BYTE*)code);
 }

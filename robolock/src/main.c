@@ -49,7 +49,9 @@ int main(void) {
 	init_network();
 	printLED(0xFF);
 	IENABLE;
+	busyWait(500);
 	lcdInit();  //this needs inturrupts
+	printLED(0x00);
 
 
 //	while (1) {

@@ -58,12 +58,18 @@ int counter;
 
 BYTE chunkBuffer[64];
 int chunkSize;
+int dancything = 0xAA;
+BYTE dancything2 = 0;
+
 
 void tcp_client_appcall(void) {
 	int k;
 	chunkSize = 0;
 
-	if (uip_aborted() || uip_timedout() || uip_closed()) {
+	if (uip_aborted() || uip_timedout() || uip_closed() ) {
+		printLED(dancything);
+		dancything = ~dancything;
+
 //		printLED(mm);
 //		mm = ~mm;
 		//busyWait(1000);
@@ -74,6 +80,8 @@ void tcp_client_appcall(void) {
 		connect();
 	} else if (uip_connected() || uip_newdata()) {
 		counter++;
+
+		printLED(0x1<<dancything2++);
 
 		int length;
 

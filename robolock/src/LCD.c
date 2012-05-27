@@ -105,28 +105,28 @@ void testLCD() {
 void lcdInit(){
 	volatile int i=0;
 	for(i=0;i<600;i++);
-		  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
-		  {
-			I2CMasterBuffer[i] = 0;
-		  }
-		  I2CWriteLength = 10;
-		  I2CReadLength = 0;
-		  I2CMasterBuffer[0] = LCD_ADDR;
-		  I2CMasterBuffer[1] = 0x00;
-		  I2CMasterBuffer[2] = 0x38; //function select is=0
-		  I2CMasterBuffer[3] = 0x39; //select is=1
-		  I2CMasterBuffer[4] = 0x14; //right direction
-		  I2CMasterBuffer[5] = 0x72;  //78
-		  I2CMasterBuffer[6] = 0x5E;
-		  I2CMasterBuffer[7] = 0x6D;
-		  I2CMasterBuffer[8] = 0x0C;  //0x0F
-		  I2CMasterBuffer[9] = 0x01;
-		  I2CMasterBuffer[10] = 0x06;
+	for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
+	{
+	I2CMasterBuffer[i] = 0;
+	}
+	I2CWriteLength = 10;
+	I2CReadLength = 0;
+	I2CMasterBuffer[0] = LCD_ADDR;
+	I2CMasterBuffer[1] = 0x00;
+	I2CMasterBuffer[2] = 0x38; //function select is=0
+	I2CMasterBuffer[3] = 0x39; //select is=1
+	I2CMasterBuffer[4] = 0x14; //right direction
+	I2CMasterBuffer[5] = 0x72;  //78
+	I2CMasterBuffer[6] = 0x5E;
+	I2CMasterBuffer[7] = 0x6D;
+	I2CMasterBuffer[8] = 0x0C;  //0x0F
+	I2CMasterBuffer[9] = 0x01;
+	I2CMasterBuffer[10] = 0x06;
 
 
-		  /* configuration value, no change from default */
-		  I2CCmd = LCD_CONFIG;
-		  I2CEngine();
+	/* configuration value, no change from default */
+	I2CCmd = LCD_CONFIG;
+	I2CEngine();
 }
 
 void lcdClear(){
