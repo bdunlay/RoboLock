@@ -40,48 +40,50 @@ void robolock() {
 	BYTE savedKeyValue;
 	DWORD savedADCValue;
 	WORD i;
-	int lcdSuppress = 0;
 
 	while (1) { //do forever
 
 		switch (so.state) {
 
 		case IDLE:
-			printLED(i++);
-
 			UARTSendChar('I');
-			if(lcdSuppress == 0){
 			lcdDisplay("      IDLE      ", "                ");
-			lcdSuppress = 1;
-			}
 			lcdBacklightOff(); // backlight OFF
-			ADC0Read(); // start reading from the piezo
-			busyWait(500);
+			buttonPressed = FALSE; // reset button flag
+			keypadValue = 0;
 
-			if (buttonPressed) {
-				buttonPressed = FALSE;
-				lcdSuppress = 0;
-				update_state(CALIBRATE);
-			} else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+			disable_timer(2);
+			reset_timer(2);
+			promptTimeoutCount = 0;
+			promptTimedout = FALSE; // reset timeout flag
+
+			while (1)
 			{
-				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
-				lcdSuppress = 0;
-				update_state(PROMPT);
+				if (buttonPressed) {
+					buttonPressed = FALSE;
+					update_state(CALIBRATE);
+					break;
+				}
+				else if (keypadValue != 0)// || get_ADCval() > knockThresh) // if someone pressed a key or knocked hard enough
+				{
+					update_state(PROMPT);
+					break;
+				}
 			}
 
 			break;
 
 		case PROMPT:
 			UARTSendChar('P');
-			lcdBacklight(); // backlight ON
+			lcdBacklight(); 							// backlight ON
 
-			enable_timer(2); // start prompt timeout
+			enable_timer(2); 							// start prompt timeout
 
+			keypadValue = 0;							// reset the keypad value to "unpressed"
 			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			while (!promptTimedout) {
 				savedKeyValue = keypadValue;
-				keypadValue = 0;
 				if (savedKeyValue == 0) {
 					continue;
 				} else if (savedKeyValue == '#') {
@@ -93,6 +95,7 @@ void robolock() {
 				} else {
 					reset_timer(2);
 					promptTimeoutCount = 0; // reset the timeout counter if a non-recognized character is seen
+					keypadValue = 0;
 				}
 			}
 
@@ -155,30 +158,31 @@ void robolock() {
 			reset_timer(2);
 			enable_timer(2);
 
-			codeIdx = 0; // reset code index to point at the beginning of the code array
+			codeIdx = 0; 										// reset code index to point at the beginning of the code array
 			for (i = 0; i < 16; i++)
-				displayCode[i] = ' '; // clear
+				displayCode[i] = ' '; 							// clear
+			keypadValue = 0; 									// reset digit to unread
 
 			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
 			while (!promptTimedout) {
-				savedKeyValue = keypadValue; // save the value in case it changes
-				keypadValue = 0; // reset digit to unread
+				savedKeyValue = keypadValue; 					// save the value in case it changes
 				if (savedKeyValue != 0) {
+					keypadValue = 0;							// reset digit to unread
 					if (savedKeyValue == '*' || savedKeyValue == '#')
-						continue; // ignore * and # characters
-					displayCode[codeIdx] = savedKeyValue; // show the last digit entered
+						continue; 								// ignore * and # characters
+					displayCode[codeIdx] = savedKeyValue; 		// show the last digit entered
 					codeEntered[codeIdx] = atoi(savedKeyValue); // save digit
 					UARTSendChar(savedKeyValue);
 					if (codeIdx > 0)
-						displayCode[codeIdx - 1] = '*'; // mask the old digits with an asterisk
+						displayCode[codeIdx - 1] = '*'; 		// mask the old digits with an asterisk
 					lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
-					++codeIdx; // move to next digit of code
-					if (codeIdx >= CODE_LEN) { // if the # digits entered = code length
-						if (codeMatches(codeEntered)) { // if there is a code that matches
+					++codeIdx; 									// move to next digit of code
+					if (codeIdx >= CODE_LEN) { 					// if the # digits entered = code length
+						if (codeMatches(codeEntered)) { 		// if there is a code that matches
 							update_state(OPEN_DOOR);
 							UARTSendChar('M');
 							break;
-						} else { // otherwise, it's a wrong code
+						} else { 								// otherwise, it's a wrong code
 							update_state(ERROR);
 							UARTSendChar('b');
 							break;
@@ -203,15 +207,6 @@ void robolock() {
 			busyWait(5000);
 			strikeClose();
 
-			keypadValue = 0;
-
-			disable_timer(2);
-			reset_timer(2);
-			promptTimeoutCount = 0;
-			promptTimedout = FALSE; // reset timeout flag
-
-			buttonPressed = FALSE; // reset button flag
-
 			update_state(IDLE);
 
 			break;
@@ -222,11 +217,7 @@ void robolock() {
 			promptTimeoutCount = 0;
 			promptTimedout = FALSE; // reset timeout flag
 
-			buttonPressed = FALSE; // reset button flag
-
 			UARTSendChar('E');
-
-			keypadValue = 0;
 
 			strikeClose(); // close door, just in case
 
@@ -249,7 +240,6 @@ void robolock() {
 					knockThresh = savedADCValue;
 			}
 			promptTimedout = FALSE; // reset the timeout flag
-			buttonPressed = FALSE; // reset button flag
 			knockThresh = knockThresh / 2; // anything higher than 0.5 * maximum is a significant value
 			update_state(IDLE);
 			break;
