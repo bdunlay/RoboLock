@@ -19,6 +19,7 @@
 #include "ethernet.h"
 #include "strike.h"
 #include "robolock.h"
+#include "button.h"
 
 /*****************************************************************************
  *    Main Function  main()													 *
@@ -33,6 +34,7 @@ int main(void) {
 	printLED(0x01);
 	initLCD();
 	init_dip();
+	init_button();
 	UARTInit(9600);
 	printLED(0x03);
 	UART2Init(38400);

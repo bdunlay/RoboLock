@@ -22,3 +22,11 @@ BYTE hexToChar(BYTE hex)
 	else
 		return hex + 55;
 }
+
+BYTE atoi(BYTE a)
+{
+	if (a >= 0x30 && a < 0x3A)
+		return a-0x30;
+	else
+		return (BYTE)0;
+}

@@ -20,6 +20,8 @@
 #include "adc.h"
 #include "code.h"
 #include "button.h"
+#include "uart.h"
+#include "common.h"
 
 //#include "uip_timer.h"
 #include "uip.h"
@@ -34,55 +36,52 @@ void robolock() {
 
 	BYTE codeEntered[CODE_LEN];
 	BYTE codeIdx;
-	//BYTE last = 0;
-	char displayCode[16] = "Enter Code:     ";
-	DWORD savedValue;
+	char displayCode[16];
+	BYTE savedKeyValue;
+	DWORD savedADCValue;
 	WORD i;
 
 	while (1) { //do forever
-//		while(1){
-//			periodic_network();
-//			//busyWait(1000);
-//		}
 
 		switch (so.state) {
 
 		case IDLE:
+			UARTSendChar('I');
 //			lcdDisplay("      IDLE      ", "                ");
-//			lcdBacklightOff(); // backlight OFF
-//
-//			ADC0Read(); // start reading from the piezo
+			lcdBacklightOff(); // backlight OFF
+
+			ADC0Read(); // start reading from the piezo
 			busyWait(500);
-//
-//			if (buttonPressed)
-//			{
-//				buttonPressed = FALSE;
-//				update_state(CALIBRATE);
-//			}
-//			else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
-//			{
-				printLED(keypadValue);
-//				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
-//				update_state(PROMPT);
-//			}
+
+			if (buttonPressed)
+			{
+				buttonPressed = FALSE;
+				update_state(CALIBRATE);
+			}
+			else if (keypadValue != 0)//  TODO:|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+			{
+				keypadValue = 0; // no need?  reset the keypad value to "unpressed"
+				update_state(PROMPT);
+			}
 			break;
 
 		case PROMPT:
+			UARTSendChar('P');
 			lcdBacklight(); // backlight ON
 
 			enable_timer(2); // start prompt timeout
 
-			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
+//			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			while (!promptTimedout) {
-				savedValue = keypadValue;
+				savedKeyValue = keypadValue;
 				keypadValue =  0;
-				if (savedValue == 0) {
+				if (savedKeyValue == 0) {
 					continue;
-				} else if (savedValue == '#') {
+				} else if (savedKeyValue == '#') {
 					update_state(AUTH_CODE);
 					break;
-				} else if (savedValue == '*') {
+				} else if (savedKeyValue == '*') {
 					update_state(PHOTO);
 					break;
 				} else {
@@ -113,7 +112,7 @@ void robolock() {
 			break;
 
 		case SEND_PHOTO:
-			lcdDisplay("Sending photo...", "----------------");
+//			lcdDisplay("Sending photo...", "----------------");
 			busyWait(1000);
 			while (!so.photo_sent)
 				;
@@ -124,7 +123,7 @@ void robolock() {
 
 		case AUTH_PHOTO:
 
-			lcdDisplay("TOOK PHOTO!!!!!!", "SENT PHOTO!!!!!!");
+//			lcdDisplay("TOOK PHOTO!!!!!!", "SENT PHOTO!!!!!!");
 			busyWait(4000);
 			update_state(IDLE);
 
@@ -145,52 +144,69 @@ void robolock() {
 			break;
 
 		case AUTH_CODE:
+			UARTSendChar('C');
 			promptTimeoutCount = 0; // reset timeout counter
 			reset_timer(2);
 			enable_timer(2);
 
-			codeIdx = 0;									// reset code index to point at the beginning of the code array
+			codeIdx = 0;										// reset code index to point at the beginning of the code array
 			for (i=0; i<16; i++)
-				displayCode[i] = ' ';						// clear
+				displayCode[i] = ' ';							// clear
 
-			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
+//			lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
 			while (!promptTimedout) {
-				savedValue = keypadValue;					// save the value in case it changes
-				keypadValue = 0;							// reset digit to unread
-				if (savedValue != 0) {
-					if (savedValue == '*' || savedValue == '#')
-						continue;							// ignore * and # characters
-					displayCode[codeIdx] = savedValue;		// show the last digit entered
-					codeEntered[codeIdx] = savedValue; 		// save digit
+				savedKeyValue = keypadValue;					// save the value in case it changes
+				keypadValue = 0;								// reset digit to unread
+				if (savedKeyValue != 0) {
+					if (savedKeyValue == '*' || savedKeyValue == '#')
+						continue;								// ignore * and # characters
+					displayCode[codeIdx] = savedKeyValue;		// show the last digit entered
+					codeEntered[codeIdx] = atoi(savedKeyValue);	// save digit
+					UARTSendChar(savedKeyValue);
 					if (codeIdx > 0)
-						displayCode[codeIdx-1] = '*';		// mask the old digits with an asterisk
-					lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
-					++codeIdx;								// move to next digit of code
-					if (codeIdx >= CODE_LEN) { 				// if the # digits entered = code length
-						if (codeMatches(codeEntered)) {		// if there is a code that matches
+						displayCode[codeIdx-1] = '*';			// mask the old digits with an asterisk
+//					lcdDisplay(ENTER_CODE_TEXT_1, displayCode);
+					++codeIdx;									// move to next digit of code
+					if (codeIdx >= CODE_LEN) { 					// if the # digits entered = code length
+						if (codeMatches(codeEntered)) {			// if there is a code that matches
 							update_state(OPEN_DOOR);
+							UARTSendChar('M');
 							break;
 						}
-						else {								// otherwise, it's a wrong code
+						else {									// otherwise, it's a wrong code
 							update_state(ERROR);
+							UARTSendChar('b');
 							break;
 						}
 					}
 				}
 			}
-			// TODO: merge Matt's keypadVerify with this ^ code...or not?
-			if (promptTimedout)
+
+			if (promptTimedout) {
 				update_state(ERROR); // the only way to break out the loop is to timeout (ERR), enter a wrong code (ERR), or enter a right code (OK)
+				UARTSendChar('t');
+			}
 			break;
 
 		case OPEN_DOOR:
 
-			lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
+//			lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
+
+			UARTSendChar('O');
 
 			strikeOpen();
 			busyWait(5000);
 			strikeClose();
+
 			keypadValue = 0;
+
+			disable_timer(2);
+			reset_timer(2);
+			promptTimeoutCount = 0;
+			promptTimedout = FALSE; // reset timeout flag
+
+			buttonPressed = FALSE;	// reset button flag
+
 			update_state(IDLE);
 
 			break;
@@ -201,11 +217,15 @@ void robolock() {
 			promptTimeoutCount = 0;
 			promptTimedout = FALSE; // reset timeout flag
 
+			buttonPressed = FALSE;	// reset button flag
+
+			UARTSendChar('E');
+
 			keypadValue = 0;
 
 			strikeClose(); // close door, just in case
 
-			lcdDisplay(ERROR_TEXT_1, BLANK_TEXT);
+//			lcdDisplay(ERROR_TEXT_1, BLANK_TEXT);
 			busyWait(5000);
 
 			update_state(IDLE);
@@ -215,15 +235,17 @@ void robolock() {
 		case CALIBRATE:
 			reset_timer(2);
 			enable_timer(2);
+			UARTSendChar('A');
 			knockThresh = 0;
 			/* Acquire maximum ADC value from a knock */
 			while (!promptTimedout)
 			{
-				savedValue = get_ADCval();
-				if (savedValue > knockThresh)
-					knockThresh = savedValue;
+				savedADCValue = get_ADCval();
+				if (savedADCValue > knockThresh)
+					knockThresh = savedADCValue;
 			}
 			promptTimedout = FALSE; 		// reset the timeout flag
+			buttonPressed = FALSE;			// reset button flag
 			knockThresh = knockThresh / 2;	// anything higher than 0.5 * maximum is a significant value
 			update_state(IDLE);
 			break;
@@ -248,7 +270,7 @@ void init_robolock() {
 	promptTimedout = FALSE;
 	promptTimeoutCount = 0;
 	knockThresh = 512;
-	keypadValue = 0x0F;
+	keypadValue = 0;
 	buttonPressed = FALSE;
 	/* set initial codes */
 	resetCodes(); // initialize all codes to invalid
@@ -313,7 +335,6 @@ void init_network() {
 	enable_timer(3);
 
 }
-BYTE x = 0;
 
 // need to discuss this with will
 void periodic_network() {
