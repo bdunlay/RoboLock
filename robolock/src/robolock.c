@@ -59,13 +59,13 @@ void robolock() {
 
 			while (1)
 			{
-				savedADCValue = get_ADCval();
+//				ADC0Read();
 				if (buttonPressed) {
 					buttonPressed = FALSE;
 					update_state(CALIBRATE);
 					break;
 				}
-				else if (keypadValue != 0 || savedADCValue > knockThresh) // if someone pressed a key or knocked hard enough
+				else if (keypadValue != 0 )//|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
 				{
 					update_state(PROMPT);
 					break;
