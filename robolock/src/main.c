@@ -37,7 +37,8 @@ int main(void) {
 	init_button();
 	UARTInit(9600);
 	printLED(0x03);
-	UART2Init(38400);
+	JPEGCamera_begin();
+	JPEGCamera_reset(so.jpegResponse);
 	printLED(0x07);
 	UART3Init(9600);
 	printLED(0x0F);
@@ -55,10 +56,6 @@ int main(void) {
 	lcdInit();  //this needs inturrupts
 	printLED(0x00);
 
-
-//	while (1) {
-//		robolock();
-//	}
 		while(1) {
 		switch (read_dip()) {
 

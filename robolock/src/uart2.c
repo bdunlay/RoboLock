@@ -252,6 +252,7 @@ int UART2Read(char* BufferPtr) {
 	}
 
 	UART2Count = 0;
+	receiveCount = 0;
 
 	return i;
 }

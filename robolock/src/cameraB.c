@@ -166,7 +166,7 @@ int JPEGCamera_sendCommand(const char* command, char* response, int length)
 
 	//Send each character in the command string to the camera through the camera serial port
 	UART2Send(command,length);
-	busyWait(500);
+	busyWait(50);
 	//Get the response from the camera and add it to the response string.
 	count = UART2Read(response);
 

@@ -38,8 +38,9 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
     var splitData = data.toString().split("/", 2);
 
 
-    var header = splitData[0]
-    var payload = splitData[1]
+    var header = splitData[0];
+    if (splitData[1] != null)
+      var payload = data.slice((header.length + 1));
 
     console.log(header);
 
@@ -68,15 +69,15 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
           console.log("CLOSING FILE");
 
           } else {
-            startIndex += fs.writeSync(fd, payload, startIndex, 'utf8');
+            startIndex += fs.writeSync(fd, payload, 0, payload.length, startIndex);
             console.log("WRITING FILE");
-
+          //fs.writeSync(fd, buffer, offset, length, position)
           }
 
         } else {
           console.log("OPENING FILE");
           fd = fs.openSync('./images/photo.jpg', 'w+', 0666);
-          startIndex = fs.writeSync(fd, payload, startIndex, 'utf8');
+          startIndex += fs.writeSync(fd, payload, 0, payload.length, startIndex);
           FILE_OPEN = true;
 
           console.log("WRITING FILE");
@@ -100,7 +101,7 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
       break;
 
       default:
-      sendData("ERROR", "Unknown Payload Type");
+//      sendData("ERROR", "Unknown Payload Type");
       break;
 
     }

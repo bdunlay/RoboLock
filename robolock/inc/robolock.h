@@ -16,7 +16,7 @@
 /* Constants */
 
 enum {
-	IDLE, PROMPT, PHOTO, AUTH_PHOTO, SEND_PHOTO, AUTH_CODE, OPEN_DOOR, ERROR, CALIBRATE
+	DISCONNECTED, IDLE, PROMPT, PHOTO, AUTH_PHOTO, SEND_PHOTO, AUTH_CODE, OPEN_DOOR, ERROR, CALIBRATE
 } states;
 
 #define PROMPT_TIMEOUT_LEN       10
@@ -43,12 +43,26 @@ enum {
 struct state_object {
 	unsigned int state;
 	unsigned int permission;
+
+	unsigned int connected;
+
+	// photo stuff
+	char jpegResponse[64];
+	char dataBuffer[64];
+	unsigned int photo_taken;
 	unsigned int photo_sent;
+	int photo_size;
+	int photo_address;
+	int chunk_length;
+	int send_data_flag;
+
+
 
 } so;
 
 /* Functions */
 #include "irq.h"
+int formatPacket(char* , char* , int );
 
 void init_robolock(void);
 void robolock(void);
