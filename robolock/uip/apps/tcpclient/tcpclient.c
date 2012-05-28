@@ -63,39 +63,22 @@ void tcp_client_appcall(void) {
 
 	if (uip_rexmit() || uip_newdata() || uip_acked() || uip_connected() || uip_poll()) {
 
-		if ((/*so.state == AUTH_PHOTO || */so.state == SEND_PHOTO) && so.send_data_flag) {
+		if (so.state == SEND_PHOTO && so.send_data_flag) {
 			printLED(++UIP_LOCK);
 			uip_send(so.dataBuffer, so.chunk_length);
-			so.photo_sent = 1;
-
-			//	case AUTH_PHOTO:
-			//
-			//				//
-			//				//					if (uip_newdata()) {
-			//				//						if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'O'
-			//				//								&& uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
-			//				//							so.permission = 1;
-			//				//						}
-			//				//					}
-			//				break;
-			//
-			//			default:
-			//				length = formatPacket("heartbeat\0", "thump thump", 11);
-			//				uip_send(dataBuffer, length);
-			//				//					// heartbeat to indicate that we're connected
-			//				//					//			for (k = 0; k < 8; k++) {
-			//				//					//				printLED(1 << k);
-			//				//					//				busyWait(20);
-			//				//					//			}
-			//				//					counter = 0;
-			//
-			//				break;
-			//			}
+			so.data_sent = 1;
 		}
 
+//		if (so.state == AUTH_PHOTO && so.send_data_flag) {
+//			if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'O'
+//					&& uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
+//				so.permission = 1;
+//			}
+//		}
 	}
 
 }
+
 
 //	if (uip_aborted() || uip_timedout() || uip_closed()) {
 //		printLED(dancything);

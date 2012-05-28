@@ -51,6 +51,7 @@ struct state_object {
 	char dataBuffer[64];
 	unsigned int photo_taken;
 	unsigned int photo_sent;
+	unsigned int data_sent;
 	int photo_size;
 	int photo_address;
 	int chunk_length;

@@ -55,7 +55,7 @@ public class RoboLock extends Activity {
 	}
 	
 	public void loadImage(View v) {
-		fetchImage("http://www.torreytrust.com/images/ucsb.jpg");
+		fetchImage(server + "/photo");
 	}
 	
 	void fetchImage(String s) {

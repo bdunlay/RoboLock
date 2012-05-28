@@ -42,25 +42,25 @@ void robolock() {
 	int i, k, eof, count;
 
 	so.state = DISCONNECTED;
-
+	lcdBacklight();
 
 	while (1) { //do forever
 
 		switch (so.state) {
 
 		case DISCONNECTED:
-			if (so.connected) {
-				UARTprint("Connected! \0");
-				update_state(PHOTO);
-			}
+			lcdDisplay("Connecting...   ", "Please wait...  ");
+			while(!so.connected);
 
+			UARTprint("Connected! \0");
+			update_state(IDLE);
 
 			break;
 
 		case IDLE:
 			UARTprint("Idle \0");
-			//lcdDisplay("      IDLE      ", "                ");
-
+			lcdDisplay("      IDLE      ", "                ");
+			busyWait(2000);
 			lcdBacklightOff(); // backlight OFF
 			buttonPressed = FALSE; // reset button flag
 			keypadValue = 0;
@@ -99,7 +99,7 @@ void robolock() {
 			enable_timer(2); 							// start prompt timeout
 
 			keypadValue = 0;							// reset the keypad value to "unpressed"
-			//lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
+			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			while (!promptTimedout) {
 				savedKeyValue = keypadValue;
@@ -125,16 +125,16 @@ void robolock() {
 		case PHOTO:
 			disable_timer(2); // disable the timer while the camera takes a picture
 
-			UARTprint("Taking Photo...\0");
+			sayCheese(); // print LCD countdown
 
 			if (JPEGCamera_takePicture(so.jpegResponse)) {
 				JPEGCamera_getSize(so.jpegResponse, &(so.photo_size));
+				lcdDisplay("Please wait...  ", "                ");
 				update_state(SEND_PHOTO);
 			} else {
 				update_state(ERROR);
 			}
 
-			//sayCheese(); // print LCD countdown
 
 			//		reset_timer(2);
 			//		enable_timer(2);
@@ -150,7 +150,7 @@ void robolock() {
 			UARTprint("Sending Photo...\0");
 			while (so.photo_address < so.photo_size) {
 				so.send_data_flag = 0;
-				so.photo_sent = 0;
+				so.data_sent = 0;
 
 				count = JPEGCamera_readData(so.jpegResponse, so.photo_address);
 
@@ -171,22 +171,22 @@ void robolock() {
 				UARTprint(" : \0");
 
 				so.send_data_flag = 1;
-				while(!so.photo_sent);
-
+				while(!so.data_sent);
+				so.send_data_flag = 0;
+				so.data_sent = 0;
 			}
 
-			so.send_data_flag = 0;
 			so.chunk_length = formatPacket("photo\0", "END", 3);
 			so.send_data_flag = 1;
+			while(!so.data_sent);
+			lcdDisplay("Photo Sent!     ", "                ");
 			update_state(AUTH_PHOTO);
 
 			break;
 
 		case AUTH_PHOTO:
-			so.send_data_flag = 0;
-			printLED(255);
-			while(1);
-			busyWait(3000);
+
+			busyWait(5000);
 			update_state(IDLE);
 			//update_state(IDLE);
 
