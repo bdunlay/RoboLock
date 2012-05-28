@@ -1,3 +1,5 @@
+//uart2.h
+
 
 /*****************************************************************************
  *   uart.h:  Header file for Philips LPC214x Family Microprocessors
@@ -37,13 +39,14 @@
 #define LSR_TEMT	0x40
 #define LSR_RXFE	0x80
 
-#define UART2_BUFSIZE		0x20
+#define UART2_BUFSIZE		64
 
 
 DWORD UART2Init( DWORD Baudrate );
 //DWORD UARTInit(  );
 void UART2Handler( void ) __irq;
-void UART2Send(BYTE *, DWORD);
+void UART2Send(const char *, DWORD);
+int UART2Read(char*);
 
 extern volatile DWORD UART2Status;
 extern volatile BYTE UART2TxEmpty;

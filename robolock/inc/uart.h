@@ -1,3 +1,5 @@
+//uart.h
+
 
 /*****************************************************************************
  *   uart.h:  Header file for Philips LPC214x Family Microprocessors
@@ -51,6 +53,8 @@ void UARTSend(BYTE *, DWORD );
 void UARTSendHexWord(WORD);
 void UARTSendChar(BYTE);
 void testUART(void);
+
+void UARTprint(char*);
 
 extern volatile DWORD UART0Status;
 extern volatile BYTE UART0TxEmpty;

@@ -1,3 +1,5 @@
+// uart2.c
+
 /*****************************************************************************
  *   uart.c:  UART API file for Philips LPC214x Family Microprocessors
  *
@@ -21,6 +23,9 @@ volatile DWORD UART2Status;
 volatile BYTE UART2TxEmpty = 1;
 volatile BYTE UART2Buffer[UART2_BUFSIZE];
 volatile DWORD UART2Count = 0;
+volatile int receiveCount = 0;
+
+
 
 /*****************************************************************************
  ** Function name:		UART2Handler
@@ -97,22 +102,23 @@ void UART2Handler (void)
 	{
 		//printLED(255);
 		/* Receive Data Available */
-		UART2Buffer[UART2Count] = U2RBR;
+		UART2Buffer[UART2Count++] = U2RBR;
+		receiveCount = UART2Count;
 		//cameraValue = UART2Buffer[UART2Count];
 
-			endFC = 1;
+//			endFC = 1;
 
 
-		if(UART2Buffer[0] ==  76 && UART2Buffer[1] == 00 && UART2Buffer[2] == 34)
-		{
-			busyWait(10);
-			camSize = 1;
-//			cameraValue = UART2Buffer[7];
-//			cameraValue+= UART2Buffer[8];
-			printLED(0x11);
-		}
-		cameraCount++;
-		UART2Count++;
+//		if(UART2Buffer[0] ==  76 && UART2Buffer[1] == 00 && UART2Buffer[2] == 34)
+//		{
+//			busyWait(10);
+//			camSize = 1;
+////			cameraValue = UART2Buffer[7];
+////			cameraValue+= UART2Buffer[8];
+//			printLED(0x11);
+//		}
+//		cameraCount++;
+//		UART2Count++;
 		if ( UART2Count == UART2_BUFSIZE ) {
 			//printLED(7);
 			UART2Count = 0;		/* buffer overflow */
@@ -223,7 +229,7 @@ DWORD UART2Init( DWORD baudrate )
 ** Returned value:		None
 **
 *****************************************************************************/
-void UART2Send( BYTE *BufferPtr, DWORD Length )
+void UART2Send( const char *BufferPtr, DWORD Length )
 {
       while ( Length != 0 )
     {
@@ -236,6 +242,21 @@ void UART2Send( BYTE *BufferPtr, DWORD Length )
 	}
   return;
 }
+
+
+int UART2Read(char* BufferPtr) {
+	int i;
+
+	for (i = 0; i < receiveCount; i++) {
+		BufferPtr[i] = UART2Buffer[i];
+	}
+
+	UART2Count = 0;
+
+	return i;
+}
+
+
 
 
 /******************************************************************************

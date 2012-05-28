@@ -1,3 +1,5 @@
+// uart.c
+
 /*****************************************************************************
  *   uart.c:  UART API file for Philips LPC214x Family Microprocessors
  *
@@ -222,6 +224,14 @@ void UARTSendChar(BYTE ch)
 						data */
 	U0THR = ch;
 	UART0TxEmpty = 0;	/* not empty in the THR until it shifts out */
+}
+
+
+void UARTprint(char* str) {
+	int i;
+	for (i = 0; str[i] != '\0'; i++) {
+		UARTSendChar(str[i]);
+	}
 }
 
 void UARTSendHexWord(WORD hex)
