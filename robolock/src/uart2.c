@@ -229,7 +229,7 @@ DWORD UART2Init( DWORD baudrate )
 ** Returned value:		None
 **
 *****************************************************************************/
-void UART2Send( const char *BufferPtr, DWORD Length )
+void UART2Send( const unsigned char *BufferPtr, DWORD Length )
 {
       while ( Length != 0 )
     {
