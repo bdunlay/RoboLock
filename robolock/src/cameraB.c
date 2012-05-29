@@ -13,7 +13,7 @@
 
 
 //We read data from the camera in chunks, this is the chunk size
-const int read_size=32;
+#define READ_SIZE 32 //TODO increase camera read size
 
 
 const char GET_SIZE[5] = {0x56, 0x00, 0x34, 0x01, 0x00};
@@ -21,89 +21,6 @@ const char RESET_CAMERA[4] = {0x56, 0x00, 0x26, 0x00};
 const char TAKE_PICTURE[5] = {0x56, 0x00, 0x36, 0x01, 0x00};
 const char STOP_TAKING_PICS[5] = {0x56, 0x00, 0x36, 0x01, 0x03};
 char READ_DATA[16] = {0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A};
-
-
-
-
-void JPEGCamera_test(void) {
-	char JPEG_response[64] = {};
-	//Size will be set to the size of the jpeg image.
-	int size=0;
-	//This will keep track of the data address being read from the camera
-	//eof is a flag for the sketch to determine when the end of a file is detected
-	//while reading the file data from the camera.
-	int eof=0;
-
-
-	JPEGCamera_begin();
-
-	int x = 0;
-	int i = 0;
-
-	x = JPEGCamera_reset(JPEG_response);
-	busyWait(3000);
-	//
-//	for (i = 0; i < x; i++) {
-//		UARTSendHexWord((WORD)JPEG_response[i]);
-//		UARTprint(":\0");
-//	}
-//	UARTprint("  Camera reset successfully...  \0");
-//	busyWait(3000);
-
-	x = JPEGCamera_takePicture(JPEG_response);
-//
-//	for (i = 0; i < x; i++) {
-//		UARTSendHexWord((WORD)JPEG_response[i]);
-//		UARTprint(":\0");
-//	}
-//	UARTprint("  Camera took picture successfully...  \0");
-//	busyWait(3000);
-
-	x = JPEGCamera_getSize(JPEG_response, &size);
-
-//	for (i = 0; i < x; i++) {
-//		UARTSendHexWord((WORD)JPEG_response[i]);
-//		UARTprint(":\0");
-//	}
-//	UARTprint(" Photo Size is...   \0");
-//	UARTSendHexWord((WORD)size);
-//		busyWait(3000);
-//		UARTprint(" Here comes the photo........  \0");
-//		busyWait(3000);
-
-		int count;
-		int address = 0;
-		int printCounter = 0;
-		while(address < size)
-    {
-    	printLED(++printCounter);
-        //Read the data starting at the current address.
-        count=JPEGCamera_readData(JPEG_response, address);
-        //Store all of the data that we read to the SD card
-
-        for(i=5; i<count-5; i++){
-            //Check the response for the eof indicator (0xFF, 0xD9). If we find it, set the eof flag
-            if((JPEG_response[i] == (char)0xD9) && (JPEG_response[i-1]==(char)0xFF))eof=1;
-
-            UARTSendChar(JPEG_response[i]);
-
-            if(eof==1)break;
-
-        }
-
-        //Increment the current address by the number of bytes we read
-        address+=(count-10);
-        //Make sure we stop reading data if the eof flag is set.
-        if(eof==1)break;
-    }
-
-
-
-
-	while(1)
-		printLED(255);
-
-}
 
 void JPEGCamera_begin(void)
 {
@@ -149,8 +66,8 @@ int JPEGCamera_readData(char * response, int address)
 	READ_DATA[8] = address>>8;
 	READ_DATA[9] = address;
 
-	READ_DATA[12] = read_size>>8;
-	READ_DATA[13] = read_size;
+	READ_DATA[12] = READ_SIZE>>8;
+	READ_DATA[13] = READ_SIZE;
 
 	count = JPEGCamera_sendCommand(READ_DATA, response, 16);
 
@@ -161,12 +78,11 @@ int JPEGCamera_readData(char * response, int address)
 
 int JPEGCamera_sendCommand(const char* command, char* response, int length)
 {
-
 	int count=0;
 
 	//Send each character in the command string to the camera through the camera serial port
 	UART2Send(command,length);
-	busyWait(50);
+	busyWait(50); // TODO increase with larger buffer sizes
 	//Get the response from the camera and add it to the response string.
 	count = UART2Read(response);
 
@@ -181,6 +97,54 @@ int JPEGCamera_sendCommand(const char* command, char* response, int length)
 
 
 
+
+
+
+
+
+void JPEGCamera_test(void) {
+//	char JPEG_response[64] = {};
+//	//Size will be set to the size of the jpeg image.
+//	int size=0;
+//	//This will keep track of the data address being read from the camera
+//	//eof is a flag for the sketch to determine when the end of a file is detected
+//	//while reading the file data from the camera.
+//	int eof=0;
+//
+//	JPEGCamera_begin();
+//
+//	int i = 0;
+//	int x = JPEGCamera_reset(JPEG_response);
+//	busyWait(3000);
+//
+//	x = JPEGCamera_takePicture(JPEG_response);
+//	x = JPEGCamera_getSize(JPEG_response, &size);
+//
+//	int count;
+//	int address = 0;
+//	int printCounter = 0;
+//	while(address < size) {
+//    	printLED(++printCounter);
+//        //Read the data starting at the current address.
+//        count=JPEGCamera_readData(JPEG_response, address);
+//        //Store all of the data that we read to the SD card
+//
+//        for(i=5; i<count-5; i++){
+//            //Check the response for the eof indicator (0xFF, 0xD9). If we find it, set the eof flag
+//            if((JPEG_response[i] == (char)0xD9) && (JPEG_response[i-1]==(char)0xFF))eof=1;
+//            UARTSendChar(JPEG_response[i]);
+//            if(eof==1)break;
+//        }
+//
+//        //Increment the current address by the number of bytes we read
+//        address+=(count-10);
+//        //Make sure we stop reading data if the eof flag is set.
+//        if(eof==1)break;
+//    	x = JPEGCamera_stopPictures(JPEG_response);
+//
+//    }
+
+}
 
 
 

@@ -51,7 +51,7 @@ public class RoboLock extends Activity {
 	
 	/* button actions */
 	public void unlock(View v) {
-		httpRequest(server);
+		httpRequest(server + "/unlock");
 	}
 	
 	public void loadImage(View v) {
