@@ -10,8 +10,7 @@
 ******************************************************************************/
 #ifndef __I2C_H 
 #define __I2C_H
-
-#define BUFSIZE			0x0F  //0x20
+#define BUFSIZE			0x6  //0x20
 #define MAX_TIMEOUT		0x05FFFFFF //0x00FFFFFF
 
 #define I2CMASTER		0x01
