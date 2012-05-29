@@ -10,16 +10,12 @@
 ******************************************************************************/
 #ifndef __I2C_H 
 #define __I2C_H
-#include "type.h"
-#define BUFSIZE			0x0F  //0x20
+#define BUFSIZE			0x6  //0x20
 #define MAX_TIMEOUT		0x05FFFFFF //0x00FFFFFF
 
 #define I2CMASTER		0x01
 #define I2CSLAVE		0x02
 
-
-volatile BYTE I2CMasterBuffer[BUFSIZE]; //extern no longer
-volatile BYTE I2CSlaveBuffer[BUFSIZE];
 /* For more info, read Philips's SE95 datasheet */
 //#define LM75_ADDR		0x90
 //#define LM75_TEMP		0x00

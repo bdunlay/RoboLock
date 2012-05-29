@@ -43,13 +43,13 @@ void robolock() {
 
 	so.state = DISCONNECTED;
 	lcdBacklight();
-while(1){
-	lcdDisplay("      IDLE      ", "                ");
-	busyWait(500);
-	lcdDisplay("                ", "      IDLE      ");
-		busyWait(500);
-
-}
+//while(1){
+//	lcdDisplay("      IDLE      ", "                ");
+//	busyWait(100);
+//	lcdDisplay("                ", "      IDLE      ");
+//		busyWait(100);
+//
+//}
 	while (1) { //do forever
 
 		switch (so.state) {

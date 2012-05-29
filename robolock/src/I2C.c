@@ -20,7 +20,7 @@ volatile DWORD I2CSlaveState = I2C_IDLE;
 
 volatile DWORD I2CCmd;
 volatile DWORD I2CMode;
-//volatile BYTE I2CMasterBuffer[BUFSIZE]; //extern no longer
+volatile BYTE I2CMasterBuffer[BUFSIZE]; //extern no longer
 //volatile BYTE I2CSlaveBuffer[BUFSIZE];
 volatile DWORD I2CCount = 0;
 volatile DWORD I2CReadLength;
@@ -247,7 +247,7 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
   }    
 
   /* Install interrupt handler */	
-  if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, HIGHEST_PRIORITY ) == FALSE )
+  if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, HIGHEST_PRIORITY +14) == FALSE )
   {
 	  printLED(0xAA);
 	 // busyWait(100);
