@@ -60,7 +60,7 @@ void robolock() {
 		case IDLE:
 			UARTprint("Idle \0");
 			lcdDisplay("      IDLE      ", "                ");
-			busyWait(2000);
+			//busyWait(2000);
 			lcdBacklightOff(); // backlight OFF
 			buttonPressed = FALSE; // reset button flag
 			keypadValue = 0;

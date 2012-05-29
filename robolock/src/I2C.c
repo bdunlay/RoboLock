@@ -20,7 +20,7 @@ volatile DWORD I2CSlaveState = I2C_IDLE;
 
 volatile DWORD I2CCmd;
 volatile DWORD I2CMode;
-extern volatile BYTE I2CMasterBuffer[BUFSIZE];
+volatile BYTE I2CMasterBuffer[BUFSIZE]; //extern no longer
 volatile BYTE I2CSlaveBuffer[BUFSIZE];
 volatile DWORD I2CCount = 0;
 volatile DWORD I2CReadLength;
@@ -171,9 +171,6 @@ void I2C1MasterHandler(void)// __irq
 *****************************************************************************/
 DWORD I2CStart( void )
 {
-	volatile int i=0;
-	//printLED(0x03);
-//	for(i=0;i<1000;i++);//busyWait(10);
   DWORD timeout = 0;
   DWORD retVal = FALSE;
  
@@ -185,16 +182,11 @@ DWORD I2CStart( void )
   {
 	if ( I2CMasterState == I2C_STARTED )
 	{
-		//for(i=0;i<1000;i++);//	printLED(0x04);
-		//busyWait(10);
 	  retVal = TRUE;
 	  break;	
 	}
 	if ( timeout >= MAX_TIMEOUT )
 	{
-		//test for timeout
-		//printLED(0xFF);
-		//busyWait(100);
 	  retVal = FALSE;
 	  break;
 	}
@@ -219,7 +211,6 @@ DWORD I2CStop( void )
   I21CONCLR = I2CONCLR_SIC;  /* Clear SI flag */
             
   /*--- Wait for STOP detected ---*/
-  //printLED(0x05);
   while( I21CONSET & I2CONSET_STO );
   return TRUE;
 }
@@ -291,8 +282,6 @@ DWORD I2CEngine( void )
   WrIndex = 0;
   if ( I2CStart() != TRUE )
   {
-	 // printLED(0x0F);
-	  //busyWait(100);
 	I2CStop();
 	return ( FALSE );
   }

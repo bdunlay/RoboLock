@@ -19,7 +19,7 @@ extern volatile BYTE I2CMasterBuffer[BUFSIZE];
 extern volatile DWORD I2CCmd, I2CMasterState;
 extern volatile DWORD I2CReadLength, I2CWriteLength;
 
-volatile BYTE I2CMasterBuffer[BUFSIZE];
+//volatile BYTE I2CMasterBuffer[BUFSIZE];
 //BYTE buff;
 
 void initLCD(void) {
@@ -41,65 +41,6 @@ void lcdBacklightOff(void) {
 	FIO1SET3 |= 0x04;
 
 }
-//void clearLCD(void) {
-////	e.g. Start, DevAddr(W), WRByte1...WRByteN, Repeated-Start, DevAddr(R),
-////	  RDByte1...RDByteN Stop. The content of the reading will be filled
-////	  after (I2CWriteLength + two devaddr) bytes.
-//
-//	  /* Configure temp register before reading */
-//	int i=0;
-//	  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
-//	  {
-//		I2CMasterBuffer[i] = 0;
-//	  }
-//	  I2CWriteLength = 3;
-//	  I2CReadLength = 0;
-//	  I2CMasterBuffer[0] = LCD_ADDR;
-//	  I2CMasterBuffer[1] = 0x38;//LCD_CONFIG;
-//	  I2CMasterBuffer[2] = 0x0F;//0x01;
-//	  I2CMasterBuffer[3] = 0x26;
-//	  /* configuration value, no change from default */
-//	  I2CCmd = LCD_CONFIG;
-//	  I2CEngine();
-//
-//}
-
-
-//void printLCD(BYTE val) {
-//	int i=0;
-//			  for ( i = 0; i < BUFSIZE; i++ )	/* clear buffer */
-//			  {
-//				I2CMasterBuffer[i] = 0;
-//			  }
-//			  I2CWriteLength = 2;
-//			  I2CReadLength = 0;
-//			  I2CMasterBuffer[0] = LCD_ADDR;
-//			  I2CMasterBuffer[1] = 0x40;
-//			  I2CMasterBuffer[2] = val;
-//			  I2CEngine();
-//			//  busyWait(200);
-//}
-
-
-//void testLCD() {
-//		//volatile int i;
-//		init_robolock();
-//
-//		lcdBacklight();
-//
-//		lcdInit();
-//		//	for(i=0;i<2000;i++);
-//		lcdClear();
-//		//	for(i=0;i<2000;i++);
-//		LCDWrite("Hello There");
-//		//	for(i=0;i<2000;i++);
-//		LCDLine2();
-//		//	for(i=0;i<2000;i++);
-//		LCDWrite("Test Program");
-//		busyWait(1000);
-//
-//}
-
 void lcdInit() {
 	volatile int i = 0;
 	for (i = 0; i < BUFSIZE; i++) /* clear buffer */
@@ -122,7 +63,7 @@ void lcdInit() {
 	/* configuration value, no change from default */
 	//I2CCmd = LCD_CONFIG;
 	I2CEngine();
-	for (i = 0; i < 2000; i++)
+	for (i = 0; i < 5000; i++)
 		;
 	////
 	for (i = 0; i < BUFSIZE; i++) /* clear buffer */
@@ -133,7 +74,20 @@ void lcdInit() {
 	I2CReadLength = 0;
 	I2CMasterBuffer[0] = LCD_ADDR;
 	I2CMasterBuffer[1] = 0x00;
-	I2CMasterBuffer[2] = 0x39; //function select is=0
+	I2CMasterBuffer[2] = 0x39;
+	I2CEngine();
+	for (i = 0; i < 5000; i++)
+		;
+	////
+	for (i = 0; i < BUFSIZE; i++) /* clear buffer */
+	{
+		I2CMasterBuffer[i] = 0;
+	}
+	I2CWriteLength = 2;
+	I2CReadLength = 0;
+	I2CMasterBuffer[0] = LCD_ADDR;
+	I2CMasterBuffer[1] = 0x00;
+	I2CMasterBuffer[2] = 0x14;
 	I2CEngine();
 	for (i = 0; i < 2000; i++)
 		;
@@ -146,7 +100,7 @@ void lcdInit() {
 	I2CReadLength = 0;
 	I2CMasterBuffer[0] = LCD_ADDR;
 	I2CMasterBuffer[1] = 0x00;
-	I2CMasterBuffer[2] = 0x14; //function select is=0
+	I2CMasterBuffer[2] = 0x72;
 	I2CEngine();
 	for (i = 0; i < 2000; i++)
 		;
@@ -159,7 +113,7 @@ void lcdInit() {
 	I2CReadLength = 0;
 	I2CMasterBuffer[0] = LCD_ADDR;
 	I2CMasterBuffer[1] = 0x00;
-	I2CMasterBuffer[2] = 0x72; //function select is=0
+	I2CMasterBuffer[2] = 0x5E;
 	I2CEngine();
 	for (i = 0; i < 2000; i++)
 		;
@@ -172,7 +126,7 @@ void lcdInit() {
 	I2CReadLength = 0;
 	I2CMasterBuffer[0] = LCD_ADDR;
 	I2CMasterBuffer[1] = 0x00;
-	I2CMasterBuffer[2] = 0x5E; //function select is=0
+	I2CMasterBuffer[2] = 0x6D;
 	I2CEngine();
 	for (i = 0; i < 2000; i++)
 		;
@@ -185,7 +139,7 @@ void lcdInit() {
 	I2CReadLength = 0;
 	I2CMasterBuffer[0] = LCD_ADDR;
 	I2CMasterBuffer[1] = 0x00;
-	I2CMasterBuffer[2] = 0x6D; //function select is=0
+	I2CMasterBuffer[2] = 0x0C;
 	I2CEngine();
 	for (i = 0; i < 2000; i++)
 		;
@@ -198,7 +152,7 @@ void lcdInit() {
 	I2CReadLength = 0;
 	I2CMasterBuffer[0] = LCD_ADDR;
 	I2CMasterBuffer[1] = 0x00;
-	I2CMasterBuffer[2] = 0x0C; //function select is=0
+	I2CMasterBuffer[2] = 0x01;
 	I2CEngine();
 	for (i = 0; i < 2000; i++)
 		;
@@ -211,22 +165,9 @@ void lcdInit() {
 	I2CReadLength = 0;
 	I2CMasterBuffer[0] = LCD_ADDR;
 	I2CMasterBuffer[1] = 0x00;
-	I2CMasterBuffer[2] = 0x01; //function select is=0
+	I2CMasterBuffer[2] = 0x06;
 	I2CEngine();
-	for (i = 0; i < 2000; i++)
-		;
-	////
-	for (i = 0; i < BUFSIZE; i++) /* clear buffer */
-	{
-		I2CMasterBuffer[i] = 0;
-	}
-	I2CWriteLength = 2;
-	I2CReadLength = 0;
-	I2CMasterBuffer[0] = LCD_ADDR;
-	I2CMasterBuffer[1] = 0x00;
-	I2CMasterBuffer[2] = 0x06; //function select is=0
-	I2CEngine();
-	for (i = 0; i < 2000; i++)
+	for (i = 0; i < 5000; i++)
 		;
 }
 
@@ -236,14 +177,11 @@ void lcdClear() {
 	{
 		I2CMasterBuffer[i] = 0;
 	}
-	I2CWriteLength = 3;
+	I2CWriteLength = 2;
 	I2CReadLength = 0;
 	I2CMasterBuffer[0] = LCD_ADDR;
 	I2CMasterBuffer[1] = 0x00;
 	I2CMasterBuffer[2] = 0x01;
-	I2CMasterBuffer[3] = 0x01;
-	/* configuration value, no change from default */
-	// I2CCmd = LCD_CONFIG;
 	I2CEngine();
 	for (i = 0; i < 2000; i++)
 		;
@@ -251,16 +189,22 @@ void lcdClear() {
 
 void LCDWrite(char* buffer) {
 	volatile int i = 0;
-	I2CWriteLength = 17;
-	I2CReadLength = 0;
-	I2CMasterBuffer[0] = LCD_ADDR;
-	I2CMasterBuffer[1] = 0x40;
-	for (i = 0; i < 16; i++) {
-		I2CMasterBuffer[i + 2] = buffer[i];
+	volatile int j = 0;
+	for(i=0;i<16;i++){
+		for (j = 0; j < BUFSIZE; j++) /* clear buffer */
+			{
+				I2CMasterBuffer[j] = 0;
+			}
+
+		I2CWriteLength = 2;
+		I2CReadLength = 0;
+		I2CMasterBuffer[0] = LCD_ADDR;
+		I2CMasterBuffer[1] = 0x40;
+		I2CMasterBuffer[2] = buffer[i];
+		I2CEngine();
+		for (j = 0; j < 2000; j++)
+			;
 	}
-	I2CEngine();
-	for (i = 0; i < 2000; i++)
-		;
 
 }
 
