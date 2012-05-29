@@ -12,11 +12,11 @@ void connect(void);
 
 void tcp_client_init(void) {
 	connect();
-
 }
 
 void connect() {
 	uip_ipaddr_t ipaddr[2];
+
 	//uip_ipaddr(ipaddr, 184,189,241,29); // server address
 	uip_ipaddr(ipaddr, 128,111,56,203); // server address
 	uip_connect(ipaddr, HTONS(9090)); // server port

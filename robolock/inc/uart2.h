@@ -39,7 +39,7 @@
 #define LSR_TEMT	0x40
 #define LSR_RXFE	0x80
 
-#define UART2_BUFSIZE		360//360 //TODO camera uart buffer
+#define UART2_BUFSIZE		1200//360 //TODO camera uart buffer
 
 
 DWORD UART2Init( DWORD Baudrate );

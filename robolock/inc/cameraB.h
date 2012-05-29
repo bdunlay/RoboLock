@@ -21,7 +21,7 @@ int getChunk(BYTE**,int);
 
 
 //We read data from the camera in chunks, this is the chunk size
-#define READ_SIZE 320 //320 //TODO increase camera read size
+#define READ_SIZE 1024 //320 //TODO increase camera read size
 
 
 

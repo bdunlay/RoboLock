@@ -28,10 +28,14 @@ enum {
 	CALIBRATE
 } states;
 
+
+// operate robolock without a server or network connection
+#define NETWORK_ENABLED			0
+
 #define PROMPT_TIMEOUT_LEN       10
 
-#define PROMPT_TEXT_1            "# to enter code "
-#define PROMPT_TEXT_2            "* to take photo "
+#define PROMPT_TEXT_1            "* to take photo "
+#define PROMPT_TEXT_2            "# to enter code "
 
 #define CHEESE_TEXT_1            " Taking picture "
 #define CHEESE_TEXT_2            "...3............"
@@ -46,8 +50,8 @@ enum {
 
 #define BLANK_TEXT               "                "
 
-#define CAMERA_BUFF_SIZE	360//TODO camera response buffer size (should be same as uart2 buffer size)
-#define PACKET_BUFF_SIZE	360//TODO packet buffer size should be no more than 1500 bytes
+#define CAMERA_BUFF_SIZE	1200//TODO camera response buffer size (should be same as uart2 buffer size)
+#define PACKET_BUFF_SIZE	1200//TODO packet buffer size should be no more than 1500 bytes
 
 /* Structs */
 
@@ -80,7 +84,7 @@ void update_state(unsigned int);
 unsigned int permission_granted(void);
 
 void init_network(void);
-void periodic_network(void) __irq;
+void periodic_network(void)/* __irq*/;
 
 void promptTimeoutHandler(void) __irq;
 

@@ -11,8 +11,16 @@ function sendData(type, message) {
   console.log(type+"/"+message);
 }
 
-function notifyPhone() {
+// var cd2m_fd = fs.openSync("cd2m.txt", "r");
 
+ 
+
+function notifyPhone() {
+  var CD2M_command = fs.readFileSync('./cd2m.txt').toString();
+  var sys = require('sys')
+  var exec = require('child_process').exec;
+  function puts(error, stdout, stderr) { sys.puts(stdout) }
+  exec(CD2M_command, puts);
   //C2DM Code
   console.log("NOTIFYING PHONE!");
 
@@ -62,7 +70,6 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
 
           if (payload == "END") {
             fs.closeSync(fd);
-            notifyPhone();
             FILE_OPEN = false;
             startIndex = 0;
 
@@ -76,6 +83,7 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
 
         } else {
           console.log("OPENING FILE");
+          notifyPhone();
           fd = fs.openSync('./images/photo.jpg', 'w+', 0666);
           startIndex += fs.writeSync(fd, payload, 0, payload.length, startIndex);
           FILE_OPEN = true;

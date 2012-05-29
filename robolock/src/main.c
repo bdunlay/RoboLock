@@ -49,12 +49,17 @@ int main(void) {
 	printLED(0x3F);
 	init_robolock();
 	printLED(0x7F);
+#if NETWORK_ENABLED
 	init_network();
+#endif
 	printLED(0xFF);
 	IENABLE;
 	busyWait(500);
 	lcdInit();  //this needs inturrupts
 	printLED(0x00);
+//
+//	JPEGCamera_test();
+//while(1);
 
 		while(1) {
 		switch (read_dip()) {

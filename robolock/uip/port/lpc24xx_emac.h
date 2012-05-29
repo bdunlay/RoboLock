@@ -20,12 +20,12 @@ UNS_32 EMAC_ReadPacket(void * pPacket);
 BOOL_32 EMAC_SendPacket(void *pPacket, UNS_32 size);
 
 
-#define MYMAC_1         0x00            /* our ethernet (MAC) address        */
-#define MYMAC_2         0x30            /* (MUST be unique in LAN!)          */
-#define MYMAC_3         0x48
-#define MYMAC_4         0x35
-#define MYMAC_5         0x1F
-#define MYMAC_6         0x86
+#define MYMAC_1         0x50            /* our ethernet (MAC) address        */
+#define MYMAC_2         0x65            /* (MUST be unique in LAN!)          */
+#define MYMAC_3         0x67
+#define MYMAC_4         0x67
+#define MYMAC_5         0x79
+#define MYMAC_6         0x53
 
 #define UIP_ETHADDR0	MYMAC_1
 #define UIP_ETHADDR1	MYMAC_2

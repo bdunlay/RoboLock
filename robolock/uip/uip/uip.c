@@ -82,6 +82,7 @@
 #include "uip.h"
 #include "uipopt.h"
 #include "uip_arch.h"
+#include "LPC24xx.h"
 
 #if UIP_CONF_IPV6
 #include "uip-neighbor.h"
@@ -123,14 +124,14 @@ static const uip_ipaddr_t all_zeroes_addr =
 #endif /* UIP_CONF_IPV6 */
 
 #if UIP_FIXEDETHADDR
-const struct uip_eth_addr uip_ethaddr = { {UIP_ETHADDR0,
-		UIP_ETHADDR1,
-		UIP_ETHADDR2,
-		UIP_ETHADDR3,
-		UIP_ETHADDR4,
-		UIP_ETHADDR5}};
+const struct uip_eth_addr uip_ethaddr = { {0x50,
+		0x65,
+		0x67,
+		0x67,
+		0x79,
+		0x53}};
 #else
-struct uip_eth_addr uip_ethaddr = { { 0, 0, 0, 0, 0, 0 } };
+struct uip_eth_addr uip_ethaddr = { { 0, 1, 2, 3, 4, 5 } };
 #endif
 
 #ifndef UIP_CONF_EXTERNAL_BUFFER
