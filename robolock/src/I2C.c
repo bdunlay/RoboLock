@@ -53,7 +53,7 @@ be READ or WRITE depending on the I2CCmd.
 void I2C1MasterHandler(void)// __irq
 {
   BYTE StatValue;
- // for(i=0;i<100;i++);
+  //for(i=0;i<100;i++);
   /* this handler deals with master read and master write only */
   StatValue = I21STAT;
   IENABLE;				/* handles nested interrupt */
@@ -247,7 +247,7 @@ DWORD I2CInit( DWORD I2cMode ) //0 slave 1 master
   }    
 
   /* Install interrupt handler */	
-  if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, HIGHEST_PRIORITY +14) == FALSE )
+  if ( install_irq( I2C1_INT, (void *)I2C1MasterHandler, HIGHEST_PRIORITY +6) == FALSE )
   {
 	  printLED(0xAA);
 	 // busyWait(100);

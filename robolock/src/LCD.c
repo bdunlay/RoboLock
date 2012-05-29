@@ -167,7 +167,7 @@ void lcdInit() {
 	I2CMasterBuffer[1] = 0x00;
 	I2CMasterBuffer[2] = 0x06;
 	I2CEngine();
-	for (i = 0; i < 5000; i++)
+	for (i = 0; i < 10000; i++)
 		;
 }
 
@@ -183,7 +183,7 @@ void lcdClear() {
 	I2CMasterBuffer[1] = 0x00;
 	I2CMasterBuffer[2] = 0x01;
 	I2CEngine();
-	for (i = 0; i < 2000; i++)
+	for (i = 0; i < 10000; i++)
 		;
 }
 
@@ -202,7 +202,7 @@ void LCDWrite(char* buffer) {
 		I2CMasterBuffer[1] = 0x40;
 		I2CMasterBuffer[2] = buffer[i];
 		I2CEngine();
-		for (j = 0; j < 2000; j++)
+		for (j = 0; j < 10000; j++)
 			;
 	}
 
@@ -237,15 +237,15 @@ void LCDLine2() {
 	I2CMasterBuffer[1] = 0x00;
 	I2CMasterBuffer[2] = 0xC0;
 	I2CEngine();
-	for (i = 0; i < 2000; i++)
+	for (i = 0; i < 10000; i++)
 		;
 }
 
 void lcdDisplay(char* line1, char* line2) {
-	//lcdClear();
+	lcdClear();
 	LCDLine1();
 	LCDWrite(line1);
 	LCDLine2();
 	LCDWrite(line2);
-
+	//busyWait(10);
 }

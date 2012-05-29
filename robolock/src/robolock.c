@@ -44,10 +44,11 @@ void robolock() {
 	so.state = DISCONNECTED;
 	lcdBacklight();
 //while(1){
+//	busyWait(250);
 //	lcdDisplay("      IDLE      ", "                ");
-//	busyWait(100);
+//	busyWait(250);
 //	lcdDisplay("                ", "      IDLE      ");
-//		busyWait(100);
+//
 //
 //}
 	while (1) { //do forever
@@ -56,7 +57,7 @@ void robolock() {
 
 		case DISCONNECTED:
 			UARTprint("disconnected\0");
-		//	lcdDisplay("Connecting...   ", "Please wait...  ");
+			lcdDisplay("Connecting...   ", "Please wait...  ");
 			while(!so.connected);
 
 			UARTprint("Connected! \0");
@@ -112,7 +113,7 @@ void robolock() {
 			enable_timer(2); 							// start prompt timeout
 
 			keypadValue = 0;							// reset the keypad value to "unpressed"
-		//	lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
+			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			while (!promptTimedout) {
 				savedKeyValue = keypadValue;
@@ -149,7 +150,7 @@ void robolock() {
 
 			if (JPEGCamera_takePicture(so.jpegResponse)) {
 				JPEGCamera_getSize(so.jpegResponse, &(so.photo_size));
-		//		lcdDisplay("Please wait...  ", "                ");
+				lcdDisplay("Please wait...  ", "                ");
 				update_state(SEND_PHOTO);
 			} else {
 				update_state(ERROR);
@@ -219,7 +220,7 @@ void robolock() {
 			so.chunk_length = formatPacket("photo\0", "END", 3);
 			so.send_data_flag = 1;
 			while(!so.data_sent);
-		//	lcdDisplay("Photo Sent!     ", "                ");
+			lcdDisplay("Photo Sent!     ", "                ");
 			UARTprint("Photo Sent!\0");
 			//JPEGCamera_stopPictures(so.jpegResponse);
 			update_state(AUTH_PHOTO);
@@ -228,11 +229,11 @@ void robolock() {
 
 		case AUTH_PHOTO:
 
-		//	lcdDisplay("Contacting      ", "     Homeowner...");
+			lcdDisplay("Contacting      ", "     Homeowner...");
 			UARTprint("Waiting for authorization...\0");
 			while(!so.permission);
 			UARTprint("Access Granted!\0");
-			//	lcdDisplay("Access Granted! ", "                ");
+				lcdDisplay("Access Granted! ", "                ");
 			busyWait(3000);
 			update_state(IDLE);
 			//update_state(IDLE);
@@ -300,7 +301,7 @@ void robolock() {
 
 		case OPEN_DOOR:
 
-		//	lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
+			lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
 			UARTprint("Welcome! Door Open...\0");
 
 			strikeOpen();
