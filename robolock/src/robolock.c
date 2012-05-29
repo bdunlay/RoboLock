@@ -1,7 +1,7 @@
 /* RoboLock
  * robolock.c
  *
- * Source file for GPIO control, configuration and usage of LEDs on the RoboLock board
+ * Main ROBOLOCK control loop
  *
  * v1.0 - 4/22/2012
  */
