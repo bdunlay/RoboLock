@@ -69,12 +69,13 @@ void tcp_client_appcall(void) {
 			so.data_sent = 1;
 		}
 
-//		if (so.state == AUTH_PHOTO && so.send_data_flag) {
-//			if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'O'
-//					&& uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
-//				so.permission = 1;
-//			}
-//		}
+
+		if (so.state == AUTH_PHOTO && uip_newdata()) {
+			if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'O'
+					&& uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
+				so.permission = 1;
+			}
+		}
 	}
 
 }

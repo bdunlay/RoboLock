@@ -16,7 +16,16 @@
 /* Constants */
 
 enum {
-	DISCONNECTED, IDLE, PROMPT, PHOTO, AUTH_PHOTO, SEND_PHOTO, AUTH_CODE, OPEN_DOOR, ERROR, CALIBRATE
+	DISCONNECTED,
+	IDLE,
+	PROMPT,
+	PHOTO,
+	AUTH_PHOTO,
+	SEND_PHOTO,
+	AUTH_CODE,
+	OPEN_DOOR,
+	ERROR,
+	CALIBRATE
 } states;
 
 #define PROMPT_TIMEOUT_LEN       10
@@ -33,10 +42,12 @@ enum {
 
 #define WELCOME_TEXT_1           "    Welcome!    "
 
-
 #define ERROR_TEXT_1             "     ERROR      "
 
 #define BLANK_TEXT               "                "
+
+#define CAMERA_BUFF_SIZE	64//TODO camera response buffer size (should be same as uart2 buffer size)
+#define PACKET_BUFF_SIZE	64//TODO packet buffer size should be no more than 1500 bytes
 
 /* Structs */
 
@@ -47,8 +58,8 @@ struct state_object {
 	unsigned int connected;
 
 	// photo stuff
-	char jpegResponse[64];
-	char dataBuffer[64];
+	char jpegResponse[CAMERA_BUFF_SIZE];
+	char dataBuffer[PACKET_BUFF_SIZE];
 	unsigned int photo_taken;
 	unsigned int photo_sent;
 	unsigned int data_sent;
@@ -57,13 +68,11 @@ struct state_object {
 	int chunk_length;
 	int send_data_flag;
 
-
-
 } so;
 
 /* Functions */
 #include "irq.h"
-int formatPacket(char* , char* , int );
+int formatPacket(char*, char*, int);
 
 void init_robolock(void);
 void robolock(void);

@@ -49,17 +49,25 @@ void robolock() {
 		switch (so.state) {
 
 		case DISCONNECTED:
-			lcdDisplay("Connecting...   ", "Please wait...  ");
+			UARTprint("disconnected\0");
+		//	lcdDisplay("Connecting...   ", "Please wait...  ");
 			while(!so.connected);
 
 			UARTprint("Connected! \0");
-			update_state(IDLE);
+			update_state(IDLE );
 
 			break;
 
 		case IDLE:
 			UARTprint("Idle \0");
-			lcdDisplay("      IDLE      ", "                ");
+			so.photo_address = 0;
+			so.photo_sent = 0;
+			so.photo_size = 0;
+			so.photo_taken = 0;
+			so.send_data_flag = 0;
+			so.data_sent = 0;
+
+		//	lcdDisplay("      IDLE      ", "                ");
 			busyWait(2000);
 			lcdBacklightOff(); // backlight OFF
 			buttonPressed = FALSE; // reset button flag
@@ -70,10 +78,7 @@ void robolock() {
 			promptTimeoutCount = 0;
 			promptTimedout = FALSE; // reset timeout flag
 
-			so.photo_address = 0;
-			so.photo_sent = 0;
-			so.photo_size = 0;
-			so.photo_taken = 0;
+
 
 			while (1)
 			{
@@ -99,7 +104,7 @@ void robolock() {
 			enable_timer(2); 							// start prompt timeout
 
 			keypadValue = 0;							// reset the keypad value to "unpressed"
-			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
+		//	lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			while (!promptTimedout) {
 				savedKeyValue = keypadValue;
@@ -123,13 +128,20 @@ void robolock() {
 			break;
 
 		case PHOTO:
-			disable_timer(2); // disable the timer while the camera takes a picture
-
-			sayCheese(); // print LCD countdown
+			//disable_timer(2); // disable the timer while the camera takes a picture
+			/* TODO we do not want to disable the timer here. if the camera fails
+					we want to know about it and have an escape plan */
+			UARTprint("3...\0");
+			busyWait(1000);
+			UARTprint("2...\0");
+			busyWait(1000);
+			UARTprint("1...\0");
+			busyWait(1000);
+	//		sayCheese(); // print LCD countdown
 
 			if (JPEGCamera_takePicture(so.jpegResponse)) {
 				JPEGCamera_getSize(so.jpegResponse, &(so.photo_size));
-				lcdDisplay("Please wait...  ", "                ");
+		//		lcdDisplay("Please wait...  ", "                ");
 				update_state(SEND_PHOTO);
 			} else {
 				update_state(ERROR);
@@ -148,13 +160,14 @@ void robolock() {
 
 		case SEND_PHOTO:
 			UARTprint("Sending Photo...\0");
+
+			// sends the image in chunks
 			while (so.photo_address < so.photo_size) {
-				so.send_data_flag = 0;
-				so.data_sent = 0;
 
 				count = JPEGCamera_readData(so.jpegResponse, so.photo_address);
 
 				for (i = 5; i < count - 5; i++) {
+
 					//Check the response for the eof indicator (0xFF, 0xD9). If we find it, set the eof flag
 					if ((so.jpegResponse[i] == (char) 0xD9) && (so.jpegResponse[i - 1] == (char) 0xFF))
 						eof = 1;
@@ -163,30 +176,36 @@ void robolock() {
 					if (eof == 1)
 						break;
 				}
-				UARTprint(" \0");
+
 				printLED(count);
 				so.photo_address += (count - 10);
+
 				so.chunk_length = formatPacket("photo\0", so.jpegResponse+5, k+1);
-				UARTSendHexWord(so.jpegResponse[5]);
-				UARTprint(" : \0");
 
 				so.send_data_flag = 1;
 				while(!so.data_sent);
 				so.send_data_flag = 0;
 				so.data_sent = 0;
 			}
-
+			// sends the final packet to end the file
 			so.chunk_length = formatPacket("photo\0", "END", 3);
 			so.send_data_flag = 1;
 			while(!so.data_sent);
-			lcdDisplay("Photo Sent!     ", "                ");
+		//	lcdDisplay("Photo Sent!     ", "                ");
+			UARTprint("Photo Sent!\0");
+			//JPEGCamera_stopPictures(so.jpegResponse);
 			update_state(AUTH_PHOTO);
 
 			break;
 
 		case AUTH_PHOTO:
 
-			busyWait(5000);
+		//	lcdDisplay("Contacting      ", "     Homeowner...");
+			UARTprint("Waiting for authorization...\0");
+			while(!so.permission);
+			UARTprint("Access Granted!\0");
+			//	lcdDisplay("Access Granted! ", "                ");
+			busyWait(3000);
 			update_state(IDLE);
 			//update_state(IDLE);
 
@@ -207,7 +226,7 @@ void robolock() {
 			break;
 
 		case AUTH_CODE:
-			UARTSendChar('C');
+			UARTprint("Auth Code State...\0");
 			promptTimeoutCount = 0; // reset timeout counter
 			reset_timer(2);
 			enable_timer(2);
@@ -234,11 +253,11 @@ void robolock() {
 					if (codeIdx >= CODE_LEN) { 					// if the # digits entered = code length
 						if (codeMatches(codeEntered)) { 		// if there is a code that matches
 							update_state(OPEN_DOOR);
-							UARTSendChar('M');
+							UARTprint("Correct Code\0");
 							break;
 						} else { 								// otherwise, it's a wrong code
 							update_state(ERROR);
-							UARTSendChar('b');
+							UARTprint("Wrong Code\0");
 							break;
 						}
 					}
@@ -247,15 +266,14 @@ void robolock() {
 
 			if (promptTimedout) {
 				update_state(ERROR); // the only way to break out the loop is to timeout (ERR), enter a wrong code (ERR), or enter a right code (OK)
-				UARTSendChar('t');
+				UARTprint("Timed out\0");
 			}
 			break;
 
 		case OPEN_DOOR:
 
-			lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
-
-			UARTSendChar('O');
+		//	lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
+			UARTprint("Welcome! Door Open...\0");
 
 			strikeOpen();
 			busyWait(5000);
@@ -286,7 +304,7 @@ void robolock() {
 		case CALIBRATE:
 			reset_timer(2);
 			enable_timer(2);
-			UARTSendChar('A');
+			UARTprint("Calibrate\0");
 			knockThresh = 0;
 			/* Acquire maximum ADC value from a knock */
 			while (!promptTimedout) {
@@ -451,7 +469,7 @@ int formatPacket(char* type, char* data, int bytes) {
 
 	int i, k;
 
-	for (i = 0; i < 64; i++) {
+	for (i = 0; i < PACKET_BUFF_SIZE; i++) {
 		so.dataBuffer[i] = 0;
 	}
 
