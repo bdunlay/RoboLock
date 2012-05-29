@@ -15,7 +15,7 @@
 #include "robolock.h"
 
 extern volatile DWORD I2CCount;
-extern volatile BYTE I2CMasterBuffer[BUFSIZE];
+//extern volatile BYTE I2CMasterBuffer[BUFSIZE];
 extern volatile DWORD I2CCmd, I2CMasterState;
 extern volatile DWORD I2CReadLength, I2CWriteLength;
 
@@ -190,11 +190,11 @@ void lcdClear() {
 void LCDWrite(char* buffer) {
 	volatile int i = 0;
 	volatile int j = 0;
-	for(i=0;i<16;i++){
+	for (i = 0; i < 16; i++) {
 		for (j = 0; j < BUFSIZE; j++) /* clear buffer */
-			{
-				I2CMasterBuffer[j] = 0;
-			}
+		{
+			I2CMasterBuffer[j] = 0;
+		}
 
 		I2CWriteLength = 2;
 		I2CReadLength = 0;
@@ -242,7 +242,6 @@ void LCDLine2() {
 }
 
 void lcdDisplay(char* line1, char* line2) {
-
 	lcdClear();
 	LCDLine1();
 	LCDWrite(line1);

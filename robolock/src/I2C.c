@@ -20,8 +20,8 @@ volatile DWORD I2CSlaveState = I2C_IDLE;
 
 volatile DWORD I2CCmd;
 volatile DWORD I2CMode;
-volatile BYTE I2CMasterBuffer[BUFSIZE]; //extern no longer
-volatile BYTE I2CSlaveBuffer[BUFSIZE];
+//volatile BYTE I2CMasterBuffer[BUFSIZE]; //extern no longer
+//volatile BYTE I2CSlaveBuffer[BUFSIZE];
 volatile DWORD I2CCount = 0;
 volatile DWORD I2CReadLength;
 volatile DWORD I2CWriteLength;
