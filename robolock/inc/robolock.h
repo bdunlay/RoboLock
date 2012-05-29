@@ -46,8 +46,8 @@ enum {
 
 #define BLANK_TEXT               "                "
 
-#define CAMERA_BUFF_SIZE	64//TODO camera response buffer size (should be same as uart2 buffer size)
-#define PACKET_BUFF_SIZE	64//TODO packet buffer size should be no more than 1500 bytes
+#define CAMERA_BUFF_SIZE	360//TODO camera response buffer size (should be same as uart2 buffer size)
+#define PACKET_BUFF_SIZE	360//TODO packet buffer size should be no more than 1500 bytes
 
 /* Structs */
 

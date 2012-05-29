@@ -12,15 +12,13 @@
 #include "robolock.h"
 
 
-//We read data from the camera in chunks, this is the chunk size
-#define READ_SIZE 32 //TODO increase camera read size
 
 
-const char GET_SIZE[5] = {0x56, 0x00, 0x34, 0x01, 0x00};
-const char RESET_CAMERA[4] = {0x56, 0x00, 0x26, 0x00};
-const char TAKE_PICTURE[5] = {0x56, 0x00, 0x36, 0x01, 0x00};
-const char STOP_TAKING_PICS[5] = {0x56, 0x00, 0x36, 0x01, 0x03};
-char READ_DATA[16] = {0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A};
+const unsigned char GET_SIZE[5] = {0x56, 0x00, 0x34, 0x01, 0x00};
+const unsigned  char RESET_CAMERA[4] = {0x56, 0x00, 0x26, 0x00};
+const unsigned char TAKE_PICTURE[5] = {0x56, 0x00, 0x36, 0x01, 0x00};
+const unsigned char STOP_TAKING_PICS[5] = {0x56, 0x00, 0x36, 0x01, 0x03};
+unsigned char READ_DATA[16] = {0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A};
 
 void JPEGCamera_begin(void)
 {
@@ -76,13 +74,13 @@ int JPEGCamera_readData(char * response, int address)
 
 
 
-int JPEGCamera_sendCommand(const char* command, char* response, int length)
+int JPEGCamera_sendCommand(const unsigned char* command, char* response, int length)
 {
 	int count=0;
 
 	//Send each character in the command string to the camera through the camera serial port
 	UART2Send(command,length);
-	busyWait(50); // TODO increase with larger buffer sizes
+	busyWait(200); // TODO increase with larger buffer sizes
 	//Get the response from the camera and add it to the response string.
 	count = UART2Read(response);
 

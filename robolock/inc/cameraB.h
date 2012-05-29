@@ -20,6 +20,8 @@ int getChunk(BYTE**,int);
 
 
 
+//We read data from the camera in chunks, this is the chunk size
+#define READ_SIZE 320 //320 //TODO increase camera read size
 
 
 
@@ -27,7 +29,7 @@ int getChunk(BYTE**,int);
 void JPEGCamera_begin(void);
 void JPEGCamera_test(void);
 int JPEGCamera_reset(char*);
-int JPEGCamera_sendCommand(const char*, char*, int);
+int JPEGCamera_sendCommand(const unsigned char*, char*, int);
 int JPEGCamera_takePicture(char *);
 int JPEGCamera_stopPictures(char *);
 int JPEGCamera_getSize(char *, int *);

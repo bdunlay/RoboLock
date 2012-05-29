@@ -39,13 +39,13 @@
 #define LSR_TEMT	0x40
 #define LSR_RXFE	0x80
 
-#define UART2_BUFSIZE		2048 //TODO camera uart buffer
+#define UART2_BUFSIZE		360//360 //TODO camera uart buffer
 
 
 DWORD UART2Init( DWORD Baudrate );
 //DWORD UARTInit(  );
 void UART2Handler( void ) __irq;
-void UART2Send(const char *, DWORD);
+void UART2Send(const unsigned char *, DWORD);
 int UART2Read(char*);
 
 extern volatile DWORD UART2Status;

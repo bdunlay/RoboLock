@@ -74,6 +74,7 @@ while(1){
 			so.photo_taken = 0;
 			so.send_data_flag = 0;
 			so.data_sent = 0;
+			so.permission = 0;
 
 			busyWait(2000);
 			lcdBacklightOff(); // backlight OFF
@@ -187,12 +188,32 @@ while(1){
 				printLED(count);
 				so.photo_address += (count - 10);
 
-				so.chunk_length = formatPacket("photo\0", so.jpegResponse+5, k+1);
 
+
+//				while(!(offset >= k)) {
+//
+//					if ((offset + bytesToRead - k) < 512) {
+//						bytesToRead = 512 - (offset + bytesToRead - k);
+//					} else {
+//						bytesToRead = 512;
+//					}
+//
+//					so.chunk_length = formatPacket("photo\0", so.jpegResponse+5+offset, bytesToRead);
+//					so.send_data_flag = 1;
+//					while(!so.data_sent);
+//					so.send_data_flag = 0;
+//					so.data_sent = 0;
+//					offset += bytesToRead;
+//				}
+
+				so.chunk_length = formatPacket("photo\0", so.jpegResponse+5, k+1);
 				so.send_data_flag = 1;
 				while(!so.data_sent);
 				so.send_data_flag = 0;
 				so.data_sent = 0;
+
+
+
 			}
 			// sends the final packet to end the file
 			so.chunk_length = formatPacket("photo\0", "END", 3);
@@ -325,6 +346,7 @@ while(1){
 			break;
 
 		}
+
 	}
 }
 
@@ -475,10 +497,6 @@ void periodic_network() {
 int formatPacket(char* type, char* data, int bytes) {
 
 	int i, k;
-
-	for (i = 0; i < PACKET_BUFF_SIZE; i++) {
-		so.dataBuffer[i] = 0;
-	}
 
 	for (i = 0; type[i] != '\0'; i++) {
 		so.dataBuffer[i] = type[i];
