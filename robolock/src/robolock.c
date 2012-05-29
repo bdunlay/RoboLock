@@ -60,6 +60,8 @@ void robolock() {
 
 		case IDLE:
 			UARTprint("Idle \0");
+			lcdDisplay("      IDLE      ", "                ");
+
 			so.photo_address = 0;
 			so.photo_sent = 0;
 			so.photo_size = 0;
@@ -68,7 +70,6 @@ void robolock() {
 			so.data_sent = 0;
 			so.permission = 0;
 
-		//	lcdDisplay("      IDLE      ", "                ");
 			busyWait(2000);
 			lcdBacklightOff(); // backlight OFF
 			buttonPressed = FALSE; // reset button flag
