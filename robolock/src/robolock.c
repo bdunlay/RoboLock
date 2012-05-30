@@ -78,6 +78,7 @@ void robolock() {
 			so.send_data_flag = 0;
 			so.data_sent = 0;
 			so.permission = 0;
+			eof = 0;
 
 			busyWait(2000);
 			lcdDisplay("                ", "                ");
@@ -144,17 +145,7 @@ void robolock() {
 			break;
 
 		case PHOTO:
-			//disable_timer(2); // disable the timer while the camera takes a picture
-			/* TODO we do not want to disable the timer here. if the camera fails
-					we want to know about it and have an escape plan */
-//			JPEGCamera_reset(so.jpegResponse);
-
-//			UARTprint("3...\0");
-//			busyWait(1000);
-//			UARTprint("2...\0");
-//			busyWait(1000);
-//			UARTprint("1...\0");
-//			busyWait(1000);
+			disable_timer(2); // disable the timer while the camera takes a picture
 
 			sayCheese(); // print LCD countdown
 
@@ -166,17 +157,20 @@ void robolock() {
 			}
 
 
-			//		reset_timer(2);
-			//		enable_timer(2);
-			//		promptTimeoutCount = 0;
+
+			break;
+
+		case SEND_PHOTO:
+
+//			reset_timer(2);
+//			enable_timer(2);
+//			promptTimeoutCount = 0;
 
 			// if (!promptTimedout) update_state(AUTH_PHOTO);
 			//		else
 			//update_state(ERROR);
 
-			break;
 
-		case SEND_PHOTO:
 			UARTprint("Sending Photo...\0");
 			lcdDisplay("   Contacting   ", "     Server     ");
 			UARTSendHexWord(so.photo_address);
@@ -188,7 +182,6 @@ void robolock() {
 				count = JPEGCamera_readData(so.jpegResponse, so.photo_address);
 
 				for (i = 5; i < count - 5; i++) {
-					UARTprint(".\0");
 					//Check the response for the eof indicator (0xFF, 0xD9). If we find it, set the eof flag
 					if ((so.jpegResponse[i] == (char) 0xD9) && (so.jpegResponse[i - 1] == (char) 0xFF))
 						eof = 1;
@@ -206,8 +199,6 @@ void robolock() {
 				}
 				so.send_data_flag = 0;
 				so.data_sent = 0;
-//				if (eof == 1)
-//					break;
 
 			}
 
@@ -219,7 +210,7 @@ void robolock() {
 			while(!so.data_sent) {
 				periodic_network();
 			}
-		//	lcdDisplay("Photo Sent!     ", "                ");
+
 			UARTprint("Photo Sent! --- \0");
 			update_state(AUTH_PHOTO);
 
@@ -234,10 +225,9 @@ void robolock() {
 			}
 
 			UARTprint("Access Granted!\0");
-			//	lcdDisplay("Access Granted! ", "                ");
+
 			busyWait(3000);
 			update_state(OPEN_DOOR);
-			//update_state(IDLE);
 
 			//			promptTimeoutCount = 0;  // reset timeout counter
 			//			reset_timer(2);
