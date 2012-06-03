@@ -148,10 +148,11 @@ void robolock() {
 			UARTprint("[PHOTO]");
 			disable_timer(2); // disable the timer while the camera takes a picture
 
-			sayCheese(); // print LCD countdown
+			if (!so.covert)
+				sayCheese(); // print LCD countdown
 
-			if (JPEGCamera_takePicture(so.prePacketBuffer)) {
-				JPEGCamera_getSize(so.prePacketBuffer, &(so.photo_size));
+
+			if (takePhoto()) {
 				update_state(SEND_PHOTO);
 			} else {
 				update_state(ERROR);
@@ -161,7 +162,19 @@ void robolock() {
 
 		case SEND_PHOTO:
 			UARTprint("[SEND_PHOTO]");
-			lcdDisplay("Sending Photo...", "  Please Wait!  ");
+
+			if (!so.covert) {
+				lcdDisplay("Sending Photo...", "  Please Wait!  ");
+				UARTprint("(Covert Photo)");
+			}
+
+			sendPhoto();
+
+			if (so.	covert) {
+				update_state(IDLE);
+			} else {
+				update_state(AUTH_PHOTO);
+			}
 
 //			reset_timer(2);
 //			enable_timer(2);
@@ -172,9 +185,6 @@ void robolock() {
 //			else
 //				update_state(ERROR);
 
-			sendPhoto();
-
-			update_state(AUTH_PHOTO);
 
 			break;
 
@@ -248,9 +258,7 @@ void robolock() {
 			UARTprint("[OPEN_DOOR]");
 
 			lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
-
 			strike(5000);
-
 			update_state(IDLE);
 
 			break;
@@ -441,6 +449,15 @@ int formatPacket(char* type, char* data, int bytes) {
 	return i;
 }
 
+int takePhoto() {
+	if (JPEGCamera_takePicture(so.prePacketBuffer)) {
+		JPEGCamera_getSize(so.prePacketBuffer, &(so.photo_size));
+		return 1;
+	}
+
+	return 0;
+}
+
 void sendPhoto() {
 
 	int i = 0;
@@ -484,6 +501,7 @@ void sendPhoto() {
 }
 
 
+
 void resetStateVariables() {
 	so.photo_address = 0;
 	so.photo_sent = 0;
@@ -492,4 +510,5 @@ void resetStateVariables() {
 	so.send_data_flag = 0;
 	so.data_sent = 0;
 	so.permission = 0;
+	so.covert = 0;
 }

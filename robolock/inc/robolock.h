@@ -64,6 +64,7 @@ struct state_object {
 	unsigned int permission;
 	unsigned int configured;
 	unsigned int connected;
+	unsigned int covert;
 
 	// photo stuff
 	char prePacketBuffer[CAMERA_BUFF_SIZE];
@@ -71,6 +72,7 @@ struct state_object {
 	unsigned int photo_taken;
 	unsigned int photo_sent;
 	unsigned int data_sent;
+
 	int photo_size;
 	int photo_address;
 	int chunk_length;
@@ -98,6 +100,7 @@ void periodic_network(void)/* __irq*/;
 int formatPacket(char*, char*, int);
 int genericTakePhoto(void);
 void resetStateVariables(void);
+int takePhoto(void);
 void sendPhoto(void);
 
 
