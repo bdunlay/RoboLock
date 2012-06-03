@@ -255,7 +255,7 @@ WORD putCodes(BYTE* a)
 			a[num++] = '\n';
 		}
 	}
-	a[num++] = '\0';
+//	a[num++] = '\0'; // causes the app to add
 	return num;
 }
 

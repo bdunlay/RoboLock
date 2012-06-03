@@ -8,6 +8,7 @@
 #include "cameraB.h"
 #include "uart.h"
 #include "LCD.h"
+#include "code.h"
 
 void connect(void);
 void client(void);
@@ -119,7 +120,7 @@ void client() {
 
 		/* DEL/CODE: DELETE CODE */
 		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'D' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'E' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'L') {
-			char asciiCodeToInt[4];
+			BYTE asciiCodeToInt[4];
 			int i;
 
 			for (i = 0; i < 4; i++) {
@@ -127,20 +128,27 @@ void client() {
 			}
 
 			if(invalidateOldCode((BYTE*)asciiCodeToInt)) {
-				uip_send("DEL/OK", 6);
+				uip_send("DELETE/OK", 9);
 			} else {
-				uip_send("DEL/NO", 6);
+				uip_send("DELETE/NO", 9);
 			}
 		}
 
 		/* GET/: GET ALL CODES DELIMITED BY NEWLINES */
 		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'G' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'E' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'T') {
-
+			int codeLength = putCodes((BYTE*)so.prePacketBuffer);
+			int length = formatPacket("codes\0", so.prePacketBuffer, codeLength);
+			uip_send(so.dataBuffer, length);
 		}
 
 		/* SET/CODE: SET NEW CODE */
 		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'S' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'E' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'T') {
-
+			BYTE asciiCodeToInt[4];
+			int i;
+			for (i = 0; i < 4; i++) {
+				asciiCodeToInt[i] = atoi(uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 4 + i]);
+			}
+			addNewCode(asciiCodeToInt, NO_EXPIRE);
 		}
 
 		/* TXT/MESSAGE: DISPLAY MESSAGE ON LCD */

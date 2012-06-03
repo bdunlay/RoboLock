@@ -45,7 +45,7 @@ void robolock() {
 	lcdDisplay("   -RoboLock-   ", "                ");
 	so.state = IDLE;
 	#if NETWORK_ENABLED
-	so.state = CONFIGURE;
+	so.state = DISCONNECTED;
 	#endif
 
 	busyWait(2000);
@@ -102,6 +102,7 @@ void robolock() {
 
 			while (1)
 			{
+				periodic_network();
 //				ADC0Read();
 				if (buttonPressed) {
 					buttonPressed = FALSE;
