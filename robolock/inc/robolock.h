@@ -54,6 +54,9 @@ enum {
 #define CAMERA_BUFF_SIZE	1200//TODO camera response buffer size (should be same as uart2 buffer size)
 #define PACKET_BUFF_SIZE	1200//TODO packet buffer size should be no more than 1500 bytes
 
+#define BUF ((struct uip_eth_hdr *)&uip_buf[0])
+
+
 /* Structs */
 
 struct state_object {
@@ -77,21 +80,27 @@ struct state_object {
 
 /* Functions */
 #include "irq.h"
-int formatPacket(char*, char*, int);
 
 void init_robolock(void);
 void robolock(void);
+
 void update_state(unsigned int);
-unsigned int permission_granted(void);
-
-void init_network(void);
-void periodic_network(void)/* __irq*/;
-
 void promptTimeoutHandler(void) __irq;
 
 BYTE codeMatches(BYTE*);
 
 void sayCheese(void);
+
+BYTE permission_granted(void);
+
+void init_network(void);
+void periodic_network(void)/* __irq*/;
+int formatPacket(char*, char*, int);
+int genericTakePhoto(void);
+void resetStateVariables(void);
+void sendPhoto(void);
+
+
 
 /* Variables */
 
@@ -101,7 +110,5 @@ volatile DWORD knockThresh;
 
 volatile BYTE promptTimedout;
 volatile BYTE promptTimeoutCount;
-
-int genericTakePhoto(void);
 
 #endif

@@ -30,23 +30,19 @@
 #include "clock-arch.h"
 #include "clock.h"
 #include "tcpclient.h"
-#define BUF ((struct uip_eth_hdr *)&uip_buf[0])
+
 
 void robolock() {
 
 	BYTE codeEntered[CODE_LEN];
 	BYTE codeIdx;
-	char displayCode[16];
 	BYTE savedKeyValue;
 	DWORD savedADCValue;
-	int i, k, eof, count;
+	char displayCode[16];
+	int i;
 
 	lcdBacklight();
-	lcdDisplay("   -RoboLock-   ", "                ");
-	so.state = IDLE;
-	#if NETWORK_ENABLED
-	so.state = DISCONNECTED;
-	#endif
+	lcdDisplay("    RoboLock    ", "ECE189 2011/2012");
 
 	busyWait(2000);
 
@@ -55,62 +51,59 @@ void robolock() {
 		switch (so.state) {
 
 		case CONFIGURE:
-			while(!so.configured) {
+			UARTprint("[DISCONNECTED]");
+
+			while(!so.configured)
 				periodic_network();
-			}
+
 			break;
 
 		case DISCONNECTED:
-			UARTprint("disconnected\0");
+			UARTprint("[DISCONNECTED]");
+
 			lcdDisplay("   -RoboLock-   ", "  Connecting..  ");
 
-			while(!so.connected){
+			while(!so.connected)
 				periodic_network();
-			}
 
-			UARTprint("Connected! \0");
+			lcdDisplay("   -RoboLock-   ", "   Connected!   ");
+
 			update_state(IDLE );
 
 			break;
 
 		case IDLE:
-			UARTprint("Idle \0");
-			lcdDisplay("      IDLE      ", "                ");
 
-			so.photo_address = 0;
-			so.photo_sent = 0;
-			so.photo_size = 0;
-			so.photo_taken = 0;
-			so.send_data_flag = 0;
-			so.data_sent = 0;
-			so.permission = 0;
-			eof = 0;
-
+			UARTprint("[IDLE]");
+			resetStateVariables();
 			busyWait(2000);
-			lcdDisplay("                ", "                ");
 
+			// Clear Display
+			lcdDisplay("                ", "                ");
 			lcdBacklightOff(); // backlight OFF
+
+			// These should be in the so struct
 			buttonPressed = FALSE; // reset button flag
 			keypadValue = 0;
 
+			//timer
 			disable_timer(2);
 			reset_timer(2);
 			promptTimeoutCount = 0;
 			promptTimedout = FALSE; // reset timeout flag
 
+			while (1) {
 
-
-			while (1)
-			{
 				periodic_network();
+				if (so.state != IDLE) break; // in case network changes state
+
 //				ADC0Read();
+
 				if (buttonPressed) {
 					buttonPressed = FALSE;
 					update_state(CALIBRATE);
 					break;
-				}
-				else if (keypadValue != 0 )//|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
-				{
+				} else if (keypadValue != 0 ) { //|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
 					update_state(PROMPT);
 					break;
 				}
@@ -119,13 +112,13 @@ void robolock() {
 			break;
 
 		case PROMPT:
-			UARTprint("Prompt \0");
+			UARTprint("[PROMPT]");
+
 			lcdBacklight(); 							// backlight ON
+			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			enable_timer(2); 							// start prompt timeout
-
 			keypadValue = 0;							// reset the keypad value to "unpressed"
-			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			while (!promptTimedout) {
 				savedKeyValue = keypadValue;
@@ -152,6 +145,7 @@ void robolock() {
 			break;
 
 		case PHOTO:
+			UARTprint("[PHOTO]");
 			disable_timer(2); // disable the timer while the camera takes a picture
 
 			sayCheese(); // print LCD countdown
@@ -163,97 +157,50 @@ void robolock() {
 				update_state(ERROR);
 			}
 
-
-
 			break;
 
 		case SEND_PHOTO:
+			UARTprint("[SEND_PHOTO]");
+			lcdDisplay("Sending Photo...", "  Please Wait!  ");
 
 //			reset_timer(2);
 //			enable_timer(2);
 //			promptTimeoutCount = 0;
+//
+// 			if (!promptTimedout)
+//				update_state(AUTH_PHOTO);
+//			else
+//				update_state(ERROR);
 
-			// if (!promptTimedout) update_state(AUTH_PHOTO);
-			//		else
-			//update_state(ERROR);
+			sendPhoto();
 
-
-			UARTprint("Sending Photo...\0");
-			lcdDisplay("   Contacting   ", "     Server     ");
-			UARTSendHexWord(so.photo_address);
-			UARTSendHexWord(so.photo_size);
-
-			// sends the image in chunks
-			while (so.photo_address < so.photo_size) {
-
-				count = JPEGCamera_readData(so.prePacketBuffer, so.photo_address);
-
-				for (i = 5; i < count - 5; i++) {
-					//Check the response for the eof indicator (0xFF, 0xD9). If we find it, set the eof flag
-					if ((so.prePacketBuffer[i] == (char) 0xD9) && (so.prePacketBuffer[i - 1] == (char) 0xFF))
-						eof = 1;
-					k = i - 5;
-					if (eof == 1)
-						break;
-				}
-				printLED(count);
-				so.photo_address += (count - 10);
-
-				so.chunk_length = formatPacket("photo\0", so.prePacketBuffer+5, k+1);
-				so.send_data_flag = 1;
-				while(!so.data_sent) {
-					periodic_network();
-				}
-				so.send_data_flag = 0;
-				so.data_sent = 0;
-
-			}
-
-			JPEGCamera_stopPictures(so.prePacketBuffer);
-
-			// sends the final packet to end the file
-			so.chunk_length = formatPacket("photo\0", "END", 3);
-			so.send_data_flag = 1;
-			while(!so.data_sent) {
-				periodic_network();
-			}
-
-			UARTprint("Photo Sent! --- \0");
 			update_state(AUTH_PHOTO);
 
 			break;
 
 		case AUTH_PHOTO:
+			UARTprint("[AUTH_PHOTO]");
+			lcdDisplay("Upload Complete!", " Please Wait... ");
 
-			lcdDisplay("     Please     ", "      Wait      ");
-			UARTprint("Waiting for authorization...\0");
-			while(!so.permission) {
+			promptTimeoutCount = 0;  // reset timeout counter
+			reset_timer(2);
+			enable_timer(2);
+
+			while (!promptTimedout) {
 				periodic_network();
+				if (so.permission) {
+					update_state(OPEN_DOOR);
+					break;
+				}
 			}
 
-			UARTprint("Access Granted!\0");
-
-			busyWait(3000);
-			update_state(OPEN_DOOR);
-
-			//			promptTimeoutCount = 0;  // reset timeout counter
-			//			reset_timer(2);
-			//			enable_timer(2);
-			//
-			//			while (!promptTimedout) {
-			//				if (so.permission) {
-			//					so.permission = 0;
-			//					update_state(OPEN_DOOR);
-			//					break;
-			//				}
-			//			}
-			//
-			//			if (promptTimedout) update_state(ERROR);
+			if (promptTimedout) update_state(ERROR);
 
 			break;
 
 		case AUTH_CODE:
-			UARTprint("Auth Code State...\0");
+			UARTprint("[AUTH_CODE]");
+
 			promptTimeoutCount = 0; // reset timeout counter
 			reset_timer(2);
 			enable_timer(2);
@@ -298,29 +245,25 @@ void robolock() {
 			break;
 
 		case OPEN_DOOR:
+			UARTprint("[OPEN_DOOR]");
 
 			lcdDisplay(WELCOME_TEXT_1, BLANK_TEXT);
-			UARTprint("Welcome! Door Open...\0");
-//			lcdDisplay(" Unlocking Door ", "    Welcome!    ");
 
-			strikeOpen();
-			busyWait(5000);
-			strikeClose();
+			strike(5000);
 
 			update_state(IDLE);
 
 			break;
 
 		case ERROR:
+			UARTprint("[ERROR]");
+
 			disable_timer(2);
 			reset_timer(2);
 			promptTimeoutCount = 0;
 			promptTimedout = FALSE; // reset timeout flag
 
-			UARTprint("Error...\0");
-
-
-			strikeClose(); // close door, just in case
+			strike(-1); // close door, just in case
 
 			lcdDisplay(ERROR_TEXT_1, BLANK_TEXT);
 			busyWait(5000);
@@ -330,10 +273,12 @@ void robolock() {
 			break;
 
 		case CALIBRATE:
+			UARTprint("[CALIBRATE]");
+
 			reset_timer(2);
 			enable_timer(2);
-			UARTprint("Calibrate\0");
 			knockThresh = 0;
+
 			/* Acquire maximum ADC value from a knock */
 			while (!promptTimedout) {
 				savedADCValue = get_ADCval();
@@ -350,7 +295,7 @@ void robolock() {
 	}
 }
 
-unsigned int permission_granted() {
+BYTE permission_granted() {
 	return so.permission;
 }
 
@@ -360,24 +305,28 @@ void update_state(unsigned int new_state) {
 void init_robolock() {
 	WORD i;
 	BYTE defaultCode[CODE_LEN];
+
 	/* set initial values */
+	resetStateVariables();
 	so.state = IDLE;
+	#if NETWORK_ENABLED
+	so.state = DISCONNECTED;
+	#endif
+
 	promptTimedout = FALSE;
 	promptTimeoutCount = 0;
 	knockThresh = 512;
 	keypadValue = 0;
 	buttonPressed = FALSE;
+
 	/* set initial codes */
 	resetCodes(); // initialize all codes to invalid
 	for (i = 0; i < CODE_LEN; i++) // create a valid default code "5555"
 		defaultCode[i] = 5;
 	addNewCode(defaultCode, NO_EXPIRE);
+
 	/* initialize some systems */
 	init_timer(2, Fpclk, (void*) promptTimeoutHandler, TIMEROPT_INT_RST);
-	so.connected = 0;
-	so.photo_size = 0;
-	so.photo_address = 0;
-	so.configured = 0;
 }
 
 void promptTimeoutHandler() {
@@ -422,40 +371,19 @@ void init_network() {
 	uip_setdraddr(ipaddr); /* router IP address */
 	uip_ipaddr(ipaddr, 255, 255, 255, 0);
 	uip_setnetmask(ipaddr); /* mask */
-//	uip_setethaddr( uip_eth_addr  );
 
 	tcp_client_init();
-
-	// Start periodic timer
-//	init_timer(3, Fpclk / 1, (void*) periodic_network, TIMEROPT_INT_RST);
-//	reset_timer(3);
-//
-//	enable_timer(3);
 }
 
 
 
 
-// need to discuss this with will
-
 void periodic_network() {
-
-//
-//	T3IR = 1; /* clear interrupt flag */
-//	IENABLE; /* handles nested interrupt */
 
 	uip_len = tapdev_read(uip_buf);
 	int i;
-	//
-	//
-	//
+
 	if (uip_len > 0) { // packed received
-
-
-		//		printLED(0xF0);
-		//		busyWait(50);
-		//		printLED(0x0F);
-		//		busyWait(50);
 
 		if (BUF->type == htons(UIP_ETHTYPE_IP)) { // IP Packet
 			uip_arp_ipin();
@@ -494,8 +422,6 @@ void periodic_network() {
 			}
 		}
 
-//	IDISABLE;
-//	VICVectAddr = 0; /* Acknowledge Interrupt */
 }
 
 int formatPacket(char* type, char* data, int bytes) {
@@ -515,25 +441,13 @@ int formatPacket(char* type, char* data, int bytes) {
 	return i;
 }
 
-
-int genericTakePhoto() {
+void sendPhoto() {
 
 	int i = 0;
 	int k = 0;
-	int count = 0;
 	int eof = 0;
+	int count = 0;
 
-	if (JPEGCamera_takePicture(so.prePacketBuffer)) {
-		JPEGCamera_getSize(so.prePacketBuffer, &(so.photo_size));
-		update_state(SEND_PHOTO);
-	} else {
-		return -1;
-	}
-
-	UARTSendHexWord(so.photo_address);
-	UARTSendHexWord(so.photo_size);
-
-	// sends the image in chunks
 	while (so.photo_address < so.photo_size) {
 
 		count = JPEGCamera_readData(so.prePacketBuffer, so.photo_address);
@@ -567,7 +481,15 @@ int genericTakePhoto() {
 	while(!so.data_sent) {
 		periodic_network();
 	}
+}
 
 
-	return 0;
+void resetStateVariables() {
+	so.photo_address = 0;
+	so.photo_sent = 0;
+	so.photo_size = 0;
+	so.photo_taken = 0;
+	so.send_data_flag = 0;
+	so.data_sent = 0;
+	so.permission = 0;
 }

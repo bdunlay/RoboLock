@@ -75,7 +75,7 @@ void client() {
 		connect();
 	}
 	if (uip_connected()) {
-		uip_send("hello", 5)
+		uip_send("hello", 5);
 		so.connected = 1;
 		printLED(0xF);
 	}

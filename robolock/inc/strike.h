@@ -10,6 +10,7 @@
 #define __STRIKE_H
 
 void strikeInit(void);
+void strike(int);
 void strikeClose(void);
 void strikeOpen(void);
 void testStrike(void);

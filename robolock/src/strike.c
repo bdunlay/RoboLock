@@ -24,6 +24,16 @@ void strikeInit(void) {
 
 }
 
+void strike(int ms) {
+	if (ms < 0) { // do not close
+		strikeClose();
+	} else {
+		strikeOpen();
+		busyWait(ms);
+		strikeClose();
+	}
+}
+
 void strikeClose(){
 	FIO2CLR0= 0x1;
 	printLED(0x0F);
