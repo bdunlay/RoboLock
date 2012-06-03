@@ -249,3 +249,96 @@ void lcdDisplay(char* line1, char* line2) {
 	LCDWrite(line2);
 	//busyWait(10);
 }
+
+void printLCD(BYTE* str)
+{
+	BYTE a[16];
+	BYTE i;
+	BYTE buffIdx;
+	BYTE wordLen;
+	BYTE spaceLeft;
+	BYTE whichLine = 1;
+	while (*str != '\0')
+	{
+		spaceLeft = 16;
+		buffIdx = 0;
+		while (spaceLeft > 0)
+		{
+			// find next word length
+			wordLen = 0;
+			while (!(str[wordLen] == ' ' || str[wordLen] == '\0'))
+				wordLen++;
+
+			if (wordLen <= spaceLeft)	// if the word will fit
+			{
+				for (i=0; i<wordLen; i++)
+				{
+					a[buffIdx+i] = str[i];	// copy into buffer
+					--spaceLeft;
+				}
+				buffIdx += wordLen;
+				str += wordLen;				// move up the str pointer to the next word
+			}
+			else if (wordLen > 16)		// if the word is larger than the screen
+			{
+				for (i=0; spaceLeft > 0; i++)
+				{
+					a[buffIdx+i] = str[i];	// only copy what will fit
+					--spaceLeft;
+				}
+				str += wordLen;				// move up the str pointer to the next word
+			}
+			else						// if the word will fit on the next line
+			{
+				while (spaceLeft > 0)	// fill the rest with spaces
+				{
+					a[16-spaceLeft] = ' ';
+					--spaceLeft;
+				}
+			}
+
+			if (*str == '\0')			// if we're at the end of the string
+			{
+				while (spaceLeft > 0)	// fill the rest with spaces
+				{
+					a[16-spaceLeft] = ' ';
+					--spaceLeft;
+				}
+			}
+			else
+			{
+				if (spaceLeft > 0)		// add the ' ' char if there's room for the space
+				{
+					a[buffIdx++] = ' ';
+					--spaceLeft;
+				}
+				++str;					// increment the str pointer past the space
+			}
+		}
+
+		// print to LCD
+		if (whichLine == 1)
+		{
+			lcdClear();
+			LCDLine1();
+			LCDWrite(a);
+			whichLine = 2;
+			if (*str == '\0')
+				busyWait(5000);
+		}
+		else
+		{
+			LCDLine2();
+			LCDWrite(a);
+			whichLine = 1;
+			busyWait(5000);
+		}
+	}
+}
+
+void testLCD()
+{
+	lcdBacklight();
+	printLCD("This is a really long message. It should be broken up correctly. W00t");
+	while (1);
+}

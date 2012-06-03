@@ -77,7 +77,7 @@ int main(void) {
 			break;
 
 		case 2:
-			//testLCD();
+			testLCD();
 			break;
 
 		case 3:
