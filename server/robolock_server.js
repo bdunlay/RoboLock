@@ -6,8 +6,13 @@ var fs = require('fs');
 
 
 function notifyRobolock(type, message) {
-	// connection.write(type+"/"+message+"\0");
-	// console.log(type+"/"+message);
+	try {
+
+		connection.write(type+"/"+message+"\0");
+		console.log("NotifyRobolock: "+type+message);
+	} catch (err) {
+		console.log("ROBOLOCK DOWN?");
+	}
 }
 
 
@@ -27,7 +32,7 @@ var connection;
 var startIndex = 0;
 
 
-
+var codesReady = 0;
 
 //TCP SERVER
 var tcp_server = net.createServer(function(c) { //'connection' listener
@@ -40,6 +45,11 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
 	});
 
 	c.on('data', function(data) {
+
+
+		console.log("[TCP REQUEST] ");
+		console.log(data);
+		console.log("\n");
 
 		var splitData = data.toString().split("/", 2);
 
@@ -90,10 +100,12 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
 			break;
 
 			case "codes":
-
+			console.log("CODES...")
+			console.log(data.toString());
 			 fd = fs.openSync('./text/codes.txt', 'w+', 0666);
-			 fs.writeSync(fd, payload, 0, 'utf8');
-			 fs.closeSync(fd)
+			 fs.writeSync(fd, payload.toString(), 0, 'utf8');
+			 fs.closeSync(fd);
+			 codesReady = 1;
 
      notifyRobolock("OK", "Received codes");
 
@@ -139,6 +151,9 @@ var http_server = http.createServer(function (req, res) {
 
 http_server.on('request', function(req, res) {
 
+	console.log("[HTTP REQUEST] ");
+	console.log(req);
+	console.log("\n");
 	var request = url.parse(req.url, true);
 	var action = request.pathname;
 	var q = request.query;
@@ -192,14 +207,15 @@ http_server.on('request', function(req, res) {
 	 *
 	 * note: URI-encode the message client-side
 	 */
-	} else if (action == '/text') {
+	} else if (action == '/greeting') {
 
 		var message = decodeURIComponent(q.msg);
+
 		res.writeHead(200, {'Content-Type': 'text/plain' });
 		res.end("Text sent\n");
 
 		console.log("texting robolock " + message);
-		notifyRobolock("TXT/" + message + "\0");
+		notifyRobolock("TXT/", message + "\0");
 
 	/* set new code 	 
 	 *
@@ -221,10 +237,26 @@ http_server.on('request', function(req, res) {
 
 		notifyRobolock("GET/");
 		console.log("getting codes"); 
-		res.writeHead(200, {'Content-Type': 'text/plain' });
 
-		var codes = fs.readFileSync("./text/codes.txt");
-		res.end(codes);
+
+			setTimeout(function() {
+
+				res.writeHead(200, {'Content-Type': 'text/plain' });
+
+				if (codesReady) {
+					var codes = fs.readFileSync("./text/codes.txt");
+					res.end(codes);
+					codesReady = 0;
+
+				} else {
+						res.end("No Codes Set\n");
+					}
+				}, 1000);
+
+			console.log("hi");
+
+
+
 
 	/* invalidate a particular code 
 	 *
@@ -245,9 +277,6 @@ http_server.on('request', function(req, res) {
 
 	}
 });
-
-
-
 
 
 

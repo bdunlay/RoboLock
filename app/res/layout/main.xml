@@ -8,8 +8,7 @@
 		android:textSize="25sp" android:paddingBottom="10sp" />
 	<ImageView android:id="@+id/photo" android:src="@drawable/robolock"
 		android:gravity="center_vertical" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:onClick="loadImage"
-		android:maxWidth="370px"></ImageView>
+		android:layout_height="wrap_content" android:onClick="loadImage" android:maxWidth="370px"></ImageView>
 		
 	<LinearLayout android:id="@+id/linearLayout1"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -28,13 +27,15 @@
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:gravity="center">
 		
-			<ImageButton android:padding="0sp" android:src="@drawable/manage"
+			<ImageButton android:padding="0sp" android:src="@drawable/greeting"
 			android:id="@+id/manage" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:onClick="manage"
+			android:layout_height="wrap_content" android:onClick="greeting" android:gravity="center"
+
 			></ImageButton>
 			
 	
 	
 	</LinearLayout>
+		<ImageButton 			android:layout_marginTop="20px" android:layout_height="wrap_content" android:onClick="manage" android:padding="0sp" android:layout_width="wrap_content" android:id="@+id/manage" android:src="@drawable/manage" android:layout_gravity="center"></ImageButton>
 	
 </LinearLayout>

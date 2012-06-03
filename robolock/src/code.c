@@ -255,7 +255,6 @@ WORD putCodes(BYTE* a)
 			a[num++] = '\n';
 		}
 	}
-//	a[num++] = '\0';
 	return num;
 }
 
