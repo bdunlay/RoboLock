@@ -30,3 +30,11 @@ BYTE atoi(BYTE a)
 	else
 		return (BYTE)0;
 }
+
+BYTE itoa(BYTE a)
+{
+	if (a >= 0 && a < 10)
+		return a+0x30;
+	else
+		return (BYTE)0;
+}

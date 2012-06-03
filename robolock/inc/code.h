@@ -46,6 +46,7 @@ BYTE invalidateOldCode(BYTE*);
 void invalidateExpiredCode(void);
 BYTE compareCode(Code*, BYTE*);
 BYTE codeMatches(BYTE*);
+WORD putCodes(BYTE*);
 
 void testCodes(void);
 

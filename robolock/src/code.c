@@ -230,6 +230,35 @@ void invalidateExpiredCode(void)
 	}
 }
 
+/*
+ * putCodes
+ * copies the BYTE codes into an array, turns BYTE numbers into ASCII
+ * each code is delimited by a newline char and the string ends with a
+ * null-terminating char
+ * parameters:
+ *   a: BYTE array where the codes will be copied
+ *
+ * returns:
+ *   number of characters copied into the array (includes \n and \0)
+ */
+
+WORD putCodes(BYTE* a)
+{
+	WORD i,j;
+	WORD num = 0;
+	for (i=0; i<MAX_CODES; i++)
+	{
+		if (codeList[i].valid)
+		{
+			for (j=0; j<CODE_LEN; j++)
+				a[num++] = itoa(codeList[i].value[j]);
+			a[num++] = '\n';
+		}
+	}
+	a[num++] = '\0';
+	return num;
+}
+
 void setValid(Code* a)
 {
 	a->valid = TRUE;
