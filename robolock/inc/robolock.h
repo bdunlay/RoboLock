@@ -102,4 +102,6 @@ volatile DWORD knockThresh;
 volatile BYTE promptTimedout;
 volatile BYTE promptTimeoutCount;
 
+int genericTakePhoto(void);
+
 #endif

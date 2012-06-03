@@ -515,3 +515,59 @@ int formatPacket(char* type, char* data, int bytes) {
 	return i;
 }
 
+
+int genericTakePhoto() {
+
+	int i = 0;
+	int k = 0;
+	int count = 0;
+	int eof = 0;
+
+	if (JPEGCamera_takePicture(so.prePacketBuffer)) {
+		JPEGCamera_getSize(so.prePacketBuffer, &(so.photo_size));
+		update_state(SEND_PHOTO);
+	} else {
+		return -1;
+	}
+
+	UARTSendHexWord(so.photo_address);
+	UARTSendHexWord(so.photo_size);
+
+	// sends the image in chunks
+	while (so.photo_address < so.photo_size) {
+
+		count = JPEGCamera_readData(so.prePacketBuffer, so.photo_address);
+
+		for (i = 5; i < count - 5; i++) {
+			//Check the response for the eof indicator (0xFF, 0xD9). If we find it, set the eof flag
+			if ((so.prePacketBuffer[i] == (char) 0xD9) && (so.prePacketBuffer[i - 1] == (char) 0xFF))
+				eof = 1;
+			k = i - 5;
+			if (eof == 1)
+				break;
+		}
+		printLED(count);
+		so.photo_address += (count - 10);
+
+		so.chunk_length = formatPacket("photo\0", so.prePacketBuffer+5, k+1);
+		so.send_data_flag = 1;
+		while(!so.data_sent) {
+			periodic_network();
+		}
+		so.send_data_flag = 0;
+		so.data_sent = 0;
+
+	}
+
+	JPEGCamera_stopPictures(so.prePacketBuffer);
+
+	// sends the final packet to end the file
+	so.chunk_length = formatPacket("photo\0", "END", 3);
+	so.send_data_flag = 1;
+	while(!so.data_sent) {
+		periodic_network();
+	}
+
+
+	return 0;
+}

@@ -75,7 +75,7 @@ void client() {
 		connect();
 	}
 	if (uip_connected()) {
-		uip_send("hello", 5);
+		uip_send("hello", 5)
 		so.connected = 1;
 		printLED(0xF);
 	}
@@ -101,6 +101,8 @@ void client() {
 		}
 
 
+
+
 		if (so.state == AUTH_PHOTO && uip_newdata()) {
 			if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'O'
 					&& uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
@@ -115,7 +117,7 @@ void client() {
 
 		/* IMG/: TAKE IMAGE ON DEMAND */
 		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'I' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'M' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'G') {
-
+			//genericTakePhoto();
 		}
 
 		/* DEL/CODE: DELETE CODE */
