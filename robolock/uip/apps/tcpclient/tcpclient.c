@@ -7,24 +7,54 @@
 #include "robolock.h"
 #include "cameraB.h"
 #include "uart.h"
+#include "LCD.h"
 
 void connect(void);
+void client(void);
+void server(void);
+int parse(char* );
 
 void tcp_client_init(void) {
 	connect();
+    //uip_listen(HTONS(2012));
+
 }
 
 void connect() {
+
 	uip_ipaddr_t ipaddr[2];
 
-	//uip_ipaddr(ipaddr, 184,189,241,29); // server address
-	uip_ipaddr(ipaddr, 128,111,56,203); // server address
+	//uip_ipaddr(ipaddr, 184,189,241,29); // home
+	//uip_ipaddr(ipaddr, 128,111,43,14);  // CSIL
+	uip_ipaddr(ipaddr, 128,111,56,203); // CELAB13 server
 	uip_connect(ipaddr, HTONS(9090)); // server port
 
 }
 
 int UIP_LOCK = 0;
 void tcp_client_appcall(void) {
+	   switch(uip_conn->lport) {
+		   case HTONS(2012):
+			   server();
+			   break;
+		   default:
+			  client();
+			  break;
+	   }
+}
+
+
+
+
+
+
+
+
+
+
+
+void client() {
+
 
 	if (uip_aborted()) {
 
@@ -76,125 +106,172 @@ void tcp_client_appcall(void) {
 				so.permission = 1;
 			}
 		}
+
+	}
+
+
+	if (uip_newdata()) {
+
+		/* IMG/: TAKE IMAGE ON DEMAND */
+		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'I' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'M' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'G') {
+
+		}
+
+		/* DEL/CODE: DELETE CODE */
+		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'D' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'E' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'L') {
+			char asciiCodeToInt[4];
+			int i;
+
+			for (i = 0; i < 4; i++) {
+				asciiCodeToInt[i] = uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 4 + i]-48;
+			}
+
+			if(invalidateOldCode(asciiCodeToInt)) {
+				uip_send("DEL/OK");
+			} else {
+				uip_send("DEL/NO");
+			}
+		}
+
+		/* GET/: GET ALL CODES DELIMITED BY NEWLINES */
+		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'G' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'E' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'T') {
+
+		}
+
+		/* SET/CODE: SET NEW CODE */
+		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'S' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'E' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'T') {
+
+		}
+
+		/* TXT/MESSAGE: DISPLAY MESSAGE ON LCD */
+		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'S' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'E' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'T') {
+
+		}
+
+
 	}
 
 }
 
 
-//	if (uip_aborted() || uip_timedout() || uip_closed()) {
-//		printLED(dancything);
-//		dancything = ~dancything;
-//		so.connected = 0;
-//
-//		connect();
-//	}
-//
-//	if (uip_connected()) {
-//		so.connected = 1;
-//		uip_send("Hello, server!", 14);
-//		UIPSTATE = 1;
-//	}
-//
-//	if (so.state == AUTH_PHOTO || so.state == SEND_PHOTO) {
-//		printLED(0x33);
-////		printLED(0x1 << dancything2++ % 8);
-//
-//		int length;
-//
-//		switch (so.state) {
-//
-//		case SEND_PHOTO:
-//		//UARTprint(" [Send Photo UIP State] \0");
-//			if (so.photo_address < so.photo_size) {
-//
-//				int count = JPEGCamera_readData(so.jpegResponse,
-//						so.photo_address);
-//				int i;
-//
-//				for (i = 5; i < count - 5; i++) {
-//					//Check the response for the eof indicator (0xFF, 0xD9). If we find it, set the eof flag
-//					if ((so.jpegResponse[i] == (char) 0xD9) && (so.jpegResponse[i - 1] == (char) 0xFF))
-//						eof = 1;
-//
-//					chunkBuffer[i-5] = so.jpegResponse[i];
-//					UARTSendChar((BYTE)so.jpegResponse[i]);
-//
-//					if (eof == 1)
-//						break;
-//				}
-//
-//				so.photo_address += (count - 10);
-//
-//			} else {
-//				length = formatPacket("photo\0", "END", 3);
-//				so.photo_sent = 1;
-//				update_state(AUTH_PHOTO);
-//			}
-//
-//			uip_send(dataBuffer, length);
-//			break;
-//
-//		case AUTH_PHOTO:
-//
-//			if (uip_newdata()) {
-//				if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'O'
-//						&& uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
-//					so.permission = 1;
-//				}
-//			}
-//			break;
-//
-//		default:
-//			length = formatPacket("heartbeat\0", "thump thump", 11);
-//			uip_send(dataBuffer, length);
-//			// heartbeat to indicate that we're connected
-//			//			for (k = 0; k < 8; k++) {
-//			//				printLED(1 << k);
-//			//				busyWait(20);
-//			//			}
-//
-//			break;
-//		}
-//	}
-
-//		if (START) {
-//			START = 0;
-//			uip_send(dataBuffer, length);
-//
-//		} else if (END)
-//
-//		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN]== 'O' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'K') {
-//			END = 0;
-//
-//		}
 
 
-//		switch (so.state) {
-//
-//		case PHOTO:
-//			// need to make sure that photo has actually been taken and saved
-//			// send "New Photo: [filesize in bytes]"
-//			// read N bytes from camera
-//			// send N bytes to server
-//			// if done, send DONE
-//			// uip_send(photo_chunk, size);
-//
-//			totalBytes = getPhotoSize();
-//
-//			formatPacket("photo", startByte, endByte, totalbytes, getChunk());
-//
-//
-//			break;
-//
-//		case AUTH_PHOTO:
-//			if (uip_len > 2 && uip_buf[0] == 'o' && uip_buf[1] == 'k') {
-//				so.permission = 1;
-//			}
-//			break;
-//
-//		default:
-//			break;
-//
-//		}
 
 
+
+
+
+
+
+
+enum network_states {
+	WAIT,
+	NETWORK_PROMPT,
+	TOGGLE_NETWORK,
+	SET_LOCAL_IP,
+	CONFIGURE_NETWORK,
+	PARSE_CHOICE
+};
+
+struct configuration {
+	int network_state;
+	uip_ipaddr_t remoteIP[2];
+	uip_ipaddr_t localIP[2];
+	uip_ipaddr_t gateway[2];
+	uip_ipaddr_t netmask[2];
+	int state;
+} config;
+
+
+void server() {
+
+
+	if (uip_aborted()) {
+
+		printLED(0x1);
+		connect();
+
+	}
+	if (uip_timedout()) {
+
+		printLED(0x3);
+		connect();
+
+	}
+	if (uip_closed()) {
+
+		printLED(0x7);
+		connect();
+	}
+	if (uip_connected()) {
+		config.state = NETWORK_PROMPT;
+		printLED(0xF);
+	}
+	if (uip_acked()) {
+
+		printLED(0x1F);
+	}
+	if (uip_newdata()) {
+
+		printLED(0x3F);
+	}
+
+	if (uip_rexmit() || uip_newdata() || uip_acked() || uip_connected() || uip_poll()) {
+
+
+
+		switch (config.state) {
+
+			case WAIT:
+				break;
+
+			case NETWORK_PROMPT:
+				uip_send("Welcome to RoboLock.\n(1) toggle connectivity\n(2) set local IP address\n(3) set network options.\n", 95);
+				config.state = PARSE_CHOICE;
+				break;
+
+			case PARSE_CHOICE:
+				if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == '1') {
+					config.state = TOGGLE_NETWORK;
+				}
+
+				if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == '2') {
+					config.state = SET_LOCAL_IP;
+				}
+
+				if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == '3') {
+					config.state = CONFIGURE_NETWORK;
+				}
+				break;
+
+
+			case TOGGLE_NETWORK:
+
+				if (config.network_state) {
+					config.network_state = 0;
+					uip_send("Network DISABLED\n", 17);
+				} else {
+					config.network_state = 1;
+					uip_send("Network ENABLED\n", 16);
+				}
+
+				config.state = WAIT;
+
+				break;
+
+			case SET_LOCAL_IP:
+				break;
+
+			case CONFIGURE_NETWORK:
+				break;
+
+			default:
+				break;
+
+		}
+
+
+	}
+
+
+}

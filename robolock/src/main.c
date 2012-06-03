@@ -38,7 +38,7 @@ int main(void) {
 	UARTInit(9600);
 	printLED(0x03);
 	JPEGCamera_begin();
-	JPEGCamera_reset(so.jpegResponse);
+	JPEGCamera_reset(so.prePacketBuffer);
 	printLED(0x07);
 	UART3Init(9600);
 	printLED(0x0F);

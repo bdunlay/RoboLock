@@ -5,25 +5,20 @@ var fs = require('fs');
 
 
 
-//var fd = fs.openSync('./images/photo.jpg', 'w+');
-function sendData(type, message) {
-  connection.write(type+"/"+message+"\0");
-  console.log(type+"/"+message);
+function notifyRobolock(type, message) {
+	// connection.write(type+"/"+message+"\0");
+	// console.log(type+"/"+message);
 }
 
-// var cd2m_fd = fs.openSync("cd2m.txt", "r");
-
- 
 
 function notifyPhone() {
-  var CD2M_command = fs.readFileSync('./cd2m.txt').toString();
-  var sys = require('sys')
-  var exec = require('child_process').exec;
-  function puts(error, stdout, stderr) { sys.puts(stdout) }
-  exec(CD2M_command, puts);
-  //C2DM Code
-  console.log("NOTIFYING PHONE!");
-
+	var CD2M_command = fs.readFileSync('./cd2m.txt').toString();
+	var sys = require('sys')
+	var exec = require('child_process').exec;
+	function puts(error, stdout, stderr) { sys.puts(stdout) }
+	exec(CD2M_command, puts);
+	//C2DM Code
+	console.log("NOTIFYING PHONE!");
 }
 
 var FILE_OPEN = false;
@@ -31,159 +26,244 @@ var FILE_OPEN = false;
 var connection;
 var startIndex = 0;
 
-// TCP SERVER (ROBOLOCK INTERFACE
+
+
+
+//TCP SERVER
 var tcp_server = net.createServer(function(c) { //'connection' listener
-  console.log('[TCP-Server] Connected');
+	console.log('[TCP-Server] Connected');
 
-  connection = c;
+	connection = c;
 
-  c.on('end', function() {
-    console.log('[TCP-Server] Disconnected');
-  });
+	c.on('end', function() {
+		console.log('[TCP-Server] Disconnected');
+	});
 
-  c.on('data', function(data) {
+	c.on('data', function(data) {
 
-    var splitData = data.toString().split("/", 2);
-
-
-    var header = splitData[0];
-    if (splitData[1] != null)
-      var payload = data.slice((header.length + 1));
-
-    console.log(header);
-
-    // photo:0:500:1500, codes
-
-    // example:
-    // type:start_byte:end_byte:total_bytes/payload
-
-    console.log("-------------");
-    console.log(header);
-    console.log(payload);
-    console.log("-------------\n");
-
-    switch(header /* payload type (photo, codes) */) {
-
-      case "photo":
-
-        if (FILE_OPEN) {
-
-          if (payload == "END") {
-            fs.closeSync(fd);
-            FILE_OPEN = false;
-            startIndex = 0;
-
-          console.log("CLOSING FILE");
-
-          } else {
-            startIndex += fs.writeSync(fd, payload, 0, payload.length, startIndex);
-            console.log("WRITING FILE");
-          //fs.writeSync(fd, buffer, offset, length, position)
-          }
-
-        } else {
-          console.log("OPENING FILE");
-          notifyPhone();
-          fd = fs.openSync('./images/photo.jpg', 'w+', 0666);
-          startIndex += fs.writeSync(fd, payload, 0, payload.length, startIndex);
-          FILE_OPEN = true;
-
-          console.log("WRITING FILE");
-
-        }
-
-        console.log(startIndex+ "\n")
-      //  sendData("OK", "Received last chunk");
+		var splitData = data.toString().split("/", 2);
 
 
-      break;
+		var header = splitData[0];
+		if (splitData[1] != null)
+			var payload = data.slice((header.length + 1));
 
-      case "codes":
+		console.log("-------------");
+		console.log(header);
+		console.log(payload);
+		console.log("-------------\n\n\n");
 
-      fd = fs.openSync('./text/codes.txt', 'w+', 0666);
-      fs.writeSync(fd, payload, 0, 'utf8');
-      fs.closeSync(fd)
+		switch(header /* payload type (photo, codes) */) {
 
-      sendData("OK", "Received codes");
+			case "photo":
 
-      break;
+				if (FILE_OPEN) {
 
-      default:
-//      sendData("ERROR", "Unknown Payload Type");
-      break;
+					if (payload == "END") {
+						fs.closeSync(fd);
+						FILE_OPEN = false;
+						startIndex = 0;
 
-    }
+					console.log("CLOSING FILE");
 
-  });  
+					} else {
+						startIndex += fs.writeSync(fd, payload, 0, payload.length, startIndex);
+						console.log("WRITING FILE");
+					//fs.writeSync(fd, buffer, offset, length, position)
+					}
+
+				} else {
+					console.log("OPENING FILE");
+					notifyPhone();
+					fd = fs.openSync('./images/photo.jpg', 'w+', 0666);
+					startIndex += fs.writeSync(fd, payload, 0, payload.length, startIndex);
+					FILE_OPEN = true;
+
+					console.log("WRITING FILE");
+
+				}
+
+				console.log(startIndex+ "\n")
+			 notifyRobolock("OK", "Received last chunk");
+
+
+			break;
+
+			case "codes":
+
+			 fd = fs.openSync('./text/codes.txt', 'w+', 0666);
+			 fs.writeSync(fd, payload, 0, 'utf8');
+			 fs.closeSync(fd)
+
+     notifyRobolock("OK", "Received codes");
+
+			break;
+
+			default:
+     notifyRobolock("ERROR", "Unknown Payload Type");
+			break;
+
+		}
+
+	});  
 
 });
 
-var registration_id;
 
-// HTTP SERVER (MOBILE INTERFACE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// HTTP SERVER 
 var http_server = http.createServer(function (req, res) {
-  //res.writeHead(200, {'Content-Type': 'text/html'});
+	//res.writeHead(200, {'Content-Type': 'text/html'});
  // res.end("<h1>RoboLock!</h1>");
 });
 
 http_server.on('request', function(req, res) {
 
-  console.log(req);
+	var request = url.parse(req.url, true);
+	var action = request.pathname;
+	var q = request.query;
 
-  var request = url.parse(req.url, true);
-  var action = request.pathname;
-  var q = request.query;
+	/* request a photo 
+	 *
+	 * parameters: ondemand
+	 */
+	if (action == '/photo') {
+	 var img;
+	 try {
+		img = fs.readFileSync('./images/photo.jpg');
+		console.log("Sending image photo.jpg")
+	 } 
+	 catch(err) {
+		console.log("Error; Sending image logo.jpg")
+		img = fs.readFileSync('./images/logo.jpg')
+		console.log("Read photo error: " + err);
+	 }
 
-  if (action == '/photo') {
+	 res.writeHead(200, {'Content-Type': 'image/jpg' });
+	 res.end(img, 'binary');
 
-   var img = fs.readFileSync('./images/photo.jpg');
-   res.writeHead(200, {'Content-Type': 'image/jpg' });
-   res.end(img, 'binary');
-   console.log("Sent image ./images/photo.jpg")
+	/* registering with C2DM 
+	 *
+	 * parameters: id
+	 *
+	 * note: not currently used
+	 */
+	} else if (action == '/register') {
 
- } else if (action == '/register') {
+		var registration_id = q.id;
+		res.writeHead(200, {'Content-Type': 'text/plain' });
+		res.end('Registration successful ' + registration_id + "\n");
+		console.log("ID: " + registration_id);
 
-   registration_id = q.id;
-   res.writeHead(200, {'Content-Type': 'text/plain' });
-   res.end('Registration successful ' + registration_id + "\n");
-   console.log("ID: " + registration_id);
+	/* unlock door 
+	 *
+	 *
+	 */
+	} else if (action == '/unlock') {
 
+		notifyRobolock("OK/");
+		res.writeHead(200, {'Content-Type': 'text/plain' });
+		console.log("unlocking");
+		res.end("Unlocking");
 
-  }
-  // else if (action == '/codes') {
+	/* send text message to door 
+	 *
+	 * parameters: msg
+	 *
+	 * note: URI-encode the message client-side
+	 */
+	} else if (action == '/text') {
 
-  //    // this needs to contact robolock, download a codes.txt file, and then serve it back to the phone
+		var message = decodeURIComponent(q.msg);
+		res.writeHead(200, {'Content-Type': 'text/plain' });
+		res.end("Text sent\n");
 
-  //    var codes = fs.readFileSync('./text/codes.txt');
-  //    res.writeHead(200, {'Content-Type': 'text/plain' });
-  //    res.end(codes);
+		console.log("texting robolock " + message);
+		notifyRobolock("TXT/" + message + "\0");
 
-  // } 
+	/* set new code 	 
+	 *
+	 * parameters: code
+	 */
+	} else if (action == '/setcode') {
 
-  else if (action == '/unlock') {
+		var code = q.code;
+		console.log("setting code "+ code);
+		notifyRobolock("SET/" + code);
+		res.writeHead(200, {'Content-Type': 'text/plain' });
+		res.end("Setting code" + code);
 
-    sendData("OK");
+	/* get all active codes 
+	 *
+	 * parameters: [none]
+	 */
+	} else if (action == '/getcodes') {
 
-    res.writeHead(200, {'Content-Type': 'text/plain' });
-    res.end("Unlocking");
+		notifyRobolock("GET/");
+		console.log("getting codes"); 
+		res.writeHead(200, {'Content-Type': 'text/plain' });
 
-  }
+		var codes = fs.readFileSync("./text/codes.txt");
+		res.end(codes);
 
-  else { 
-   res.writeHead(200, {'Content-Type': 'text/plain' });
-   res.end('Hello World \n');
- }
+	/* invalidate a particular code 
+	 *
+	 * parameters: code
+	 */
+	} else if (action == '/invalidate') {
 
+		var code = q.code;
+		notifyRobolock("DEL/"+ code);
+		console.log("deleting code" + code); 
+		res.writeHead(200, {'Content-Type': 'text/plain' });
+		res.end("Invalidating Code " + code);
+
+	} else { 
+
+	 res.writeHead(200, {'Content-Type': 'text/plain' });
+	 res.end('Hello World \n');
+
+	}
 });
 
 
+
+
+
+
+
+
+
+
+
+
 http_server.listen(8080, function() {
-  console.log('[HTTP-Server] Bound on port 8080');
+	console.log('[HTTP-Server] Bound on port 8080');
 });
 
 
 tcp_server.listen(9090, function() { //'listening' listener
-  console.log('[TCP-Server] Bound on port 8081');
+	console.log('[TCP-Server] Bound on port 9090');
 });
 
 

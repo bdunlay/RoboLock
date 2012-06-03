@@ -45,7 +45,7 @@ void robolock() {
 	lcdDisplay("   -RoboLock-   ", "                ");
 	so.state = IDLE;
 	#if NETWORK_ENABLED
-	so.state = DISCONNECTED;
+	so.state = CONFIGURE;
 	#endif
 
 	busyWait(2000);
@@ -53,6 +53,12 @@ void robolock() {
 	while (1) { //do forever
 
 		switch (so.state) {
+
+		case CONFIGURE:
+			while(!so.configured) {
+				periodic_network();
+			}
+			break;
 
 		case DISCONNECTED:
 			UARTprint("disconnected\0");
@@ -149,8 +155,8 @@ void robolock() {
 
 			sayCheese(); // print LCD countdown
 
-			if (JPEGCamera_takePicture(so.jpegResponse)) {
-				JPEGCamera_getSize(so.jpegResponse, &(so.photo_size));
+			if (JPEGCamera_takePicture(so.prePacketBuffer)) {
+				JPEGCamera_getSize(so.prePacketBuffer, &(so.photo_size));
 				update_state(SEND_PHOTO);
 			} else {
 				update_state(ERROR);
@@ -179,11 +185,11 @@ void robolock() {
 			// sends the image in chunks
 			while (so.photo_address < so.photo_size) {
 
-				count = JPEGCamera_readData(so.jpegResponse, so.photo_address);
+				count = JPEGCamera_readData(so.prePacketBuffer, so.photo_address);
 
 				for (i = 5; i < count - 5; i++) {
 					//Check the response for the eof indicator (0xFF, 0xD9). If we find it, set the eof flag
-					if ((so.jpegResponse[i] == (char) 0xD9) && (so.jpegResponse[i - 1] == (char) 0xFF))
+					if ((so.prePacketBuffer[i] == (char) 0xD9) && (so.prePacketBuffer[i - 1] == (char) 0xFF))
 						eof = 1;
 					k = i - 5;
 					if (eof == 1)
@@ -192,7 +198,7 @@ void robolock() {
 				printLED(count);
 				so.photo_address += (count - 10);
 
-				so.chunk_length = formatPacket("photo\0", so.jpegResponse+5, k+1);
+				so.chunk_length = formatPacket("photo\0", so.prePacketBuffer+5, k+1);
 				so.send_data_flag = 1;
 				while(!so.data_sent) {
 					periodic_network();
@@ -202,7 +208,7 @@ void robolock() {
 
 			}
 
-			JPEGCamera_stopPictures(so.jpegResponse);
+			JPEGCamera_stopPictures(so.prePacketBuffer);
 
 			// sends the final packet to end the file
 			so.chunk_length = formatPacket("photo\0", "END", 3);
@@ -370,6 +376,7 @@ void init_robolock() {
 	so.connected = 0;
 	so.photo_size = 0;
 	so.photo_address = 0;
+	so.configured = 0;
 }
 
 void promptTimeoutHandler() {

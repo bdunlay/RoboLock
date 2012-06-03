@@ -16,6 +16,7 @@
 /* Constants */
 
 enum {
+	CONFIGURE,
 	DISCONNECTED,
 	IDLE,
 	PROMPT,
@@ -58,11 +59,11 @@ enum {
 struct state_object {
 	unsigned int state;
 	unsigned int permission;
-
+	unsigned int configured;
 	unsigned int connected;
 
 	// photo stuff
-	char jpegResponse[CAMERA_BUFF_SIZE];
+	char prePacketBuffer[CAMERA_BUFF_SIZE];
 	char dataBuffer[PACKET_BUFF_SIZE];
 	unsigned int photo_taken;
 	unsigned int photo_sent;

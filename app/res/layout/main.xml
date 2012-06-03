@@ -29,8 +29,8 @@
 		android:gravity="center">
 		
 			<ImageButton android:padding="0sp" android:src="@drawable/manage"
-			android:id="@+id/decline" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
+			android:id="@+id/manage" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:onClick="manage"
 			></ImageButton>
 			
 	
