@@ -161,10 +161,10 @@ void RTCHandler(void)
 	RTC_ILR |= ILR_RTCCIF;		/* clear interrupt flag */
 	IENABLE;			/* handles nested interrupt */
 
-	UARTSendChar('R');
+//	UARTSendChar('R');
 	invalidateExpiredCode();
 	updateAlarmTime();
-	UARTSendChar('r');
+//	UARTSendChar('r');
 
 	IDISABLE;
 	VICVectAddr = 0;		/* Acknowledge Interrupt */
@@ -195,11 +195,12 @@ void updateAlarmTime(void)
 			if (compareTime(&closest, &(codeList[i].expTime)) < 0) 		// if the valid, not-expired code is earlier than the "closest" time
 			{
 				closest = codeList[i].expTime;
-				UARTSendChar('u');
+//				UARTSendChar('u');
 			}
 		}
 	}
 	RTCSetAlarm(closest);
+//	UARTSendChar('s');
 }
 
 /*
@@ -220,10 +221,10 @@ void invalidateExpiredCode(void)
 	{
 		if (codeList[i].valid && codeList[i].expires)					// if it's a valid, expiring code
 		{
-			if (compareTime(&currTime, &(codeList[i].expTime)) < 0) 	// if the current time is later than the expiration time
+			if (compareTime(&currTime, &(codeList[i].expTime)) <= 0) 	// if the current time is later than the expiration time
 			{
 				setInvalid(&codeList[i]);
-				UARTSendChar('e');
+//				UARTSendChar('e');
 			}
 		}
 	}
