@@ -12,6 +12,7 @@
 #include "type.h"
 #include "irq.h"
 #include "rtc.h"
+#include "code.h"
 
 /*****************************************************************************
 ** Function name:		RTCInit
@@ -37,9 +38,9 @@ void RTCInit( void )
   /*--- Initialize registers ---*/    
   RTC_AMR = 0;
   RTC_CIIR = 0;
-  RTC_CCR = 0x10;					// set the clock source as the 32kHz external osc and initialize the clock
-  //RTC_PREINT = PREINT_RTC;
-  //RTC_PREFRAC = PREFRAC_RTC;
+  RTC_CCR = 0x0;					// set the clock source as pclk and initialize the clock
+  RTC_PREINT = PREINT_RTC;
+  RTC_PREFRAC = PREFRAC_RTC;
 
   install_irq( RTC_INT, (void *)RTCHandler, HIGHEST_PRIORITY+3 );
 
@@ -183,7 +184,7 @@ void RTCSetAlarmMask( DWORD AlarmMask )
 }
 
 /*
- * compareRTC
+ * compareTime
  *
  * parameters:
  *   a: Time "a"
@@ -222,6 +223,18 @@ int compareTime(RTCTime* a, RTCTime* b)
 				}
 			}
 		}
+	}
+}
+
+#include "common.h"
+#include "uart.h"
+void testRTC(void)
+{
+	while (1)
+	{
+		UARTSendHexWord(RTC_SEC);
+		UARTSendChar('-');
+		busyWait(1000);
 	}
 }
 

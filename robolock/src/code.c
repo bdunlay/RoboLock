@@ -8,6 +8,8 @@
 
 #include "code.h"
 #include "LPC23xx.h"
+#include "uart.h"
+#include "common.h"
 
 /*
  * compareCode
@@ -159,8 +161,10 @@ void RTCHandler(void)
 	RTC_ILR |= ILR_RTCCIF;		/* clear interrupt flag */
 	IENABLE;			/* handles nested interrupt */
 
+//	UARTSendChar('R');
 	invalidateExpiredCode();
 	updateAlarmTime();
+//	UARTSendChar('r');
 
 	IDISABLE;
 	VICVectAddr = 0;		/* Acknowledge Interrupt */
@@ -187,10 +191,16 @@ void updateAlarmTime(void)
 	for (i=0; i<MAX_CODES; i++)
 	{
 		if (codeList[i].valid && codeList[i].expires)					// if it's a valid, expiring code
+		{
 			if (compareTime(&closest, &(codeList[i].expTime)) < 0) 		// if the valid, not-expired code is earlier than the "closest" time
+			{
 				closest = codeList[i].expTime;
+//				UARTSendChar('u');
+			}
+		}
 	}
 	RTCSetAlarm(closest);
+//	UARTSendChar('s');
 }
 
 /*
@@ -210,8 +220,13 @@ void invalidateExpiredCode(void)
 	for (i=0; i<MAX_CODES; i++)
 	{
 		if (codeList[i].valid && codeList[i].expires)					// if it's a valid, expiring code
-			if (compareTime(&currTime, &(codeList[i].expTime)) < 0) 	// if the current time is later than the expiration time
+		{
+			if (compareTime(&currTime, &(codeList[i].expTime)) <= 0) 	// if the current time is later than the expiration time
+			{
 				setInvalid(&codeList[i]);
+//				UARTSendChar('e');
+			}
+		}
 	}
 }
 
@@ -248,7 +263,8 @@ void setExpireTime(Code* a, BYTE expire)
 	RTCTime currTime = RTCGetTime();
 	switch (expire) {
 	case EXPIRE_ONE_MINUTE:
-		if (currTime.RTC_Min+1 > 60) {
+		currTime.RTC_Min++;
+		if (currTime.RTC_Min > 60) {
 			currTime.RTC_Min = 0;
 			currTime.RTC_Hour++;
 			if (currTime.RTC_Hour > 24) {
@@ -294,4 +310,41 @@ void setExpireTime(Code* a, BYTE expire)
 		break;
 	}
 	a->expTime = currTime;
+}
+
+void testCodes()
+{
+	BYTE fives[CODE_LEN];
+	BYTE sixes[CODE_LEN];
+	BYTE incr[CODE_LEN];
+	WORD i;
+	for (i=0; i<CODE_LEN; i++)
+	{
+		fives[i] = 5;
+		sixes[i] = 6;
+		incr[i] = i;
+	}
+	resetCodes();
+
+	addNewCode(fives, EXPIRE_ONE_MINUTE);
+	addNewCode(sixes, NO_EXPIRE);
+	busyWait(30000);
+	UARTSendHexWord((WORD)codeMatches(fives)); // TRUE
+	UARTSendHexWord((WORD)codeMatches(sixes)); // TRUE
+	busyWait(30000);
+	UARTSendHexWord((WORD)codeMatches(fives)); // FALSE
+	UARTSendHexWord((WORD)codeMatches(sixes)); // TRUE
+
+	addNewCode(incr, EXPIRE_ONE_MINUTE);
+	busyWait(30000);
+	addNewCode(fives, EXPIRE_ONE_MINUTE);
+	UARTSendHexWord((WORD)codeMatches(fives)); // TRUE
+	UARTSendHexWord((WORD)codeMatches(incr));  // TRUE
+	busyWait(30000);
+	UARTSendHexWord((WORD)codeMatches(fives)); // TRUE
+	UARTSendHexWord((WORD)codeMatches(incr));  // FALSE
+	busyWait(30000);
+	UARTSendHexWord((WORD)codeMatches(fives)); // FALSE
+	UARTSendHexWord((WORD)codeMatches(incr));  // FALSE
+
 }
