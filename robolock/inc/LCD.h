@@ -13,7 +13,7 @@
 
 void initLCD(void);
 void clearLCD(void);
-void printLCD(BYTE);
+void printLCD(BYTE*);
 void lcdInit(void);
 void lcdClear(void);
 void lcdShow(void);
