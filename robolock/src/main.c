@@ -20,6 +20,8 @@
 #include "strike.h"
 #include "robolock.h"
 #include "button.h"
+#include "rtc.h"
+#include "code.h"
 
 /*****************************************************************************
  *    Main Function  main()													 *
@@ -115,9 +117,11 @@ int main(void) {
 			break;
 
 		case 12:
+			testRTC();
 			break;
 
 		case 13:
+			testCodes();
 			break;
 
 		case 14:

@@ -25,12 +25,12 @@ void strikeInit(void) {
 }
 
 void strikeClose(){
-	FIO2SET0 = 0x1;
+	FIO2CLR0= 0x1;
 	printLED(0x0F);
 }
 
 void strikeOpen(){
-	FIO2CLR0= 0x1;
+	FIO2SET0 = 0x1;
 	printLED(0xF0);
 }
 

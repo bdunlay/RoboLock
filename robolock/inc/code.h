@@ -47,6 +47,8 @@ void invalidateExpiredCode(void);
 BYTE compareCode(Code*, BYTE*);
 BYTE codeMatches(BYTE*);
 
+void testCodes(void);
+
 /* RTC methods */
 void RTCHandler(void) __irq;
 void updateAlarmTime(void);

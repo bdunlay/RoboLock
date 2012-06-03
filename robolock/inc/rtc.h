@@ -13,6 +13,7 @@
 
 #include "irq.h"
 #include "type.h"
+#include "target.h"
 
 typedef struct {
     BYTE RTC_Sec;     /* Second value - [0,59] */
@@ -43,10 +44,9 @@ typedef struct {
 #define AMRMON		0x00000040  /* Alarm mask for Month */
 #define AMRYEAR		0x00000080  /* Alarm mask for Year */
 
-#define PREINT_RTC	0x000001C8  /* Prescaler value, integer portion, 
-				    PCLK = 15Mhz */
-#define PREFRAC_RTC	0x000061C0  /* Prescaler value, fraction portion, 
-				    PCLK = 15Mhz */
+#define PREINT_RTC	548
+#define PREFRAC_RTC	10368
+
 #define ILR_RTCCIF	0x01
 #define ILR_RTCALF	0x02
 
@@ -54,7 +54,7 @@ typedef struct {
 #define CCR_CTCRST	0x02
 #define CCR_CLKSRC	0x10
 
-extern void RTCHandler (void) __irq;
+//extern void RTCHandler (void) __irq;
 extern void RTCInit( void );
 extern void RTCStart( void );
 extern void RTCStop( void );
@@ -65,6 +65,8 @@ extern void RTCSetAlarm( RTCTime );
 extern void RTCSetAlarmMask( DWORD AlarmMask );
 
 int compareTime(RTCTime*, RTCTime*);
+
+void testRTC(void);
 
 #endif /* end __RTC_H */
 /*****************************************************************************
