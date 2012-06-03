@@ -123,13 +123,13 @@ void client() {
 			int i;
 
 			for (i = 0; i < 4; i++) {
-				asciiCodeToInt[i] = uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 4 + i]-48;
+				asciiCodeToInt[i] = atoi(uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 4 + i]);
 			}
 
-			if(invalidateOldCode(asciiCodeToInt)) {
-				uip_send("DEL/OK");
+			if(invalidateOldCode((BYTE*)asciiCodeToInt)) {
+				uip_send("DEL/OK", 6);
 			} else {
-				uip_send("DEL/NO");
+				uip_send("DEL/NO", 6);
 			}
 		}
 
