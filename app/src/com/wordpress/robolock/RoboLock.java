@@ -41,8 +41,17 @@ public class RoboLock extends Activity {
 		Utilities.httpRequest(Utilities.server + "/unlock");
 	}
 
-	public void loadImage(View v) {
+	// this should be async task which updates the photo when ready
+	// TODO make the notification indicate that there is a new image to load
+	// TODO only send notification once image has been completed
+	// TODO make different notifications for alerts and on-demand (on-demand wont open a notification)
+	public void loadImage() {
 		fetchImage(Utilities.server + "/photo");
+	}
+	
+	// this should send a request to take a new photo and update the photo when a notification is received
+	public void takePhoto(View v) {
+		fetchImage(Utilities.server + "/takephoto");
 	}
 
 	public void manage(View v) {
