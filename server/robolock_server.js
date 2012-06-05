@@ -94,7 +94,7 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
 				}
 
 				console.log(startIndex+ "\n")
-			 notifyRobolock("OK", "Received last chunk");
+			 //notifyRobolock("OK", "Received last chunk");
 
 
 			break;
@@ -107,7 +107,7 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
 			 fs.closeSync(fd);
 			 codesReady = 1;
 
-     notifyRobolock("OK", "Received codes");
+     //notifyRobolock("OK", "Received codes");
 
 			break;
 
