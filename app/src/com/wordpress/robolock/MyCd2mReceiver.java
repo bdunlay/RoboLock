@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 public class MyCd2mReceiver extends BroadcastReceiver{
@@ -65,21 +66,32 @@ public class MyCd2mReceiver extends BroadcastReceiver{
 	       // This should be done in a separate thread.
 	       // When done, remember that all registration is done.
     		
-    		httpRequest(server + "/register?id=" + registration);
+    		httpRequest(Utilities.server + "/register?id=" + registration);
 
 	    }
 	}
-	final String server = "http://192.168.1.149:8080";
 
 	private void handleMessage(Context context, Intent intent)
 	{
 	
 		//httpRequest(server + "/hello");
 		Log.v("RoboLock", "CD2M SUCCESS!");
+		
+		Bundle extras = intent.getExtras();
+		if (extras != null) {
+			//parse the message and do something with it.
+			//For example, if the server sent the payload as "data.message=xxx", here you would have an extra called "message"
+			String message = extras.getString("payload");
+			
+			sendIntentToPhotoView();
+		}
 		serverNotification(context);
 	}
 
-
+	void sendIntentToPhotoView() {
+		
+	}
+	
 	void httpRequest(String url) {
 		final DefaultHttpClient client = new DefaultHttpClient();
 		final HttpGet getRequest = new HttpGet(url);

@@ -157,12 +157,16 @@ void client() {
 		}
 
 		/* TXT/MESSAGE: DISPLAY MESSAGE ON LCD */
-		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'S' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'E' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'T') {
+		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'T' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'X' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'T') {
 			int i;
 
-			for (i = 0; i < WELCOME_BUFF_SIZE; i++) {
-				welcomeMsg[i] = uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 4 + i];
+			for (i = 0; i < uip_len; i++) {
+				welcomeMsg[i] = uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 5 + i]; // why does this require 5? should be 4...
 			}
+
+			UARTprint((char*)welcomeMsg);
+			uip_send("RECEIVED MESSAGE!", 17);
+
 		}
 
 

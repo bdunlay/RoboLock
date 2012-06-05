@@ -105,6 +105,7 @@ void robolock() {
 					update_state(CALIBRATE);
 					break;
 				} else if (keypadValue != 0 || ADC0Value > knockThresh) {// if someone pressed a key or knocked hard enough
+					lcdBacklight(); 							// backlight ON
 					printLCD(welcomeMsg);
 					update_state(PROMPT);
 					break;
@@ -116,7 +117,6 @@ void robolock() {
 		case PROMPT:
 			UARTprint("[PROMPT]");
 
-			lcdBacklight(); 							// backlight ON
 			lcdDisplay(PROMPT_TEXT_1, PROMPT_TEXT_2);
 
 			enable_timer(2); 							// start prompt timeout

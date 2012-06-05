@@ -17,7 +17,7 @@ function notifyRobolock(type, message) {
 
 
 function notifyPhone() {
-	var CD2M_command = fs.readFileSync('./cd2m.txt').toString();
+	var CD2M_command = fs.readFileSync('./notify.txt').toString();
 	var sys = require('sys')
 	var exec = require('child_process').exec;
 	function puts(error, stdout, stderr) { sys.puts(stdout) }
@@ -25,6 +25,17 @@ function notifyPhone() {
 	//C2DM Code
 	console.log("NOTIFYING PHONE!");
 }
+
+function notifyPhonePhoto() {
+	var CD2M_command = fs.readFileSync('./photo.txt').toString();
+	var sys = require('sys')
+	var exec = require('child_process').exec;
+	function puts(error, stdout, stderr) { sys.puts(stdout) }
+	exec(CD2M_command, puts);
+	//C2DM Code
+	console.log("NOTIFYING PHONE OF PHOTO!");
+}
+
 
 var FILE_OPEN = false;
 
@@ -73,7 +84,7 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
 						fs.closeSync(fd);
 						FILE_OPEN = false;
 						startIndex = 0;
-
+						notifyPhonePhoto();
 					console.log("CLOSING FILE");
 
 					} else {
@@ -182,6 +193,17 @@ http_server.on('request', function(req, res) {
 	 * parameters: id
 	 *
 	 * note: not currently used
+	 */
+	} else if (action == '/takephoto') {
+
+		notifyRobolock("IMG/");
+		res.writeHead(200, {'Content-Type': 'text/plain' });
+		res.end('Taking Photo \n');
+		console.log("Take Photo!");
+
+	/* unlock door 
+	 *
+	 *
 	 */
 	} else if (action == '/register') {
 
