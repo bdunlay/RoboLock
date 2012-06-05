@@ -84,12 +84,14 @@ void resetCodes()
  *
  * returns:
  *   TRUE if no code has been overwritten
- *   FALSE if the maximum number of codes has been reached.  NOTE: the new code will overwrite the last code in the array.
+ *   FALSE if the maximum number of codes has been reached or the code already exists.  NOTE: the new code will overwrite the last code in the array.
  */
 
 BYTE addNewCode(BYTE* a, BYTE expire)
 {
 	WORD i;
+	if (codeMatches(a))
+		return FALSE;
 	for (i=0; i<MAX_CODES; i++)
 	{
 		if (!(codeList[i].valid))
