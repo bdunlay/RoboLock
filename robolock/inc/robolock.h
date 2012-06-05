@@ -56,6 +56,8 @@ enum {
 
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])
 
+#define WELCOME_BUFF_SIZE		 128
+
 
 /* Structs */
 
@@ -113,5 +115,7 @@ volatile DWORD knockThresh;
 
 volatile BYTE promptTimedout;
 volatile BYTE promptTimeoutCount;
+
+volatile BYTE welcomeMsg[WELCOME_BUFF_SIZE];
 
 #endif

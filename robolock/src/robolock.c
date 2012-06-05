@@ -105,6 +105,7 @@ void robolock() {
 					update_state(CALIBRATE);
 					break;
 				} else if (keypadValue != 0 || ADC0Value > knockThresh) {// if someone pressed a key or knocked hard enough
+					printLCD(welcomeMsg);
 					update_state(PROMPT);
 					break;
 				}
@@ -166,12 +167,12 @@ void robolock() {
 
 			if (!so.covert) {
 				lcdDisplay("Sending Photo...", "  Please Wait!  ");
-				UARTprint("(Covert Photo)");
 			}
 
 			sendPhoto();
 
-			if (so.	covert) {
+			if (so.covert) {
+				UARTprint("(Covert Photo)");
 				update_state(IDLE);
 			} else {
 				update_state(AUTH_PHOTO);
@@ -327,6 +328,7 @@ void init_robolock() {
 	knockThresh = 512;
 	keypadValue = 0;
 	buttonPressed = FALSE;
+	welcomeMsg[0] = '\0';
 
 	/* set initial codes */
 	resetCodes(); // initialize all codes to invalid
