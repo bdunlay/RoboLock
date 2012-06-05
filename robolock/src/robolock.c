@@ -93,17 +93,18 @@ void robolock() {
 			promptTimedout = FALSE; // reset timeout flag
 
 			while (1) {
+				ADC0Read();
 
+#if NETWORK_ENABLED
 				periodic_network();
 				if (so.state != IDLE) break; // in case network changes state
-
-//				ADC0Read();
+#endif
 
 				if (buttonPressed) {
 					buttonPressed = FALSE;
 					update_state(CALIBRATE);
 					break;
-				} else if (keypadValue != 0 ) { //|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+				} else if (keypadValue != 0 || ADC0Value > knockThresh) {// if someone pressed a key or knocked hard enough
 					update_state(PROMPT);
 					break;
 				}

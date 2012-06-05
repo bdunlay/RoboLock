@@ -31,7 +31,7 @@ enum {
 
 
 // operate robolock without a server or network connection
-#define NETWORK_ENABLED			1
+#define NETWORK_ENABLED			 1
 
 #define PROMPT_TIMEOUT_LEN       10
 
