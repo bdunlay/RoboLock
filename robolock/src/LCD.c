@@ -278,6 +278,23 @@ void printLCD(BYTE* str)
 				}
 				buffIdx += wordLen;
 				str += wordLen;				// move up the str pointer to the next word
+				if (*str == '\0')			// if we're at the end of the string
+				{
+					while (spaceLeft > 0)	// fill the rest with spaces
+					{
+						a[16-spaceLeft] = ' ';
+						--spaceLeft;
+					}
+				}
+				else
+				{
+					if (spaceLeft > 0)		// add the ' ' char if there's room for the space
+					{
+						a[buffIdx++] = ' ';
+						--spaceLeft;
+					}
+					++str;					// increment the str pointer past the space
+				}
 			}
 			else if (wordLen > 16)		// if the word is larger than the screen
 			{
@@ -287,6 +304,23 @@ void printLCD(BYTE* str)
 					--spaceLeft;
 				}
 				str += wordLen;				// move up the str pointer to the next word
+				if (*str == '\0')			// if we're at the end of the string
+				{
+					while (spaceLeft > 0)	// fill the rest with spaces
+					{
+						a[16-spaceLeft] = ' ';
+						--spaceLeft;
+					}
+				}
+				else
+				{
+					if (spaceLeft > 0)		// add the ' ' char if there's room for the space
+					{
+						a[buffIdx++] = ' ';
+						--spaceLeft;
+					}
+					++str;					// increment the str pointer past the space
+				}
 			}
 			else						// if the word will fit on the next line
 			{
@@ -297,23 +331,7 @@ void printLCD(BYTE* str)
 				}
 			}
 
-			if (*str == '\0')			// if we're at the end of the string
-			{
-				while (spaceLeft > 0)	// fill the rest with spaces
-				{
-					a[16-spaceLeft] = ' ';
-					--spaceLeft;
-				}
-			}
-			else
-			{
-				if (spaceLeft > 0)		// add the ' ' char if there's room for the space
-				{
-					a[buffIdx++] = ' ';
-					--spaceLeft;
-				}
-				++str;					// increment the str pointer past the space
-			}
+
 		}
 
 		// print to LCD
@@ -339,6 +357,6 @@ void printLCD(BYTE* str)
 void testLCD()
 {
 	lcdBacklight();
-	printLCD("This is a really long message. It should be broken up correctly. W00t");
-	while (1);
+	while (1)
+		printLCD("This is a really long message. It should be broken up correctly. But soft, what light through yonder window breaks? I am the east, and Juliet is the sun.  Arise, fair sun, and kill the envious moon who is already sick and pale with grief that thou, her maid, art more fair than she.");
 }

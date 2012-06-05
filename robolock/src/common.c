@@ -1,8 +1,6 @@
 #include "type.h"
 #include "common.h"
 #include "target.h"
-#include "cameraB.h"
-#include "uart2.h"
 
 void busyWait(DWORD delay_period) {
 	volatile int a;
@@ -15,7 +13,7 @@ void busyWait(DWORD delay_period) {
 }
 
 
-BYTE hexToChar(BYTE hex)
+inline BYTE hexToChar(BYTE hex)
 {
 	if (hex < 10)
 		return hex + 0x30;
@@ -23,7 +21,7 @@ BYTE hexToChar(BYTE hex)
 		return hex + 55;
 }
 
-BYTE atoi(BYTE a)
+inline BYTE atoi(BYTE a)
 {
 	if (a >= 0x30 && a < 0x3A)
 		return a-0x30;
@@ -31,7 +29,7 @@ BYTE atoi(BYTE a)
 		return (BYTE)0;
 }
 
-BYTE itoa(BYTE a)
+inline BYTE itoa(BYTE a)
 {
 	if (a >= 0 && a < 10)
 		return a+0x30;

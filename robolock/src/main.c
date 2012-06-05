@@ -9,7 +9,6 @@
 #include "LCD.h"
 #include "keypad.h"
 #include "cameraB.h"
-#include "ex_sdram.h"
 #include "timer.h"
 #include "uart.h"
 #include "adc.h"
@@ -101,11 +100,11 @@ int main(void) {
 			break;
 
 		case 8:
-			testSDRAM();
+//			testSDRAM();
 			break;
 
 		case 9:
-			testSDRAM_simple();
+//			testSDRAM_simple();
 			break;
 
 		case 10:

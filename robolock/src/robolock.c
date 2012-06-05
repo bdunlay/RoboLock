@@ -334,7 +334,7 @@ void init_robolock() {
 	addNewCode(defaultCode, NO_EXPIRE);
 
 	/* initialize some systems */
-	init_timer(2, Fpclk, (void*) promptTimeoutHandler, TIMEROPT_INT_RST);
+	init_timer(2, Fpclk, (void*) promptTimeoutHandler, TIMEROPT_INT | TIMEROPT_RST);
 }
 
 void promptTimeoutHandler() {
