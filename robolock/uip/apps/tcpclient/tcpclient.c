@@ -158,7 +158,11 @@ void client() {
 
 		/* TXT/MESSAGE: DISPLAY MESSAGE ON LCD */
 		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'S' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'E' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'T') {
+			int i;
 
+			for (i = 0; i < WELCOME_BUFF_SIZE; i++) {
+				welcomeMsg[i] = uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 4 + i];
+			}
 		}
 
 
