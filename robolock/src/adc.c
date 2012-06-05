@@ -82,7 +82,7 @@ DWORD ADCInit( void )
   /* If POLLING, no need to do the following */
 #if ADC_INTERRUPT_FLAG
   AD0INTEN = 0x110;		/* Enable interrupts for A0[4] */
-  if ( install_irq( ADC0_INT, (void *)ADC0Handler, HIGHEST_PRIORITY ) == FALSE )
+  if ( install_irq( ADC0_INT, (void *)ADC0Handler, HIGHEST_PRIORITY+8 ) == FALSE )
   {
 	return (FALSE);
   }

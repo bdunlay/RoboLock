@@ -93,17 +93,19 @@ void robolock() {
 			promptTimedout = FALSE; // reset timeout flag
 
 			while (1) {
+				ADC0Read();
 
+#if NETWORK_ENABLED
 				periodic_network();
 				if (so.state != IDLE) break; // in case network changes state
-
-//				ADC0Read();
+#endif
 
 				if (buttonPressed) {
 					buttonPressed = FALSE;
 					update_state(CALIBRATE);
 					break;
-				} else if (keypadValue != 0 ) { //|| ADC0Value > knockThresh) // if someone pressed a key or knocked hard enough
+				} else if (keypadValue != 0 || ADC0Value > knockThresh) {// if someone pressed a key or knocked hard enough
+					printLCD(welcomeMsg);
 					update_state(PROMPT);
 					break;
 				}
@@ -165,12 +167,12 @@ void robolock() {
 
 			if (!so.covert) {
 				lcdDisplay("Sending Photo...", "  Please Wait!  ");
-				UARTprint("(Covert Photo)");
 			}
 
 			sendPhoto();
 
-			if (so.	covert) {
+			if (so.covert) {
+				UARTprint("(Covert Photo)");
 				update_state(IDLE);
 			} else {
 				update_state(AUTH_PHOTO);
@@ -326,6 +328,7 @@ void init_robolock() {
 	knockThresh = 512;
 	keypadValue = 0;
 	buttonPressed = FALSE;
+	welcomeMsg[0] = '\0';
 
 	/* set initial codes */
 	resetCodes(); // initialize all codes to invalid
@@ -334,7 +337,7 @@ void init_robolock() {
 	addNewCode(defaultCode, NO_EXPIRE);
 
 	/* initialize some systems */
-	init_timer(2, Fpclk, (void*) promptTimeoutHandler, TIMEROPT_INT_RST);
+	init_timer(2, Fpclk, (void*) promptTimeoutHandler, TIMEROPT_INT | TIMEROPT_RST);
 }
 
 void promptTimeoutHandler() {

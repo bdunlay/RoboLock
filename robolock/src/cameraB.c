@@ -18,6 +18,10 @@ const unsigned char GET_SIZE[5] = {0x56, 0x00, 0x34, 0x01, 0x00};
 const unsigned  char RESET_CAMERA[4] = {0x56, 0x00, 0x26, 0x00};
 const unsigned char TAKE_PICTURE[5] = {0x56, 0x00, 0x36, 0x01, 0x00};
 const unsigned char STOP_TAKING_PICS[5] = {0x56, 0x00, 0x36, 0x01, 0x03};
+/*must reset camera after changing image size*/
+const unsigned char SET_RESOLUTION_640x480[9] = {0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, 0x00};
+const unsigned char SET_RESOLUTION_320x240[9] = {0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, 0x11};
+const unsigned char SET_RESOLUTION_160x120[9] = {0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19, 0x22};
 unsigned char READ_DATA[16] = {0x56, 0x00, 0x32, 0x0C, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A};
 
 void JPEGCamera_begin(void)
@@ -29,6 +33,27 @@ void JPEGCamera_begin(void)
 int JPEGCamera_reset(char* response)
 {
 	return JPEGCamera_sendCommand(RESET_CAMERA, response, 4);
+}
+
+int JPEGCamera_setRes640x480(char* response)
+{
+	int a = JPEGCamera_sendCommand(SET_RESOLUTION_640x480, response, 9);
+	JPEGCamera_sendCommand(RESET_CAMERA, response, 4);
+	return a;
+}
+
+int JPEGCamera_setRes320x240(char* response)
+{
+	int a = JPEGCamera_sendCommand(SET_RESOLUTION_320x240, response, 9);
+	JPEGCamera_sendCommand(RESET_CAMERA, response, 4);
+	return a;
+}
+
+int JPEGCamera_setRes160x120(char* response)
+{
+	int a = JPEGCamera_sendCommand(SET_RESOLUTION_160x120, response, 9);
+	JPEGCamera_sendCommand(RESET_CAMERA, response, 4);
+	return a;
 }
 
 int JPEGCamera_takePicture(char * response)

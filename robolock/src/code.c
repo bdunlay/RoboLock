@@ -84,12 +84,14 @@ void resetCodes()
  *
  * returns:
  *   TRUE if no code has been overwritten
- *   FALSE if the maximum number of codes has been reached.  NOTE: the new code will overwrite the last code in the array.
+ *   FALSE if the maximum number of codes has been reached or the code already exists.  NOTE: the new code will overwrite the last code in the array.
  */
 
 BYTE addNewCode(BYTE* a, BYTE expire)
 {
 	WORD i;
+	if (codeMatches(a))
+		return FALSE;
 	for (i=0; i<MAX_CODES; i++)
 	{
 		if (!(codeList[i].valid))
@@ -298,40 +300,70 @@ void setExpireTime(Code* a, BYTE expire)
 			if (currTime.RTC_Hour > 24) {
 				currTime.RTC_Hour = 0;
 				currTime.RTC_Yday++;
-				if (currTime.RTC_Yday > 365) {
-					currTime.RTC_Yday = 0;
-					currTime.RTC_Year++;
+				if (currTime.RTC_Year&0x3) {
+					if (currTime.RTC_Yday > 366) {
+						currTime.RTC_Yday = 366 - (currTime.RTC_Yday);
+						currTime.RTC_Year++;
+					}
 				}
+				else if (currTime.RTC_Yday > 365) {
+						currTime.RTC_Yday = 365 - (currTime.RTC_Yday);
+						currTime.RTC_Year++;
+					}
 			}
 		}
 		break;
 	case EXPIRE_ONE_DAY:
 		currTime.RTC_Yday += 1;
-		if (currTime.RTC_Yday > 365) {
-			currTime.RTC_Yday = 365 - (currTime.RTC_Yday);
-			currTime.RTC_Year++;
+		if (currTime.RTC_Year&0x3) {
+			if (currTime.RTC_Yday > 366) {
+				currTime.RTC_Yday = 366 - (currTime.RTC_Yday);
+				currTime.RTC_Year++;
+			}
 		}
+		else if (currTime.RTC_Yday > 365) {
+				currTime.RTC_Yday = 365 - (currTime.RTC_Yday);
+				currTime.RTC_Year++;
+			}
 		break;
 	case EXPIRE_THREE_DAYS:
 		currTime.RTC_Yday += 3;
-		if (currTime.RTC_Yday > 365) {
-			currTime.RTC_Yday = 365 - (currTime.RTC_Yday);
-			currTime.RTC_Year++;
+		if (currTime.RTC_Year&0x3) {
+			if (currTime.RTC_Yday > 366) {
+				currTime.RTC_Yday = 366 - (currTime.RTC_Yday);
+				currTime.RTC_Year++;
+			}
 		}
+		else if (currTime.RTC_Yday > 365) {
+				currTime.RTC_Yday = 365 - (currTime.RTC_Yday);
+				currTime.RTC_Year++;
+			}
 		break;
 	case EXPIRE_ONE_WEEK:
 		currTime.RTC_Yday += 7;
-		if (currTime.RTC_Yday > 365) {
-			currTime.RTC_Yday = 365 - (currTime.RTC_Yday);
-			currTime.RTC_Year++;
+		if (currTime.RTC_Year&0x3) {
+			if (currTime.RTC_Yday > 366) {
+				currTime.RTC_Yday = 366 - (currTime.RTC_Yday);
+				currTime.RTC_Year++;
+			}
 		}
+		else if (currTime.RTC_Yday > 365) {
+				currTime.RTC_Yday = 365 - (currTime.RTC_Yday);
+				currTime.RTC_Year++;
+			}
 		break;
 	case EXPIRE_THIRTY_DAYS:
 		currTime.RTC_Yday += 30;
-		if (currTime.RTC_Yday > 365) {
-			currTime.RTC_Yday = 365 - (currTime.RTC_Yday);
-			currTime.RTC_Year++;
+		if (currTime.RTC_Year&0x3) {
+			if (currTime.RTC_Yday > 366) {
+				currTime.RTC_Yday = 366 - (currTime.RTC_Yday);
+				currTime.RTC_Year++;
+			}
 		}
+		else if (currTime.RTC_Yday > 365) {
+				currTime.RTC_Yday = 365 - (currTime.RTC_Yday);
+				currTime.RTC_Year++;
+			}
 		break;
 	default:
 		currTime.RTC_Year = 4000;

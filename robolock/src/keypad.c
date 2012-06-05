@@ -13,7 +13,7 @@
 
 void testKeypad(void) {
 	IENABLE;
-	init_timer(3, Fpclk * 2, (void*) periodic_network, TIMEROPT_INT_RST);
+	init_timer(3, Fpclk * 2, (void*) periodic_network, TIMEROPT_INT | TIMEROPT_RST);
 	reset_timer(3);
 
 	enable_timer(3);

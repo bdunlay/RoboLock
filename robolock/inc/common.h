@@ -4,8 +4,8 @@
 
 
 void busyWait(DWORD);
-BYTE hexToChar(BYTE);
-BYTE atoi(BYTE);
-BYTE itoa(BYTE);
+inline BYTE hexToChar(BYTE);
+inline BYTE atoi(BYTE);
+inline BYTE itoa(BYTE);
 
 #endif

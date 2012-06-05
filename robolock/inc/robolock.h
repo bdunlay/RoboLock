@@ -31,7 +31,7 @@ enum {
 
 
 // operate robolock without a server or network connection
-#define NETWORK_ENABLED			1
+#define NETWORK_ENABLED			 1
 
 #define PROMPT_TIMEOUT_LEN       10
 
@@ -55,6 +55,8 @@ enum {
 #define PACKET_BUFF_SIZE	1200//TODO packet buffer size should be no more than 1500 bytes
 
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])
+
+#define WELCOME_BUFF_SIZE		 128
 
 
 /* Structs */
@@ -113,5 +115,7 @@ volatile DWORD knockThresh;
 
 volatile BYTE promptTimedout;
 volatile BYTE promptTimeoutCount;
+
+volatile BYTE welcomeMsg[WELCOME_BUFF_SIZE];
 
 #endif
