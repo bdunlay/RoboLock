@@ -6,12 +6,11 @@ import java.net.URLEncoder;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -25,8 +24,10 @@ public class RoboLock extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		// cd2mSetup();
+		loadImage();
 	}
 
+	
 	public void cd2mSetup() {
 		Intent registrationIntent = new Intent(
 				"com.google.android.c2dm.intent.REGISTER");
@@ -51,7 +52,7 @@ public class RoboLock extends Activity {
 	
 	// this should send a request to take a new photo and update the photo when a notification is received
 	public void takePhoto(View v) {
-		fetchImage(Utilities.server + "/takephoto");
+		Utilities.httpRequest(Utilities.server + "/takephoto");
 	}
 
 	public void manage(View v) {
@@ -101,5 +102,7 @@ public class RoboLock extends Activity {
 		ImageView imview = (ImageView) findViewById(R.id.photo);
 		imview.setImageBitmap(image);
 	}
+	
+
 
 }

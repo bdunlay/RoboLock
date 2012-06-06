@@ -95,7 +95,7 @@ var tcp_server = net.createServer(function(c) { //'connection' listener
 
 				} else {
 					console.log("OPENING FILE");
-					notifyPhone();
+				//	notifyPhone();
 					fd = fs.openSync('./images/photo.jpg', 'w+', 0666);
 					startIndex += fs.writeSync(fd, payload, 0, payload.length, startIndex);
 					FILE_OPEN = true;

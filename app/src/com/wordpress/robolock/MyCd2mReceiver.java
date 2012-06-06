@@ -82,10 +82,10 @@ public class MyCd2mReceiver extends BroadcastReceiver{
 			//parse the message and do something with it.
 			//For example, if the server sent the payload as "data.message=xxx", here you would have an extra called "message"
 			String message = extras.getString("payload");
-			
-			sendIntentToPhotoView();
+
+			serverNotification(context);				
+
 		}
-		serverNotification(context);
 	}
 
 	void sendIntentToPhotoView() {

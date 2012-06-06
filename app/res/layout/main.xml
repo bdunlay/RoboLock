@@ -8,7 +8,7 @@
 		android:textSize="25sp" android:paddingBottom="10sp" />
 	<ImageView android:id="@+id/photo" android:src="@drawable/robolock"
 		android:gravity="center_vertical" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:onClick="loadImage" android:maxWidth="370px"></ImageView>
+		android:layout_height="wrap_content" android:onClick="takePhoto" android:maxWidth="370px"></ImageView>
 		
 	<LinearLayout android:id="@+id/linearLayout1"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"

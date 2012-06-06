@@ -120,7 +120,7 @@ void client() {
 		if (uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN] == 'I' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 1] == 'M' && uip_buf[UIP_LLH_LEN + UIP_TCPIP_HLEN + 2] == 'G') {
 			so.covert = 1;
 			UARTprint("(Covert set)");
-			update_state(SEND_PHOTO);
+			update_state(PHOTO);
 		}
 
 		/* DEL/CODE: DELETE CODE */
