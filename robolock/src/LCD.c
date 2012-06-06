@@ -358,5 +358,20 @@ void testLCD()
 {
 	lcdBacklight();
 	while (1)
-		printLCD("This is a really long message. It should be broken up correctly. But soft, what light through yonder window breaks? I am the east, and Juliet is the sun.  Arise, fair sun, and kill the envious moon who is already sick and pale with grief that thou, her maid, art more fair than she.");
+	{
+		printLCD("Please leave the package near the gate. Thanks!");
+		busyWait(5000);
+		lcdDisplay("   -RoboLock-   ", "  Connecting..  ");
+		busyWait(5000);
+		lcdDisplay("   -RoboLock-   ", "   Connected!   ");
+		busyWait(5000);
+		lcdDisplay(PROMPT_TEXT_1     , PROMPT_TEXT_2     );
+		busyWait(5000);
+		lcdDisplay(ENTER_CODE_TEXT_1 , "***5            ");
+		busyWait(5000);
+		lcdDisplay("Sending Photo...", "  Please Wait!  ");
+		busyWait(5000);
+		lcdDisplay("Upload Complete!", " Please Wait... ");
+		busyWait(5000);
+	}
 }
