@@ -12,6 +12,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,6 +30,28 @@ public class RoboLock extends Activity {
 		loadImage();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.servermenu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.remove:
+			remove();
+			return true;
+		case R.id.take:
+			takePhoto(null);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
 	
 	public void cd2mSetup() {
 		Intent registrationIntent = new Intent(
@@ -41,6 +66,11 @@ public class RoboLock extends Activity {
 	public void unlock(View v) {
 		Utilities.httpRequest(Utilities.server + "/unlock");
 	}
+	
+	public void remove() {
+		Utilities.httpRequest(Utilities.server + "/move");
+	}
+
 
 	// this should be async task which updates the photo when ready
 	// TODO make the notification indicate that there is a new image to load

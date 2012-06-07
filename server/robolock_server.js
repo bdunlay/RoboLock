@@ -178,6 +178,7 @@ http_server.on('request', function(req, res) {
 	 try {
 		img = fs.readFileSync('./images/photo.jpg');
 		console.log("Sending image photo.jpg")
+		move();
 	 } 
 	 catch(err) {
 		console.log("Error; Sending image logo.jpg")
@@ -292,6 +293,14 @@ http_server.on('request', function(req, res) {
 		res.writeHead(200, {'Content-Type': 'text/plain' });
 		res.end("Invalidating Code " + code);
 
+	}  else if (action == '/move') {
+
+
+		move();
+		console.log("moving photo"); 
+		res.writeHead(200, {'Content-Type': 'text/plain' });
+		res.end("Invalidating Code " + code);
+
 	} else { 
 
 	 res.writeHead(200, {'Content-Type': 'text/plain' });
@@ -303,7 +312,19 @@ http_server.on('request', function(req, res) {
 
 
 
+function move() {
+		var sys = require('sys')
+		var exec = require('child_process').exec;
+		var date = new Date();
+		var n = date.getTime()
+		var command = "mv ./images/photo.jpg ./images/photo-"+ n +".jpg";
+		console.log(command);
+		function puts(error, stdout, stderr) { sys.puts(stdout) }
+		exec(command, puts);
 
+
+
+}
 
 
 

@@ -17,6 +17,8 @@ import android.util.Log;
 public class Utilities {
 
 	final public static String server = "http://128.111.56.203:8080";
+//	final public static String server = "http://128.111.43.54:8080";
+	
 	final public static int CODE_LENGTH = 4;
 	public static String httpRequest(String url) {
 		final DefaultHttpClient client = new DefaultHttpClient();
