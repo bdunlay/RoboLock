@@ -67,6 +67,7 @@ DWORD ADCInit( void )
 
   /* set pin 42, A0[4] to ADC */
   PINSEL3 |= 0x30000000;	/* A0[4], function 11 */
+  PINMODE3 |= 0x20000000;
 
   AD0CR = ( 0x1 << 4 ) | 	/* SEL=1,select channel 4 on ADC0 */
 		( 3 << 8 ) |        /* CLKDIV = Fpclk / (3+1) , should be <=4.5Mhz */

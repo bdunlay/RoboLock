@@ -31,9 +31,8 @@ enum {
 
 
 // operate robolock without a server or network connection
-#define NETWORK_ENABLED			 1
 
-#define PROMPT_TIMEOUT_LEN       10
+#define PROMPT_TIMEOUT_LEN       20
 
 #define PROMPT_TEXT_1            "* to take photo "
 #define PROMPT_TEXT_2            "# to enter code "
@@ -108,6 +107,8 @@ void sendPhoto(void);
 
 
 /* Variables */
+
+volatile BYTE NETWORK_ENABLED;
 
 volatile DWORD adcValue;
 

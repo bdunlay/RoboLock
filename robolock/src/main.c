@@ -35,6 +35,8 @@ int main(void) {
 	printLED(0x01);
 	initLCD();
 	init_dip();
+	if (read_dip() == 14) NETWORK_ENABLED = 0;
+	else NETWORK_ENABLED = 1;
 	init_button();
 	UARTInit(9600);
 	printLED(0x03);
@@ -50,9 +52,7 @@ int main(void) {
 	printLED(0x3F);
 	init_robolock();
 	printLED(0x7F);
-#if NETWORK_ENABLED
-	init_network();
-#endif
+	if (NETWORK_ENABLED) init_network();
 	printLED(0xFF);
 	IENABLE;
 	busyWait(500);
@@ -124,6 +124,7 @@ int main(void) {
 			break;
 
 		case 14:
+			robolock();
 			break;
 
 		case 15:

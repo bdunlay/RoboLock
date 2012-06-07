@@ -505,7 +505,8 @@ DWORD EMACInit( void )
   {
 	PINSEL2 = 0x50150105;	/* selects P1[0,1,4,8,9,10,14,15] */
   }
-  PINSEL3 = 0x00000005;	/* selects P1[17:16] */
+  PINSEL3 &= ~0x0000000F;	/* selects P1[17:16] */
+  PINSEL3 |= 0x00000005;	/* selects P1[17:16] */
 #else					/* else RMII, then it's MII mode */      
   PINSEL2 = 0x55555555;	/* selects P1[15:0] */
   PINSEL3 = 0x00000005;	/* selects P1[17:16] */
