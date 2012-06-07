@@ -94,10 +94,10 @@ void robolock() {
 
 			while (1) {
 
-#if NETWORK_ENABLED
-				periodic_network();
-				if (so.state != IDLE) break; // in case network changes state
-#endif
+				if (NETWORK_ENABLED) {
+					periodic_network();
+					if (so.state != IDLE) break; // in case network changes state
+				}
 				printLED((BYTE)(0xFF >> (8 - (ADC0Value>>7))));
 				if (buttonPressed) {
 					buttonPressed = FALSE;
@@ -130,9 +130,8 @@ void robolock() {
 					break;
 				} else if (savedKeyValue == '*') {
 					update_state(ERROR);
-					#if NETWORK_ENABLED
-					update_state(PHOTO);
-					#endif
+					if (NETWORK_ENABLED)
+						update_state(PHOTO);
 					break;
 				} else {
 					reset_timer(2);
@@ -320,9 +319,8 @@ void init_robolock() {
 	/* set initial values */
 	resetStateVariables();
 	so.state = IDLE;
-	#if NETWORK_ENABLED
-	so.state = DISCONNECTED;
-	#endif
+	if (NETWORK_ENABLED)
+		so.state = DISCONNECTED;
 
 	promptTimedout = FALSE;
 	promptTimeoutCount = 0;
@@ -389,7 +387,7 @@ void init_network() {
 
 
 
-	//	uip_ipaddr(ipaddr, 128, 111, 56, 53);
+//	uip_ipaddr(ipaddr, 128, 111, 56, 53);
 //	uip_sethostaddr(ipaddr); /* host IP address */
 //	uip_ipaddr(ipaddr, 128, 111, 56, 1);
 //	uip_setdraddr(ipaddr); /* router IP address */
