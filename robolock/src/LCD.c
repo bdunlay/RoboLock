@@ -33,12 +33,12 @@ void initLCD(void) {
 
 void lcdBacklight(void) {
 
-	FIO1CLR3 |= 0x04;
+	FIO1CLR3 |= 0x00000004;
 
 }
 
 void lcdBacklightOff(void) {
-	FIO1SET3 |= 0x04;
+	FIO1SET3 |= 0x00000004;
 
 }
 void lcdInit() {
@@ -369,9 +369,19 @@ void testLCD()
 		busyWait(5000);
 		lcdDisplay(ENTER_CODE_TEXT_1 , "***5            ");
 		busyWait(5000);
+		lcdDisplay(CHEESE_TEXT_1, CHEESE_TEXT_2);
+		busyWait(5000);
+		lcdDisplay(CHEESE_TEXT_1, CHEESE_TEXT_3);
+		busyWait(5000);
+		lcdDisplay(CHEESE_TEXT_1, CHEESE_TEXT_4);
+		busyWait(5000);
 		lcdDisplay("Sending Photo...", "  Please Wait!  ");
 		busyWait(5000);
 		lcdDisplay("Upload Complete!", " Please Wait... ");
+		busyWait(5000);
+		lcdDisplay("  Code expired  ", BLANK_TEXT        );
+		busyWait(5000);
+		lcdDisplay("  Code invalid  ", BLANK_TEXT        );
 		busyWait(5000);
 	}
 }

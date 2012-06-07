@@ -93,18 +93,17 @@ void robolock() {
 			promptTimedout = FALSE; // reset timeout flag
 
 			while (1) {
-				ADC0Read();
 
 #if NETWORK_ENABLED
 				periodic_network();
 				if (so.state != IDLE) break; // in case network changes state
 #endif
-
+				printLED((BYTE)(0xFF >> (8 - (ADC0Value>>7))));
 				if (buttonPressed) {
 					buttonPressed = FALSE;
 					update_state(CALIBRATE);
 					break;
-				} else if (keypadValue != 0 || ADC0Value > knockThresh) {// if someone pressed a key or knocked hard enough
+				} else if (keypadValue != 0 || get_ADCval() > knockThresh) {// if someone pressed a key or knocked hard enough
 					lcdBacklight(); 							// backlight ON
 					printLCD(welcomeMsg);
 					update_state(PROMPT);
@@ -284,6 +283,8 @@ void robolock() {
 
 		case CALIBRATE:
 			UARTprint("[CALIBRATE]");
+			lcdBacklight();
+			lcdDisplay("  Calibrating   ", "  Please knock  ");
 
 			reset_timer(2);
 			enable_timer(2);
@@ -325,7 +326,7 @@ void init_robolock() {
 
 	promptTimedout = FALSE;
 	promptTimeoutCount = 0;
-	knockThresh = 512;
+	knockThresh = 1023;
 	keypadValue = 0;
 	buttonPressed = FALSE;
 	welcomeMsg[0] = '\0';
@@ -376,12 +377,24 @@ void init_network() {
 	uip_init();
 	//	uip_ipaddr(ipaddr, 128,111,56,53);
 	//	uip_ipaddr(ipaddr, 169,254,255,255);
-	uip_ipaddr(ipaddr, 128, 111, 56, 53);
+
+	uip_ipaddr(ipaddr, 128, 111, 43, 99);
 	uip_sethostaddr(ipaddr); /* host IP address */
-	uip_ipaddr(ipaddr, 128, 111, 56, 1);
+	uip_ipaddr(ipaddr, 128, 111, 43, 1);
 	uip_setdraddr(ipaddr); /* router IP address */
 	uip_ipaddr(ipaddr, 255, 255, 255, 0);
 	uip_setnetmask(ipaddr); /* mask */
+
+
+
+
+
+	//	uip_ipaddr(ipaddr, 128, 111, 56, 53);
+//	uip_sethostaddr(ipaddr); /* host IP address */
+//	uip_ipaddr(ipaddr, 128, 111, 56, 1);
+//	uip_setdraddr(ipaddr); /* router IP address */
+//	uip_ipaddr(ipaddr, 255, 255, 255, 0);
+//	uip_setnetmask(ipaddr); /* mask */
 
 	tcp_client_init();
 }
@@ -454,6 +467,7 @@ int formatPacket(char* type, char* data, int bytes) {
 
 int takePhoto() {
 	if (JPEGCamera_takePicture(so.prePacketBuffer)) {
+		busyWait(1000);
 		JPEGCamera_getSize(so.prePacketBuffer, &(so.photo_size));
 		return 1;
 	}

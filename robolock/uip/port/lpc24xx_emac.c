@@ -40,7 +40,8 @@ BOOL_32 EMAC_Init(void)
       /* on rev. 'A' and later, P1.6 should NOT be set. */
       PINSEL2 |= 0x50150105;
    }
-   PINSEL3 = (PINSEL3 & ~0x0000000F) | 0x00000005;
+   PINSEL3 &= ~0x0000000F;
+   PINSEL3 |= 0x00000005;
 
   /* Reset all EMAC internal modules. */
   MAC_MAC1 = MAC1_RES_TX | MAC1_RES_MCS_TX | MAC1_RES_RX | MAC1_RES_MCS_RX |

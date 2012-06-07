@@ -17,8 +17,8 @@ void initLED(void) {
 
 	//	PINMODE3 = 0xAAAAAAAA;
 
-	PINSEL2 = 0x00;
-	PINSEL3 = 0x00; // (Re)Set to GPIO
+//	PINSEL2 = 0x00;
+	PINSEL3 &= 0xFFF0000F; // (Re)Set to GPIO
 
 	FIO1DIR2 = 0xFC;
 	FIO1DIR3 = 0x03;
