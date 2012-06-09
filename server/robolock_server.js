@@ -3,6 +3,12 @@ var http = require('http');
 var url = require('url');
 var fs = require('fs');
 
+setInterval(function(){console.log("["+currTime()+"]bump")},10000);
+
+function currTime() {
+	var datetime = new Date();
+	return datetime.getHours() + ":" + datetime.getMinutes() + ":" + datetime.getSeconds();
+}
 
 
 function notifyRobolock(type, message) {
